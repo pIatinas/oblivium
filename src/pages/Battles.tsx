@@ -3,32 +3,45 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
+import Header from "@/components/Header";
 
 // Mock data para demonstração
 const mockBattles = [
   {
     id: 1,
     winnerTeam: {
-      image: "/placeholder.svg",
-      characters: ["Seiya", "Shiryu", "Hyoga"]
+      characters: ["Jon Snow", "Daenerys Targaryen", "Arya Stark"]
     },
     loserTeam: {
-      image: "/placeholder.svg", 
-      characters: ["Ikki", "Shun", "Jabu"]
-    },
-    date: "2024-01-15"
+      characters: ["Tyrion Lannister", "Sansa Stark", "Jaime Lannister"]
+    }
   },
   {
     id: 2,
     winnerTeam: {
-      image: "/placeholder.svg",
-      characters: ["Mu", "Aldebaran", "Saga"]
+      characters: ["Tyrion Lannister", "Arya Stark"]
     },
     loserTeam: {
-      image: "/placeholder.svg",
-      characters: ["Aiolia", "Shaka", "Dohko"]
+      characters: ["Jon Snow", "Sansa Stark"]
+    }
+  },
+  {
+    id: 3,
+    winnerTeam: {
+      characters: ["Sansa Stark", "Jaime Lannister", "Daenerys Targaryen"]
     },
-    date: "2024-01-14"
+    loserTeam: {
+      characters: ["Jon Snow", "Arya Stark"]
+    }
+  },
+  {
+    id: 4,
+    winnerTeam: {
+      characters: ["Jon Snow", "Tyrion Lannister"]
+    },
+    loserTeam: {
+      characters: ["Daenerys Targaryen", "Jaime Lannister"]
+    }
   }
 ];
 
@@ -46,11 +59,12 @@ const Battles = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-nebula p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-nebula">
+      <Header />
+      <div className="max-w-6xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
-            Arquivo de Batalhas Cósmicas
+            Registro de Batalhas
           </h1>
           
           <div className="relative max-w-md mx-auto">
@@ -64,54 +78,42 @@ const Battles = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           {filteredBattles.map((battle) => (
             <Card key={battle.id} className="bg-card border-border shadow-cosmic hover:shadow-gold transition-all duration-300">
-              <CardHeader>
-                <CardTitle className="text-center text-accent">
-                  Batalha #{battle.id}
-                </CardTitle>
-                <p className="text-center text-muted-foreground text-sm">
-                  {new Date(battle.date).toLocaleDateString('pt-BR')}
-                </p>
-              </CardHeader>
-              
-              <CardContent className="space-y-4">
-                {/* Time Vencedor */}
-                <div className="space-y-2">
-                  <h3 className="text-accent font-semibold flex items-center gap-2">
-                    🏆 Time Vencedor
-                  </h3>
-                  <img
-                    src={battle.winnerTeam.image}
-                    alt="Time Vencedor"
-                    className="w-full h-32 object-cover rounded-lg border border-accent/20"
-                  />
-                  <div className="flex flex-wrap gap-1">
-                    {battle.winnerTeam.characters.map((char, index) => (
-                      <Badge key={index} variant="secondary" className="bg-accent/10 text-accent">
-                        {char}
-                      </Badge>
-                    ))}
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between gap-4">
+                  {/* Time Vencedor */}
+                  <div className="flex-1 space-y-3">
+                    <h3 className="text-accent font-semibold text-center flex items-center justify-center gap-2">
+                      🏆 Vencedor
+                    </h3>
+                    <div className="flex flex-wrap gap-1 justify-center">
+                      {battle.winnerTeam.characters.map((char, index) => (
+                        <Badge key={index} className="bg-accent/10 text-accent border-accent/20">
+                          {char}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Time Perdedor */}
-                <div className="space-y-2">
-                  <h3 className="text-muted-foreground font-semibold flex items-center gap-2">
-                    💀 Time Perdedor
-                  </h3>
-                  <img
-                    src={battle.loserTeam.image}
-                    alt="Time Perdedor"
-                    className="w-full h-32 object-cover rounded-lg border border-border"
-                  />
-                  <div className="flex flex-wrap gap-1">
-                    {battle.loserTeam.characters.map((char, index) => (
-                      <Badge key={index} variant="outline" className="text-muted-foreground">
-                        {char}
-                      </Badge>
-                    ))}
+                  {/* X Separador */}
+                  <div className="text-3xl font-bold text-muted-foreground">
+                    ✕
+                  </div>
+
+                  {/* Time Perdedor */}
+                  <div className="flex-1 space-y-3">
+                    <h3 className="text-primary font-semibold text-center flex items-center justify-center gap-2">
+                      💀 Perdedor
+                    </h3>
+                    <div className="flex flex-wrap gap-1 justify-center">
+                      {battle.loserTeam.characters.map((char, index) => (
+                        <Badge key={index} className="bg-primary/10 text-primary border-primary/20">
+                          {char}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </CardContent>

@@ -1,32 +1,19 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sword, Search, Plus, Archive } from "lucide-react";
+import { Sword, Search, Plus, Archive, Users } from "lucide-react";
+import Header from "@/components/Header";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-nebula">
-      {/* Header */}
-      <header className="bg-card/50 backdrop-blur-sm border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 py-4">
-          <h1 className="text-2xl font-bold text-accent text-center">
-            ⚔️ Arquivo de Batalhas Cósmicas
-          </h1>
-          <p className="text-center text-muted-foreground mt-2">
-            Sistema de Gerenciamento de Lutas - Cavaleiros do Zodíaco
-          </p>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            Bem-vindo ao Cosmo das Batalhas
-          </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Gerencie e consulte o histórico de batalhas da sua guilda. 
-            Estratégias cósmicas começam com dados precisos.
+            Guia para consulta de lutas da Guerra dos Tronos
           </p>
         </div>
 
@@ -71,21 +58,21 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          {/* Busca Avançada */}
+          {/* Cavaleiros */}
           <Card className="bg-card border-border shadow-cosmic hover:shadow-gold transition-all duration-300 group md:col-span-2 lg:col-span-1">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                <Search className="w-8 h-8 text-secondary-foreground" />
+                <Users className="w-8 h-8 text-secondary-foreground" />
               </div>
-              <CardTitle className="text-foreground">Busca Avançada</CardTitle>
+              <CardTitle className="text-foreground">Cavaleiros</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground mb-4">
-                Analise o histórico de personagens específicos
+                Consulte o histórico de cada cavaleiro
               </p>
               <Button asChild variant="secondary">
-                <Link to="/search">
-                  Buscar Personagem
+                <Link to="/knights">
+                  Ver Cavaleiros
                 </Link>
               </Button>
             </CardContent>
