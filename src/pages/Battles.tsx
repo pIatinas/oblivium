@@ -64,7 +64,7 @@ const Battles = () => {
       <div className="max-w-6xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
-            Registro de Batalhas
+            Batalhas
           </h1>
           
           <div className="relative max-w-md mx-auto">
@@ -90,9 +90,16 @@ const Battles = () => {
                     </h3>
                     <div className="flex flex-wrap gap-1 justify-center">
                       {battle.winnerTeam.characters.map((char, index) => (
-                        <Badge key={index} className="bg-accent/10 text-accent border-accent/20">
-                          {char}
-                        </Badge>
+                        <div key={index} className="flex flex-col items-center gap-1">
+                          <img
+                            src="/placeholder.svg"
+                            alt={char}
+                            className="w-8 h-8 rounded-full border border-accent/20"
+                          />
+                          <Badge className="bg-accent/10 text-accent border-accent/20 text-xs">
+                            {char}
+                          </Badge>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -109,9 +116,16 @@ const Battles = () => {
                     </h3>
                     <div className="flex flex-wrap gap-1 justify-center">
                       {battle.loserTeam.characters.map((char, index) => (
-                        <Badge key={index} className="bg-primary/10 text-primary border-primary/20">
-                          {char}
-                        </Badge>
+                        <div key={index} className="flex flex-col items-center gap-1">
+                          <img
+                            src="/placeholder.svg"
+                            alt={char}
+                            className="w-8 h-8 rounded-full border border-primary/20"
+                          />
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
+                            {char}
+                          </Badge>
+                        </div>
                       ))}
                     </div>
                   </div>

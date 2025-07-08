@@ -19,32 +19,32 @@ const Index = () => {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-12">
           {/* Registrar Batalha */}
-          <Card className="bg-card border-accent/20 shadow-cosmic hover:shadow-gold transition-all duration-300 group">
+          <Card className="bg-card border-accent/20 shadow-cosmic hover:scale-105 transition-all duration-300 group">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Plus className="w-8 h-8 text-primary-foreground" />
               </div>
-              <CardTitle className="text-accent">Registrar Batalha</CardTitle>
+              <CardTitle className="text-accent">Cadastrar Batalha</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground mb-4">
-                Adicione uma nova batalha ao arquivo cósmico
+                Adicione uma nova batalha
               </p>
               <Button asChild className="bg-gradient-cosmic text-primary-foreground hover:opacity-90">
                 <Link to="/create-battle">
-                  Criar Nova Batalha
+                  Cadastrar
                 </Link>
               </Button>
             </CardContent>
           </Card>
 
           {/* Ver Batalhas */}
-          <Card className="bg-card border-border shadow-cosmic hover:shadow-gold transition-all duration-300 group">
+          <Card className="bg-card border-border shadow-cosmic hover:scale-105 transition-all duration-300 group">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Archive className="w-8 h-8 text-accent-foreground" />
               </div>
-              <CardTitle className="text-foreground">Arquivo de Batalhas</CardTitle>
+              <CardTitle className="text-foreground">Batalhas</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground mb-4">
@@ -59,7 +59,7 @@ const Index = () => {
           </Card>
 
           {/* Cavaleiros */}
-          <Card className="bg-card border-border shadow-cosmic hover:shadow-gold transition-all duration-300 group md:col-span-2 lg:col-span-1">
+          <Card className="bg-card border-border shadow-cosmic hover:scale-105 transition-all duration-300 group md:col-span-2 lg:col-span-1">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Users className="w-8 h-8 text-secondary-foreground" />
@@ -68,7 +68,7 @@ const Index = () => {
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground mb-4">
-                Consulte o histórico de cada cavaleiro
+                Consultar cavaleiros
               </p>
               <Button asChild variant="secondary">
                 <Link to="/knights">
@@ -82,7 +82,7 @@ const Index = () => {
         {/* Stats Section */}
         <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border p-8 shadow-cosmic">
           <h3 className="text-2xl font-bold text-center text-foreground mb-6">
-            Status do Arquivo Cósmico
+            Estatísticas
           </h3>
           <div className="grid gap-4 md:grid-cols-3 text-center">
             <div>

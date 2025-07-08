@@ -3,7 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
 import { Search, Plus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import Header from "@/components/Header";
 
 // Mock data para demonstração
 const mockKnights = [
@@ -34,9 +37,13 @@ const mockBattleHistory = {
 };
 
 const Knights = () => {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedKnight, setSelectedKnight] = useState<any>(null);
-  const [knights] = useState(mockKnights);
+  const [knights, setKnights] = useState(mockKnights);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newKnightName, setNewKnightName] = useState("");
+  const [newKnightImage, setNewKnightImage] = useState("");
 
   const filteredKnights = knights.filter(knight =>
     knight.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -48,23 +55,108 @@ const Knights = () => {
 
   const knightHistory = selectedKnight ? mockBattleHistory[selectedKnight.id as keyof typeof mockBattleHistory] : null;
 
+  const handleAddKnight = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newKnightName.trim()) {
+      toast({
+        title: "Erro",
+        description: "Nome do cavaleiro é obrigatório",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newKnight = {
+      id: knights.length + 1,
+      name: newKnightName.trim(),
+      image: newKnightImage || "/placeholder.svg"
+    };
+
+    setKnights([...knights, newKnight]);
+    setNewKnightName("");
+    setNewKnightImage("");
+    setShowAddForm(false);
+    
+    toast({
+      title: "Cavaleiro Adicionado!",
+      description: `${newKnight.name} foi adicionado ao sistema`,
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-nebula p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-nebula">
+      <Header />
+      <div className="max-w-6xl mx-auto p-6">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
             Cavaleiros da Guerra dos Tronos
           </h1>
           
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Buscar cavaleiro..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-card border-border"
-            />
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Buscar cavaleiro..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-card border-border w-64"
+              />
+            </div>
+            
+            <Button
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="bg-gradient-cosmic text-primary-foreground hover:opacity-90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Adicionar Cavaleiro
+            </Button>
           </div>
+
+          {showAddForm && (
+            <Card className="bg-card border-accent/20 shadow-cosmic mb-6 max-w-md mx-auto">
+              <CardHeader>
+                <CardTitle className="text-accent">Novo Cavaleiro</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleAddKnight} className="space-y-4">
+                  <div>
+                    <Label htmlFor="name">Nome</Label>
+                    <Input
+                      id="name"
+                      value={newKnightName}
+                      onChange={(e) => setNewKnightName(e.target.value)}
+                      placeholder="Nome do cavaleiro"
+                      className="bg-background border-border"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="image">URL da Imagem (opcional)</Label>
+                    <Input
+                      id="image"
+                      value={newKnightImage}
+                      onChange={(e) => setNewKnightImage(e.target.value)}
+                      placeholder="https://exemplo.com/imagem.jpg"
+                      className="bg-background border-border"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                      Adicionar
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowAddForm(false)}
+                      className="border-border"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {!selectedKnight ? (

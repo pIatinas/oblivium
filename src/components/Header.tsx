@@ -8,9 +8,9 @@ const Header = () => {
   const location = useLocation();
 
   const navigation = [
-    { name: "Início", href: "/" },
-    { name: "Registrar Batalha", href: "/create-battle" },
-    { name: "Registro de Batalhas", href: "/battles" },
+    { name: "Home", href: "/" },
+    { name: "Cadastrar", href: "/create-battle" },
+    { name: "Batalhas", href: "/battles" },
     { name: "Cavaleiros", href: "/knights" },
   ];
 
@@ -30,7 +30,7 @@ const Header = () => {
               <Link key={item.name} to={item.href}>
                 <Button
                   variant={isActive(item.href) ? "secondary" : "ghost"}
-                  className={isActive(item.href) ? "bg-accent/10 text-accent" : "text-foreground hover:text-accent"}
+                  className={isActive(item.href) ? "bg-accent/10 text-accent" : "text-foreground hover:text-black hover:bg-accent"}
                 >
                   {item.name}
                 </Button>
@@ -62,7 +62,7 @@ const Header = () => {
                   <Button
                     variant={isActive(item.href) ? "secondary" : "ghost"}
                     className={`w-full justify-start ${
-                      isActive(item.href) ? "bg-accent/10 text-accent" : "text-foreground hover:text-accent"
+                      isActive(item.href) ? "bg-accent/10 text-accent" : "text-foreground hover:text-black hover:bg-accent"
                     }`}
                   >
                     {item.name}

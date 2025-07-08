@@ -79,7 +79,7 @@ const CreateBattle = () => {
       <Header />
       <div className="max-w-4xl mx-auto p-6">
         <h1 className="text-4xl font-bold text-foreground mb-8 text-center">
-          Registrar Nova Batalha
+          Cadastrar Nova Batalha
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -192,7 +192,7 @@ const CreateBattle = () => {
               size="lg" 
               className="bg-gradient-cosmic text-primary-foreground shadow-cosmic hover:shadow-gold transition-all duration-300"
             >
-              Registrar Batalha no Cosmos
+              Cadastrar
             </Button>
           </div>
         </form>
