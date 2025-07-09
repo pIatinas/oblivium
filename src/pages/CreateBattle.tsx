@@ -8,6 +8,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
+import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
 
 interface Knight {
   id: string;
@@ -145,6 +147,7 @@ const CreateBattle = () => {
     <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
+        <Breadcrumb />
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
             Cadastrar
@@ -284,39 +287,41 @@ const CreateBattle = () => {
                       : 'bg-background border-border hover:border-accent/50 cursor-pointer'
                   }`}
                 >
-                  <div className="flex items-center gap-3 mb-2">
-                    <img
-                      src={knight.image_url}
-                      alt={knight.name}
-                      className="w-10 h-10 rounded-full border border-border"
-                    />
-                    <span className="text-foreground font-medium">
-                      {knight.name}
-                    </span>
-                  </div>
-                  
-                  {!isKnightInTeam(knight.id) && (
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => addToTeam(knight, 'winner')}
-                        className="flex-1 text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20"
-                        disabled={winnerTeam.length >= 3}
-                      >
-                        Vencedor
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => addToTeam(knight, 'loser')}
-                        className="flex-1 text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20"
-                        disabled={loserTeam.length >= 3}
-                      >
-                        Perdedor
-                      </Button>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={knight.image_url}
+                        alt={knight.name}
+                        className="w-10 h-10 rounded-full border border-border"
+                      />
+                      <span className="text-foreground font-medium">
+                        {knight.name}
+                      </span>
                     </div>
-                  )}
+                    
+                    {!isKnightInTeam(knight.id) && (
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addToTeam(knight, 'winner')}
+                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-3 py-1"
+                          disabled={winnerTeam.length >= 3}
+                        >
+                          Vencedor
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addToTeam(knight, 'loser')}
+                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-3 py-1"
+                          disabled={loserTeam.length >= 3}
+                        >
+                          Perdedor
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -329,6 +334,7 @@ const CreateBattle = () => {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   );
 };

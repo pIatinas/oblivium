@@ -8,6 +8,8 @@ import { Search, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
+import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
 
 interface Knight {
   id: string;
@@ -159,6 +161,7 @@ const Knights = () => {
     <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
+        <Breadcrumb />
         {!selectedKnight ? (
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
@@ -169,7 +172,7 @@ const Knights = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="Buscar cavaleiro..."
+                  placeholder="Buscar..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-card border-border w-64"
@@ -181,7 +184,7 @@ const Knights = () => {
                 className="bg-gradient-cosmic text-white hover:opacity-90"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Adicionar Cavaleiro
+                Adicionar
               </Button>
             </div>
 
@@ -267,7 +270,7 @@ const Knights = () => {
                   alt={knight.name}
                   className="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-accent/20"
                 />
-                <h3 className="text-foreground font-semibold">{knight.name}</h3>
+                <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
               </div>
             ))}
           </div>
@@ -431,6 +434,7 @@ const Knights = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

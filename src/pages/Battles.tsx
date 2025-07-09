@@ -6,6 +6,8 @@ import { Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
+import Breadcrumb from "@/components/Breadcrumb";
+import Footer from "@/components/Footer";
 
 interface Knight {
   id: string;
@@ -21,16 +23,24 @@ interface Battle {
   created_by: string;
 }
 
+interface Profile {
+  id: string;
+  full_name: string | null;
+  user_id: string;
+}
+
 const Battles = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [battles, setBattles] = useState<Battle[]>([]);
   const [knights, setKnights] = useState<Knight[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchBattles();
     fetchKnights();
+    fetchProfiles();
   }, []);
 
   const fetchBattles = async () => {
@@ -66,8 +76,25 @@ const Battles = () => {
     }
   };
 
+  const fetchProfiles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*');
+      
+      if (error) throw error;
+      setProfiles(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar perfis:', error);
+    }
+  };
+
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
+  };
+
+  const getProfileByUserId = (userId: string) => {
+    return profiles.find(p => p.user_id === userId);
   };
 
   const filteredBattles = battles.filter(battle => {
@@ -93,6 +120,7 @@ const Battles = () => {
     <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
+        <Breadcrumb />
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
             Batalhas
@@ -123,17 +151,13 @@ const Battles = () => {
                       {battle.winner_team.map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
-                          <div key={index} className="flex items-center gap-2">
+                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => window.location.href = `/knights?knight=${knight.id}`}>
                             <img
                               src={knight.image_url}
                               alt={knight.name}
-                              className="w-8 h-8 rounded-full border border-accent/20 cursor-pointer hover:border-accent/40"
-                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
+                              className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40"
                             />
-                            <span
-                              className="text-xs text-foreground hover:text-accent cursor-pointer transition-colors"
-                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
-                            >
+                            <span className="text-xs text-foreground hover:text-accent transition-colors">
                               {knight.name}
                             </span>
                           </div>
@@ -156,17 +180,13 @@ const Battles = () => {
                       {battle.loser_team.map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
-                          <div key={index} className="flex items-center gap-2">
+                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => window.location.href = `/knights?knight=${knight.id}`}>
                             <img
                               src={knight.image_url}
                               alt={knight.name}
-                              className="w-8 h-8 rounded-full border border-purple-400/20 cursor-pointer hover:border-purple-400/40"
-                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
+                              className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40"
                             />
-                            <span
-                              className="text-xs text-foreground hover:text-purple-400 cursor-pointer transition-colors"
-                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
-                            >
+                            <span className="text-xs text-foreground hover:text-purple-400 transition-colors">
                               {knight.name}
                             </span>
                           </div>
@@ -179,7 +199,7 @@ const Battles = () => {
                 {/* Informação do autor */}
                 <div className="mt-4 text-center">
                   <p className="text-xs text-muted-foreground">
-                    Cadastrado por Usuário
+                    Cadastrado por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                   </p>
                 </div>
               </CardContent>
@@ -195,6 +215,7 @@ const Battles = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };
