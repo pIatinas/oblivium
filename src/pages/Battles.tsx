@@ -1,62 +1,93 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 
-// Mock data para demonstração
-const mockBattles = [
-  {
-    id: 1,
-    winnerTeam: {
-      characters: ["Jon Snow", "Daenerys Targaryen", "Arya Stark"]
-    },
-    loserTeam: {
-      characters: ["Tyrion Lannister", "Sansa Stark", "Jaime Lannister"]
-    }
-  },
-  {
-    id: 2,
-    winnerTeam: {
-      characters: ["Tyrion Lannister", "Arya Stark"]
-    },
-    loserTeam: {
-      characters: ["Jon Snow", "Sansa Stark"]
-    }
-  },
-  {
-    id: 3,
-    winnerTeam: {
-      characters: ["Sansa Stark", "Jaime Lannister", "Daenerys Targaryen"]
-    },
-    loserTeam: {
-      characters: ["Jon Snow", "Arya Stark"]
-    }
-  },
-  {
-    id: 4,
-    winnerTeam: {
-      characters: ["Jon Snow", "Tyrion Lannister"]
-    },
-    loserTeam: {
-      characters: ["Daenerys Targaryen", "Jaime Lannister"]
-    }
-  }
-];
+interface Knight {
+  id: string;
+  name: string;
+  image_url: string;
+}
+
+interface Battle {
+  id: string;
+  winner_team: string[];
+  loser_team: string[];
+  created_at: string;
+  created_by: string;
+}
 
 const Battles = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [battles] = useState(mockBattles);
+  const [battles, setBattles] = useState<Battle[]>([]);
+  const [knights, setKnights] = useState<Knight[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  const filteredBattles = battles.filter(battle =>
-    battle.winnerTeam.characters.some(char => 
-      char.toLowerCase().includes(searchTerm.toLowerCase())
-    ) ||
-    battle.loserTeam.characters.some(char => 
-      char.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  useEffect(() => {
+    fetchBattles();
+    fetchKnights();
+  }, []);
+
+  const fetchBattles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('battles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setBattles(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar as batalhas",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchKnights = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('knights')
+        .select('*');
+      
+      if (error) throw error;
+      setKnights(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar cavaleiros:', error);
+    }
+  };
+
+  const getKnightById = (knightId: string) => {
+    return knights.find(k => k.id === knightId);
+  };
+
+  const filteredBattles = battles.filter(battle => {
+    const allKnights = [...battle.winner_team, ...battle.loser_team];
+    return allKnights.some(knightId => {
+      const knight = getKnightById(knightId);
+      return knight && knight.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+  });
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-nebula">
+        <Header />
+        <div className="max-w-6xl mx-auto p-6 text-center">
+          <div className="text-accent text-xl">Carregando batalhas...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-nebula">
@@ -88,19 +119,22 @@ const Battles = () => {
                     <h3 className="text-accent font-semibold text-center flex items-center justify-center gap-2">
                       🏆 Vencedor
                     </h3>
-                    <div className="flex flex-wrap gap-1 justify-center">
-                      {battle.winnerTeam.characters.map((char, index) => (
-                        <div key={index} className="flex flex-col items-center gap-1">
-                          <img
-                            src="/placeholder.svg"
-                            alt={char}
-                            className="w-8 h-8 rounded-full border border-accent/20"
-                          />
-                          <Badge className="bg-accent/10 text-accent border-accent/20 text-xs">
-                            {char}
-                          </Badge>
-                        </div>
-                      ))}
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {battle.winner_team.map((knightId, index) => {
+                        const knight = getKnightById(knightId);
+                        return knight ? (
+                          <div key={index} className="flex flex-col items-center gap-1">
+                            <img
+                              src={knight.image_url}
+                              alt={knight.name}
+                              className="w-8 h-8 rounded-full border border-accent/20"
+                            />
+                            <Badge className="bg-accent/10 text-accent border-accent/20 text-xs">
+                              {knight.name}
+                            </Badge>
+                          </div>
+                        ) : null;
+                      })}
                     </div>
                   </div>
 
@@ -111,24 +145,34 @@ const Battles = () => {
 
                   {/* Time Perdedor */}
                   <div className="flex-1 space-y-3">
-                    <h3 className="text-primary font-semibold text-center flex items-center justify-center gap-2">
+                    <h3 className="text-purple-400 font-semibold text-center flex items-center justify-center gap-2">
                       💀 Perdedor
                     </h3>
-                    <div className="flex flex-wrap gap-1 justify-center">
-                      {battle.loserTeam.characters.map((char, index) => (
-                        <div key={index} className="flex flex-col items-center gap-1">
-                          <img
-                            src="/placeholder.svg"
-                            alt={char}
-                            className="w-8 h-8 rounded-full border border-primary/20"
-                          />
-                          <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
-                            {char}
-                          </Badge>
-                        </div>
-                      ))}
+                    <div className="flex flex-wrap gap-2 justify-center">
+                      {battle.loser_team.map((knightId, index) => {
+                        const knight = getKnightById(knightId);
+                        return knight ? (
+                          <div key={index} className="flex flex-col items-center gap-1">
+                            <img
+                              src={knight.image_url}
+                              alt={knight.name}
+                              className="w-8 h-8 rounded-full border border-purple-400/20"
+                            />
+                            <Badge className="bg-purple-400/10 text-purple-400 border-purple-400/20 text-xs">
+                              {knight.name}
+                            </Badge>
+                          </div>
+                        ) : null;
+                      })}
                     </div>
                   </div>
+                </div>
+                
+                {/* Informação do autor */}
+                <div className="mt-4 text-center">
+                  <p className="text-xs text-muted-foreground">
+                    Cadastrado por: Usuário
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -138,7 +182,7 @@ const Battles = () => {
         {filteredBattles.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
-              Nenhuma batalha encontrada para "{searchTerm}"
+              {searchTerm ? `Nenhuma batalha encontrada para "${searchTerm}"` : "Nenhuma batalha cadastrada"}
             </p>
           </div>
         )}

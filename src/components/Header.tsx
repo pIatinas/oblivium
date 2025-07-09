@@ -1,11 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const { signOut } = useAuth();
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -36,6 +38,13 @@ const Header = () => {
                 </Button>
               </Link>
             ))}
+            <Button
+              variant="ghost"
+              onClick={signOut}
+              className="text-foreground hover:text-black hover:bg-accent"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </nav>
 
           {/* Mobile menu button */}
@@ -69,6 +78,17 @@ const Header = () => {
                   </Button>
                 </Link>
               ))}
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  signOut();
+                }}
+                className="w-full justify-start text-foreground hover:text-black hover:bg-accent"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
             </nav>
           </div>
         )}

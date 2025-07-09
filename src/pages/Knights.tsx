@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,56 +6,93 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Search, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 
-// Mock data para demonstração
-const mockKnights = [
-  { id: 1, name: "Jon Snow", image: "/placeholder.svg" },
-  { id: 2, name: "Daenerys Targaryen", image: "/placeholder.svg" },
-  { id: 3, name: "Tyrion Lannister", image: "/placeholder.svg" },
-  { id: 4, name: "Arya Stark", image: "/placeholder.svg" },
-  { id: 5, name: "Sansa Stark", image: "/placeholder.svg" },
-  { id: 6, name: "Jaime Lannister", image: "/placeholder.svg" }
-];
+interface Knight {
+  id: string;
+  name: string;
+  image_url: string;
+  created_at: string;
+}
 
-const mockBattleHistory = {
-  1: { // Jon Snow
-    victories: [
-      { battleId: 1, againstTeam: ["Tyrion Lannister", "Sansa Stark"], allies: ["Daenerys Targaryen", "Arya Stark"] },
-      { battleId: 3, againstTeam: ["Jaime Lannister"], allies: ["Daenerys Targaryen"] }
-    ],
-    defeats: [
-      { battleId: 2, againstTeam: ["Arya Stark", "Tyrion Lannister"], allies: ["Sansa Stark"] }
-    ]
-  },
-  2: { // Daenerys
-    victories: [
-      { battleId: 1, againstTeam: ["Tyrion Lannister", "Sansa Stark"], allies: ["Jon Snow", "Arya Stark"] }
-    ],
-    defeats: []
-  }
-};
+interface Battle {
+  id: string;
+  winner_team: string[];
+  loser_team: string[];
+  created_at: string;
+}
 
 const Knights = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedKnight, setSelectedKnight] = useState<any>(null);
-  const [knights, setKnights] = useState(mockKnights);
+  const [selectedKnight, setSelectedKnight] = useState<Knight | null>(null);
+  const [knights, setKnights] = useState<Knight[]>([]);
+  const [battles, setBattles] = useState<Battle[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newKnightName, setNewKnightName] = useState("");
   const [newKnightImage, setNewKnightImage] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchKnights();
+    fetchBattles();
+  }, []);
+
+  const fetchKnights = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('knights')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setKnights(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os cavaleiros",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBattles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('battles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setBattles(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar batalhas:', error);
+    }
+  };
 
   const filteredKnights = knights.filter(knight =>
     knight.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleKnightClick = (knight: any) => {
+  const handleKnightClick = (knight: Knight) => {
     setSelectedKnight(knight);
   };
 
-  const knightHistory = selectedKnight ? mockBattleHistory[selectedKnight.id as keyof typeof mockBattleHistory] : null;
+  const getKnightHistory = (knightId: string) => {
+    const victories = battles.filter(battle => 
+      battle.winner_team.includes(knightId)
+    );
+    const defeats = battles.filter(battle => 
+      battle.loser_team.includes(knightId)
+    );
+    
+    return { victories, defeats };
+  };
 
-  const handleAddKnight = (e: React.FormEvent) => {
+  const handleAddKnight = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!newKnightName.trim()) {
@@ -67,22 +104,56 @@ const Knights = () => {
       return;
     }
 
-    const newKnight = {
-      id: knights.length + 1,
-      name: newKnightName.trim(),
-      image: newKnightImage || "/placeholder.svg"
-    };
+    try {
+      const { data, error } = await supabase
+        .from('knights')
+        .insert([
+          {
+            name: newKnightName.trim(),
+            image_url: newKnightImage || "/placeholder.svg",
+            created_by: (await supabase.auth.getUser()).data.user?.id!
+          }
+        ])
+        .select()
+        .single();
 
-    setKnights([...knights, newKnight]);
-    setNewKnightName("");
-    setNewKnightImage("");
-    setShowAddForm(false);
-    
-    toast({
-      title: "Cavaleiro Adicionado!",
-      description: `${newKnight.name} foi adicionado ao sistema`,
-    });
+      if (error) throw error;
+
+      setKnights([data, ...knights]);
+      setNewKnightName("");
+      setNewKnightImage("");
+      setShowAddForm(false);
+      
+      toast({
+        title: "Cavaleiro Adicionado!",
+        description: `${data.name} foi adicionado ao sistema`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível adicionar o cavaleiro",
+        variant: "destructive"
+      });
+    }
   };
+
+  const getKnightName = (knightId: string) => {
+    const knight = knights.find(k => k.id === knightId);
+    return knight ? knight.name : "Cavaleiro removido";
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-nebula">
+        <Header />
+        <div className="max-w-6xl mx-auto p-6 text-center">
+          <div className="text-accent text-xl">Carregando cavaleiros...</div>
+        </div>
+      </div>
+    );
+  }
+
+  const knightHistory = selectedKnight ? getKnightHistory(selectedKnight.id) : null;
 
   return (
     <div className="min-h-screen bg-gradient-nebula">
@@ -169,7 +240,7 @@ const Knights = () => {
               >
                 <CardContent className="p-4 text-center">
                   <img
-                    src={knight.image}
+                    src={knight.image_url}
                     alt={knight.name}
                     className="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-accent/20"
                   />
@@ -185,7 +256,7 @@ const Knights = () => {
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-accent flex items-center gap-3">
                     <img
-                      src={selectedKnight.image}
+                      src={selectedKnight.image_url}
                       alt={selectedKnight.name}
                       className="w-12 h-12 rounded-full border-2 border-accent/20"
                     />
@@ -216,9 +287,9 @@ const Knights = () => {
                                 Time Aliado:
                               </p>
                               <div className="flex flex-wrap gap-1 mb-3">
-                                {battle.allies.map((ally, i) => (
+                                {battle.winner_team.map((ally, i) => (
                                   <Badge key={i} className="bg-accent/10 text-accent">
-                                    {ally}
+                                    {getKnightName(ally)}
                                   </Badge>
                                 ))}
                               </div>
@@ -226,9 +297,9 @@ const Knights = () => {
                                 Derrotou:
                               </p>
                               <div className="flex flex-wrap gap-1">
-                                {battle.againstTeam.map((enemy, i) => (
+                                {battle.loser_team.map((enemy, i) => (
                                   <Badge key={i} variant="outline" className="text-muted-foreground">
-                                    {enemy}
+                                    {getKnightName(enemy)}
                                   </Badge>
                                 ))}
                               </div>
@@ -259,9 +330,9 @@ const Knights = () => {
                                 Time Aliado:
                               </p>
                               <div className="flex flex-wrap gap-1 mb-3">
-                                {battle.allies.map((ally, i) => (
+                                {battle.loser_team.map((ally, i) => (
                                   <Badge key={i} className="bg-primary/10 text-primary">
-                                    {ally}
+                                    {getKnightName(ally)}
                                   </Badge>
                                 ))}
                               </div>
@@ -269,9 +340,9 @@ const Knights = () => {
                                 Perdeu para:
                               </p>
                               <div className="flex flex-wrap gap-1">
-                                {battle.againstTeam.map((enemy, i) => (
+                                {battle.winner_team.map((enemy, i) => (
                                   <Badge key={i} variant="outline" className="text-muted-foreground">
-                                    {enemy}
+                                    {getKnightName(enemy)}
                                   </Badge>
                                 ))}
                               </div>
