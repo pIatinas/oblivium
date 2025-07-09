@@ -159,10 +159,13 @@ const CreateBattle = () => {
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Vencedor */}
-          <Card className="bg-card border-accent/20 shadow-cosmic">
+          <Card className="bg-card border-accent/20 shadow-cosmic border-[3px]">
             <CardHeader>
               <CardTitle className="text-accent text-center">
-                🏆 Vencedor
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl mb-2">🏆</div>
+                  <div>Vencedor</div>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -202,10 +205,13 @@ const CreateBattle = () => {
           </Card>
 
           {/* Perdedor */}
-          <Card className="bg-card border-purple-400/20 shadow-cosmic">
+          <Card className="bg-card border-purple-400/20 shadow-cosmic border-[3px]">
             <CardHeader>
               <CardTitle className="text-purple-400 text-center">
-                💀 Perdedor
+                <div className="flex flex-col items-center">
+                  <div className="text-2xl mb-2">💀</div>
+                  <div>Perdedor</div>
+                </div>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -272,10 +278,10 @@ const CreateBattle = () => {
         </div>
 
         {/* Lista de Cavaleiros Disponíveis */}
-        <Card className="bg-card border-border shadow-cosmic">
+        <Card className="bg-card">
           <CardHeader>
             <CardTitle className="text-foreground text-center">
-              Cavaleiros Disponíveis
+              Cavaleiros
             </CardTitle>
           </CardHeader>
           <CardContent>

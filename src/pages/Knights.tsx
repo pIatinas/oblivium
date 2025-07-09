@@ -249,15 +249,15 @@ const Knights = () => {
         ) : (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-4xl font-bold text-foreground">
-                  {selectedKnight.name}
-                </h1>
+              <div className="flex items-center gap-4">
                 <img
                   src={selectedKnight.image_url}
                   alt={selectedKnight.name}
-                  className="w-[110px] h-[110px] rounded-full mt-4 border-2 border-accent/20"
+                  className="w-[110px] h-[110px] rounded-full border-2 border-accent/20"
                 />
+                <h1 className="text-4xl font-bold text-foreground">
+                  {selectedKnight.name}
+                </h1>
               </div>
               <button
                 onClick={() => setSelectedKnight(null)}
@@ -290,7 +290,7 @@ const Knights = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            <Card className="bg-card border-border shadow-cosmic">
+            <Card className="bg-card">
               <CardContent className="p-6">
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Vitórias - lado esquerdo */}
@@ -306,9 +306,6 @@ const Knights = () => {
                               <div className="flex items-center justify-between gap-4">
                                 {/* Time Aliado */}
                                 <div className="flex-1">
-                                  <p className="text-sm font-medium text-accent mb-2">
-                                    Time Aliado:
-                                  </p>
                                   <div className="flex flex-wrap gap-2">
                                     {battle.winner_team.map((ally, i) => {
                                       const knight = knights.find(k => k.id === ally);
@@ -335,9 +332,6 @@ const Knights = () => {
 
                                 {/* Time Inimigo */}
                                 <div className="flex-1">
-                                  <p className="text-sm font-medium text-muted-foreground mb-2">
-                                    Venceu contra:
-                                  </p>
                                   <div className="flex flex-wrap gap-2">
                                     {battle.loser_team.map((enemy, i) => {
                                       const knight = knights.find(k => k.id === enemy);
@@ -381,9 +375,6 @@ const Knights = () => {
                               <div className="flex items-center justify-between gap-4">
                                 {/* Time Aliado */}
                                 <div className="flex-1">
-                                  <p className="text-sm font-medium text-primary mb-2">
-                                    Time Aliado:
-                                  </p>
                                   <div className="flex flex-wrap gap-2">
                                     {battle.loser_team.map((ally, i) => {
                                       const knight = knights.find(k => k.id === ally);
@@ -410,9 +401,6 @@ const Knights = () => {
 
                                 {/* Time Inimigo */}
                                 <div className="flex-1">
-                                  <p className="text-sm font-medium text-muted-foreground mb-2">
-                                    Perdeu para:
-                                  </p>
                                   <div className="flex flex-wrap gap-2">
                                     {battle.winner_team.map((enemy, i) => {
                                       const knight = knights.find(k => k.id === enemy);

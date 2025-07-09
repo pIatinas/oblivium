@@ -139,13 +139,13 @@ const Battles = () => {
 
         <div className="grid gap-6 md:grid-cols-2">
           {filteredBattles.map((battle) => (
-            <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative">
+            <Card key={battle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between gap-4">
                   {/* Time Vencedor */}
                   <div className="flex-1 space-y-3">
                     <h3 className="text-accent font-semibold text-center flex items-center justify-center gap-2">
-                      🏆 Vencedor
+                      Vencedor
                     </h3>
                     <div className="flex gap-2 justify-center">
                       {battle.winner_team.slice(0, 3).map((knightId, index) => {
@@ -174,7 +174,7 @@ const Battles = () => {
                   {/* Time Perdedor */}
                   <div className="flex-1 space-y-3">
                     <h3 className="text-purple-400 font-semibold text-center flex items-center justify-center gap-2">
-                      💀 Perdedor
+                      Perdedor
                     </h3>
                     <div className="flex gap-2 justify-center">
                       {battle.loser_team.slice(0, 3).map((knightId, index) => {
@@ -197,8 +197,8 @@ const Battles = () => {
                 </div>
                 
                 {/* Informação do autor */}
-                <div className="absolute bottom-2 right-2 bg-card px-2 py-1 rounded text-xs text-muted-foreground">
-                  {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
+                <div className="absolute -bottom-2 right-2 bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+                  por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                 </div>
               </CardContent>
             </Card>

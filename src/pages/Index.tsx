@@ -63,7 +63,7 @@ const Index = () => {
       // Set data for other blocks
       setKnights(knightsRes.data || []);
       setProfiles(profilesRes.data || []);
-      setRecentBattles(battlesRes.data?.slice(0, 6) || []);
+      setRecentBattles(battlesRes.data?.slice(0, 4) || []);
 
       // Calculate most used knights
       const knightUsage: { [key: string]: number } = {};
@@ -75,7 +75,7 @@ const Index = () => {
 
       const sortedKnights = Object.entries(knightUsage)
         .sort(([, a], [, b]) => b - a)
-        .slice(0, 5)
+        .slice(0, 14)
         .map(([knightId]) => knightsRes.data?.find(k => k.id === knightId))
         .filter(Boolean) as Knight[];
 
@@ -103,7 +103,7 @@ const Index = () => {
       <main className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-foreground mb-4">
-            Oblivium - Guerra dos Tronos
+            Guerra dos Tronos
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Guia para consulta de lutas da Guerra dos Tronos
@@ -112,7 +112,7 @@ const Index = () => {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-12">
           {/* Registrar Batalha */}
-          <Card className="bg-card border-accent/20 shadow-cosmic hover:scale-105 transition-all duration-300 group">
+          <Card className="bg-card hover:scale-105 transition-all duration-300 group">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Plus className="w-8 h-8 text-primary-foreground" />
@@ -123,7 +123,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-4">
                 Adicione uma nova batalha
               </p>
-              <Button asChild className="bg-gradient-cosmic text-primary-foreground hover:opacity-90">
+              <Button asChild className="bg-accent text-accent-foreground hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/create-battle">
                   Cadastrar
                 </Link>
@@ -132,7 +132,7 @@ const Index = () => {
           </Card>
 
           {/* Ver Batalhas */}
-          <Card className="bg-card border-border shadow-cosmic hover:scale-105 transition-all duration-300 group">
+          <Card className="bg-card hover:scale-105 transition-all duration-300 group">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Archive className="w-8 h-8 text-accent-foreground" />
@@ -143,7 +143,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-4">
                 Consulte todas as batalhas registradas
               </p>
-              <Button asChild variant="outline" className="border-accent/20 text-accent hover:bg-accent/10">
+              <Button asChild variant="outline" className="text-accent hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/battles">
                   Ver Batalhas
                 </Link>
@@ -152,7 +152,7 @@ const Index = () => {
           </Card>
 
           {/* Cavaleiros */}
-          <Card className="bg-card border-border shadow-cosmic hover:scale-105 transition-all duration-300 group md:col-span-2 lg:col-span-1">
+          <Card className="bg-card hover:scale-105 transition-all duration-300 group md:col-span-2 lg:col-span-1">
             <CardHeader className="text-center">
               <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                 <Users className="w-8 h-8 text-secondary-foreground" />
@@ -163,7 +163,7 @@ const Index = () => {
               <p className="text-muted-foreground mb-4">
                 Consultar cavaleiros
               </p>
-              <Button asChild variant="secondary">
+              <Button asChild className="bg-secondary text-secondary-foreground hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/knights">
                   Ver Cavaleiros
                 </Link>
@@ -213,8 +213,8 @@ const Index = () => {
                 </Link>
               </Button>
             </div>
-            <div className="grid grid-cols-9 gap-4">
-              {mostUsedKnights.slice(0, 9).map((knight) => (
+            <div className="grid grid-cols-7 gap-4">
+              {mostUsedKnights.slice(0, 14).map((knight) => (
                 <Link key={knight.id} to={`/knights?knight=${knight.id}`} className="text-center hover:opacity-80 transition-opacity">
                   <img
                     src={knight.image_url}
@@ -225,8 +225,13 @@ const Index = () => {
                 </Link>
               ))}
               {mostUsedKnights.length === 0 && !loading && (
-                <p className="text-center text-muted-foreground py-8 col-span-9">
+                <p className="text-center text-muted-foreground py-8 col-span-7">
                   Nenhum cavaleiro usado ainda
+                </p>
+              )}
+              {loading && (
+                <p className="text-center text-muted-foreground py-8 col-span-7">
+                  Carregando...
                 </p>
               )}
             </div>
@@ -244,8 +249,8 @@ const Index = () => {
                 </Link>
               </Button>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {recentBattles.map((battle) => (
+            <div className="grid grid-cols-2 gap-4">
+              {recentBattles.slice(0, 4).map((battle) => (
                 <Card key={battle.id} className="bg-card border-border">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between gap-4">
@@ -303,7 +308,7 @@ const Index = () => {
                 </Card>
               ))}
               {recentBattles.length === 0 && !loading && (
-                <p className="text-center text-muted-foreground py-8 col-span-3">
+                <p className="text-center text-muted-foreground py-8 col-span-2">
                   Nenhuma batalha cadastrada ainda
                 </p>
               )}
