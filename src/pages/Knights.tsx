@@ -161,7 +161,7 @@ const Knights = () => {
     <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
-        <Breadcrumb />
+        <Breadcrumb knightName={selectedKnight?.name} />
         {!selectedKnight ? (
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
@@ -236,23 +236,22 @@ const Knights = () => {
         ) : (
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-4xl font-bold text-foreground">
-                {selectedKnight.name}
-              </h1>
+              <div>
+                <h1 className="text-4xl font-bold text-foreground">
+                  {selectedKnight.name}
+                </h1>
+                <img
+                  src={selectedKnight.image_url}
+                  alt={selectedKnight.name}
+                  className="w-[110px] h-[110px] rounded-full mt-4 border-2 border-accent/20"
+                />
+              </div>
               <button
                 onClick={() => setSelectedKnight(null)}
                 className="text-accent hover:text-accent/80 transition-colors"
               >
                 Voltar
               </button>
-            </div>
-            
-            <div className="text-center mb-6">
-              <img
-                src={selectedKnight.image_url}
-                alt={selectedKnight.name}
-                className="w-[70px] h-[70px] rounded-full mx-auto border-2 border-accent/20"
-              />
             </div>
           </div>
         )}
@@ -279,7 +278,82 @@ const Knights = () => {
             <Card className="bg-card border-border shadow-cosmic">
               <CardContent className="p-6">
                 <div className="grid gap-6 md:grid-cols-2">
-                  {/* Derrotas - lado esquerdo */}
+                  {/* Vitórias - lado esquerdo */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-accent mb-3 flex items-center gap-2">
+                      🏆 Vitórias ({knightHistory?.victories?.length || 0})
+                    </h3>
+                    <div className="space-y-3">
+                      {knightHistory?.victories?.length ? (
+                        knightHistory.victories.map((battle, index) => (
+                          <Card key={index} className="bg-accent/5 border-accent/20">
+                            <CardContent className="pt-4">
+                              <div className="flex items-center justify-between gap-4">
+                                {/* Time Aliado */}
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-accent mb-2">
+                                    Time Aliado:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {battle.winner_team.map((ally, i) => {
+                                      const knight = knights.find(k => k.id === ally);
+                                      return knight ? (
+                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                          <img
+                                            src={knight.image_url}
+                                            alt={knight.name}
+                                            className="w-8 h-8 rounded-full border border-accent/20"
+                                          />
+                                          <span className="text-xs text-foreground hover:text-accent transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                            {knight.name}
+                                          </span>
+                                        </div>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* X Separador */}
+                                <div className="text-xl font-bold text-muted-foreground">
+                                  ✕
+                                </div>
+
+                                {/* Time Inimigo */}
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-muted-foreground mb-2">
+                                    Venceu contra:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {battle.loser_team.map((enemy, i) => {
+                                      const knight = knights.find(k => k.id === enemy);
+                                      return knight ? (
+                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                          <img
+                                            src={knight.image_url}
+                                            alt={knight.name}
+                                            className="w-8 h-8 rounded-full border border-purple-400/20"
+                                          />
+                                          <span className="text-xs text-foreground hover:text-purple-400 transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                            {knight.name}
+                                          </span>
+                                        </div>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))
+                      ) : (
+                        <p className="text-center text-muted-foreground py-4">
+                          Nenhuma vitória registrada
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Derrotas - lado direito */}
                   <div>
                     <h3 className="text-lg font-semibold text-primary mb-3 flex items-center gap-2">
                       💀 Derrotas ({knightHistory?.defeats?.length || 0})
@@ -349,81 +423,6 @@ const Knights = () => {
                       ) : (
                         <p className="text-center text-muted-foreground py-4">
                           Nenhuma derrota registrada
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Vitórias - lado direito */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-accent mb-3 flex items-center gap-2">
-                      🏆 Vitórias ({knightHistory?.victories?.length || 0})
-                    </h3>
-                    <div className="space-y-3">
-                      {knightHistory?.victories?.length ? (
-                        knightHistory.victories.map((battle, index) => (
-                          <Card key={index} className="bg-accent/5 border-accent/20">
-                            <CardContent className="pt-4">
-                              <div className="flex items-center justify-between gap-4">
-                                {/* Time Aliado */}
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-accent mb-2">
-                                    Time Aliado:
-                                  </p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {battle.winner_team.map((ally, i) => {
-                                      const knight = knights.find(k => k.id === ally);
-                                      return knight ? (
-                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                          <img
-                                            src={knight.image_url}
-                                            alt={knight.name}
-                                            className="w-8 h-8 rounded-full border border-accent/20"
-                                          />
-                                          <span className="text-xs text-foreground hover:text-accent transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                            {knight.name}
-                                          </span>
-                                        </div>
-                                      ) : null;
-                                    })}
-                                  </div>
-                                </div>
-
-                                {/* X Separador */}
-                                <div className="text-xl font-bold text-muted-foreground">
-                                  ✕
-                                </div>
-
-                                {/* Time Inimigo */}
-                                <div className="flex-1">
-                                  <p className="text-sm font-medium text-muted-foreground mb-2">
-                                    Derrotou:
-                                  </p>
-                                  <div className="flex flex-wrap gap-2">
-                                    {battle.loser_team.map((enemy, i) => {
-                                      const knight = knights.find(k => k.id === enemy);
-                                      return knight ? (
-                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                          <img
-                                            src={knight.image_url}
-                                            alt={knight.name}
-                                            className="w-8 h-8 rounded-full border border-primary/20"
-                                          />
-                                          <span className="text-xs text-foreground hover:text-primary transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                            {knight.name}
-                                          </span>
-                                        </div>
-                                      ) : null;
-                                    })}
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))
-                      ) : (
-                        <p className="text-center text-muted-foreground py-4">
-                          Nenhuma vitória registrada
                         </p>
                       )}
                     </div>

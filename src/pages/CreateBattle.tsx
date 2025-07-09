@@ -245,27 +245,30 @@ const CreateBattle = () => {
           </Card>
         </div>
 
-        {/* Botão de Cadastro */}
-        <div className="mt-8 text-center">
-          <Button
-            onClick={handleSubmit}
-            className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg"
-            disabled={winnerTeam.length === 0 || loserTeam.length === 0}
-          >
-            Cadastrar
-          </Button>
-        </div>
-
-        {/* Buscar Cavaleiros */}
+        {/* Buscar Cavaleiros e Botão de Cadastro */}
         <div className="mt-8 mb-6">
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Buscar cavaleiros..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-card border-border"
-            />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1">
+              <h3 className="text-lg font-semibold text-foreground mb-2">Buscar</h3>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="Buscar cavaleiros..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-card border-border"
+                />
+              </div>
+            </div>
+            <div className="flex items-end">
+              <Button
+                onClick={handleSubmit}
+                className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg"
+                disabled={winnerTeam.length === 0 || loserTeam.length === 0}
+              >
+                Cadastrar
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -288,7 +291,7 @@ const CreateBattle = () => {
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-1">
                       <img
                         src={knight.image_url}
                         alt={knight.name}
@@ -300,12 +303,12 @@ const CreateBattle = () => {
                     </div>
                     
                     {!isKnightInTeam(knight.id) && (
-                      <div className="flex gap-2">
+                      <div className="flex gap-1">
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => addToTeam(knight, 'winner')}
-                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-3 py-1"
+                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-2 py-1"
                           disabled={winnerTeam.length >= 3}
                         >
                           Vencedor
@@ -314,7 +317,7 @@ const CreateBattle = () => {
                           variant="outline"
                           size="sm"
                           onClick={() => addToTeam(knight, 'loser')}
-                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-3 py-1"
+                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-2 py-1"
                           disabled={loserTeam.length >= 3}
                         >
                           Perdedor

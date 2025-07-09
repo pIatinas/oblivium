@@ -63,7 +63,7 @@ const Index = () => {
       // Set data for other blocks
       setKnights(knightsRes.data || []);
       setProfiles(profilesRes.data || []);
-      setRecentBattles(battlesRes.data?.slice(0, 2) || []);
+      setRecentBattles(battlesRes.data?.slice(0, 6) || []);
 
       // Calculate most used knights
       const knightUsage: { [key: string]: number } = {};
@@ -202,7 +202,7 @@ const Index = () => {
           <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border p-8 shadow-cosmic">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-foreground">
-                Cavaleiros Mais Usados
+                Mais Usados
               </h3>
               <Button asChild variant="outline" className="border-accent/20 text-accent hover:bg-accent/10">
                 <Link to="/knights">
@@ -210,9 +210,9 @@ const Index = () => {
                 </Link>
               </Button>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2">
-              {mostUsedKnights.map((knight) => (
-                <div key={knight.id} className="flex-shrink-0 text-center">
+            <div className="grid grid-cols-5 gap-4">
+              {mostUsedKnights.slice(0, 5).map((knight) => (
+                <div key={knight.id} className="text-center">
                   <img
                     src={knight.image_url}
                     alt={knight.name}
@@ -222,7 +222,7 @@ const Index = () => {
                 </div>
               ))}
               {mostUsedKnights.length === 0 && !loading && (
-                <p className="text-center text-muted-foreground py-8 w-full">
+                <p className="text-center text-muted-foreground py-8 col-span-5">
                   Nenhum cavaleiro usado ainda
                 </p>
               )}
@@ -241,7 +241,7 @@ const Index = () => {
                 </Link>
               </Button>
             </div>
-            <div className="space-y-4">
+            <div className="grid grid-cols-3 gap-4">
               {recentBattles.map((battle) => (
                 <Card key={battle.id} className="bg-card border-border">
                   <CardContent className="p-4">
@@ -291,7 +291,7 @@ const Index = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-2 text-center">
+                    <div className="mt-2 text-right">
                       <p className="text-xs text-muted-foreground">
                         Cadastrado por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                       </p>
@@ -300,7 +300,7 @@ const Index = () => {
                 </Card>
               ))}
               {recentBattles.length === 0 && !loading && (
-                <p className="text-center text-muted-foreground py-8">
+                <p className="text-center text-muted-foreground py-8 col-span-3">
                   Nenhuma batalha cadastrada ainda
                 </p>
               )}

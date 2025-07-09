@@ -1,7 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
-const Breadcrumb = () => {
+interface BreadcrumbProps {
+  knightName?: string;
+}
+
+const Breadcrumb = ({ knightName }: BreadcrumbProps) => {
   const location = useLocation();
   
   const breadcrumbMap: { [key: string]: string } = {
@@ -26,7 +30,20 @@ const Breadcrumb = () => {
         Home
       </Link>
       <ChevronRight className="w-4 h-4" />
-      <span className="text-foreground">{currentPage}</span>
+      {knightName ? (
+        <>
+          <Link 
+            to="/knights" 
+            className="hover:text-accent transition-colors"
+          >
+            Cavaleiros
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-foreground">{knightName}</span>
+        </>
+      ) : (
+        <span className="text-foreground">{currentPage}</span>
+      )}
     </nav>
   );
 };

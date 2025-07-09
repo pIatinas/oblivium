@@ -147,8 +147,8 @@ const Battles = () => {
                     <h3 className="text-accent font-semibold text-center flex items-center justify-center gap-2">
                       🏆 Vencedor
                     </h3>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {battle.winner_team.map((knightId, index) => {
+                    <div className="flex gap-2 justify-center">
+                      {battle.winner_team.slice(0, 3).map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
                           <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => window.location.href = `/knights?knight=${knight.id}`}>
@@ -176,8 +176,8 @@ const Battles = () => {
                     <h3 className="text-purple-400 font-semibold text-center flex items-center justify-center gap-2">
                       💀 Perdedor
                     </h3>
-                    <div className="flex flex-wrap gap-2 justify-center">
-                      {battle.loser_team.map((knightId, index) => {
+                    <div className="flex gap-2 justify-center">
+                      {battle.loser_team.slice(0, 3).map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
                           <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => window.location.href = `/knights?knight=${knight.id}`}>
@@ -197,7 +197,7 @@ const Battles = () => {
                 </div>
                 
                 {/* Informação do autor */}
-                <div className="mt-4 text-center">
+                <div className="mt-2 text-right">
                   <p className="text-xs text-muted-foreground">
                     Cadastrado por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                   </p>
