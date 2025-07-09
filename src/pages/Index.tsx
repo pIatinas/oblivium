@@ -102,6 +102,9 @@ const Index = () => {
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-6 py-12">
         <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
+            Oblivium - Guerra dos Tronos
+          </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Guia para consulta de lutas da Guerra dos Tronos
           </p>
@@ -172,7 +175,7 @@ const Index = () => {
         {/* Stats, Most Used Knights, and Recent Battles will be added here */}
         <div className="space-y-8">
           {/* Stats Section */}
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border p-8 shadow-cosmic">
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-8">
             <h3 className="text-2xl font-bold text-center text-foreground mb-6">
               Estatísticas
             </h3>
@@ -181,7 +184,7 @@ const Index = () => {
                 <div className="text-3xl font-bold text-accent mb-2">
                   {loading ? '-' : stats.users}
                 </div>
-                <div className="text-muted-foreground">Guild</div>
+                <div className="text-muted-foreground">Membros</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-accent mb-2">
@@ -199,30 +202,30 @@ const Index = () => {
           </div>
 
           {/* Most Used Knights Section */}
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border p-8 shadow-cosmic">
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-foreground">
                 Mais Usados
               </h3>
-              <Button asChild variant="outline" className="border-accent/20 text-accent hover:bg-accent/10">
+              <Button asChild variant="outline" className="text-accent hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/knights">
                   Ver Todos
                 </Link>
               </Button>
             </div>
-            <div className="grid grid-cols-5 gap-4">
-              {mostUsedKnights.slice(0, 5).map((knight) => (
-                <div key={knight.id} className="text-center">
+            <div className="grid grid-cols-9 gap-4">
+              {mostUsedKnights.slice(0, 9).map((knight) => (
+                <Link key={knight.id} to={`/knights?knight=${knight.id}`} className="text-center hover:opacity-80 transition-opacity">
                   <img
                     src={knight.image_url}
                     alt={knight.name}
                     className="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-accent/20"
                   />
                   <p className="text-sm text-foreground font-medium">{knight.name}</p>
-                </div>
+                </Link>
               ))}
               {mostUsedKnights.length === 0 && !loading && (
-                <p className="text-center text-muted-foreground py-8 col-span-5">
+                <p className="text-center text-muted-foreground py-8 col-span-9">
                   Nenhum cavaleiro usado ainda
                 </p>
               )}
@@ -230,12 +233,12 @@ const Index = () => {
           </div>
 
           {/* Recent Battles Section */}
-          <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border p-8 shadow-cosmic">
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg p-8">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-2xl font-bold text-foreground">
                 Últimas Batalhas
               </h3>
-              <Button asChild variant="outline" className="border-accent/20 text-accent hover:bg-accent/10">
+              <Button asChild variant="outline" className="text-accent hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/battles">
                   Ver Todas
                 </Link>
@@ -253,14 +256,14 @@ const Index = () => {
                           {battle.winner_team.slice(0, 3).map((knightId, index) => {
                             const knight = getKnightById(knightId);
                             return knight ? (
-                              <div key={index} className="flex flex-col items-center gap-1">
+                              <Link key={index} to={`/knights?knight=${knight.id}`} className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity">
                                 <img
                                   src={knight.image_url}
                                   alt={knight.name}
                                   className="w-6 h-6 rounded-full border border-accent/20"
                                 />
                                 <span className="text-xs text-foreground">{knight.name}</span>
-                              </div>
+                              </Link>
                             ) : null;
                           })}
                         </div>
@@ -278,14 +281,14 @@ const Index = () => {
                           {battle.loser_team.slice(0, 3).map((knightId, index) => {
                             const knight = getKnightById(knightId);
                             return knight ? (
-                              <div key={index} className="flex flex-col items-center gap-1">
+                              <Link key={index} to={`/knights?knight=${knight.id}`} className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity">
                                 <img
                                   src={knight.image_url}
                                   alt={knight.name}
                                   className="w-6 h-6 rounded-full border border-purple-400/20"
                                 />
                                 <span className="text-xs text-foreground">{knight.name}</span>
-                              </div>
+                              </Link>
                             ) : null;
                           })}
                         </div>

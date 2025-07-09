@@ -23,7 +23,7 @@ const Header = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <h1 className="text-xl font-bold text-accent">⚔️ Oblivium</h1>
+            <h1 className="text-xl font-bold text-accent">ラ Oblivium</h1>
           </Link>
 
           {/* Desktop Navigation */}

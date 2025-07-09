@@ -248,12 +248,11 @@ const CreateBattle = () => {
         {/* Buscar Cavaleiros e Botão de Cadastro */}
         <div className="mt-8 mb-6">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold text-foreground mb-2">Buscar</h3>
+            <div className="flex-1 max-w-[300px]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="Buscar cavaleiros..."
+                  placeholder="Buscar"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-card border-border"

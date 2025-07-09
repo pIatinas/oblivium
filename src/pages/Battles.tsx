@@ -139,7 +139,7 @@ const Battles = () => {
 
         <div className="grid gap-6 md:grid-cols-2">
           {filteredBattles.map((battle) => (
-            <Card key={battle.id} className="bg-card border-border shadow-cosmic hover:shadow-gold transition-all duration-300">
+            <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between gap-4">
                   {/* Time Vencedor */}
@@ -197,10 +197,8 @@ const Battles = () => {
                 </div>
                 
                 {/* Informação do autor */}
-                <div className="mt-2 text-right">
-                  <p className="text-xs text-muted-foreground">
-                    Cadastrado por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
-                  </p>
+                <div className="absolute bottom-2 right-2 bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+                  {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                 </div>
               </CardContent>
             </Card>

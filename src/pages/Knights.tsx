@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Search, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -27,6 +28,7 @@ interface Battle {
 
 const Knights = () => {
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedKnight, setSelectedKnight] = useState<Knight | null>(null);
   const [knights, setKnights] = useState<Knight[]>([]);
@@ -40,6 +42,17 @@ const Knights = () => {
     fetchKnights();
     fetchBattles();
   }, []);
+
+  // Handle knight selection from URL parameters
+  useEffect(() => {
+    const knightId = searchParams.get('knight');
+    if (knightId && knights.length > 0) {
+      const knight = knights.find(k => k.id === knightId);
+      if (knight) {
+        setSelectedKnight(knight);
+      }
+    }
+  }, [searchParams, knights]);
 
   const fetchKnights = async () => {
     try {
@@ -261,15 +274,17 @@ const Knights = () => {
             {filteredKnights.map((knight) => (
               <div 
                 key={knight.id} 
-                className="p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors rounded-lg"
+                className="p-4 cursor-pointer hover:bg-muted/50 transition-colors rounded-lg"
                 onClick={() => handleKnightClick(knight)}
               >
-                <img
-                  src={knight.image_url}
-                  alt={knight.name}
-                  className="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-accent/20"
-                />
-                <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
+                <div className="flex items-center gap-3">
+                  <img
+                    src={knight.image_url}
+                    alt={knight.name}
+                    className="w-20 h-20 rounded-full border-2 border-accent/20"
+                  />
+                  <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
+                </div>
               </div>
             ))}
           </div>
