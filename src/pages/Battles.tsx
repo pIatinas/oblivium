@@ -123,15 +123,19 @@ const Battles = () => {
                       {battle.winner_team.map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
-                          <div key={index} className="flex flex-col items-center gap-1">
+                          <div key={index} className="flex items-center gap-2">
                             <img
                               src={knight.image_url}
                               alt={knight.name}
-                              className="w-8 h-8 rounded-full border border-accent/20"
+                              className="w-8 h-8 rounded-full border border-accent/20 cursor-pointer hover:border-accent/40"
+                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
                             />
-                            <Badge className="bg-accent/10 text-accent border-accent/20 text-xs">
+                            <span
+                              className="text-xs text-foreground hover:text-accent cursor-pointer transition-colors"
+                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
+                            >
                               {knight.name}
-                            </Badge>
+                            </span>
                           </div>
                         ) : null;
                       })}
@@ -152,15 +156,19 @@ const Battles = () => {
                       {battle.loser_team.map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
-                          <div key={index} className="flex flex-col items-center gap-1">
+                          <div key={index} className="flex items-center gap-2">
                             <img
                               src={knight.image_url}
                               alt={knight.name}
-                              className="w-8 h-8 rounded-full border border-purple-400/20"
+                              className="w-8 h-8 rounded-full border border-purple-400/20 cursor-pointer hover:border-purple-400/40"
+                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
                             />
-                            <Badge className="bg-purple-400/10 text-purple-400 border-purple-400/20 text-xs">
+                            <span
+                              className="text-xs text-foreground hover:text-purple-400 cursor-pointer transition-colors"
+                              onClick={() => window.location.href = `/knights?knight=${knight.id}`}
+                            >
                               {knight.name}
-                            </Badge>
+                            </span>
                           </div>
                         ) : null;
                       })}
@@ -171,7 +179,7 @@ const Battles = () => {
                 {/* Informação do autor */}
                 <div className="mt-4 text-center">
                   <p className="text-xs text-muted-foreground">
-                    Cadastrado por: Usuário
+                    Cadastrado por Usuário
                   </p>
                 </div>
               </CardContent>

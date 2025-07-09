@@ -79,23 +79,26 @@ const Index = () => {
           </Card>
         </div>
 
-        {/* Stats Section */}
-        <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border p-8 shadow-cosmic">
-          <h3 className="text-2xl font-bold text-center text-foreground mb-6">
-            Estatísticas
-          </h3>
-          <div className="grid gap-4 md:grid-cols-3 text-center">
-            <div>
-              <div className="text-3xl font-bold text-accent mb-2">12</div>
-              <div className="text-muted-foreground">Batalhas Registradas</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-accent mb-2">36</div>
-              <div className="text-muted-foreground">Cavaleiros Catalogados</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-accent mb-2">8</div>
-              <div className="text-muted-foreground">Times Ativos</div>
+        {/* Stats, Most Used Knights, and Recent Battles will be added here */}
+        <div className="space-y-8">
+          {/* Stats Section */}
+          <div className="bg-card/50 backdrop-blur-sm rounded-lg border border-border p-8 shadow-cosmic">
+            <h3 className="text-2xl font-bold text-center text-foreground mb-6">
+              Estatísticas
+            </h3>
+            <div className="grid gap-4 md:grid-cols-3 text-center">
+              <div>
+                <div className="text-3xl font-bold text-accent mb-2">-</div>
+                <div className="text-muted-foreground">Batalhas Registradas</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-accent mb-2">-</div>
+                <div className="text-muted-foreground">Cavaleiros Catalogados</div>
+              </div>
+              <div>
+                <div className="text-3xl font-bold text-accent mb-2">-</div>
+                <div className="text-muted-foreground">Times Ativos</div>
+              </div>
             </div>
           </div>
         </div>
@@ -103,9 +106,12 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="bg-card/30 backdrop-blur-sm border-t border-border mt-12">
-        <div className="max-w-6xl mx-auto px-6 py-6 text-center">
+        <div className="max-w-6xl mx-auto px-6 py-6 flex justify-between items-center">
           <p className="text-muted-foreground">
-            Que o cosmos guie suas estratégias de batalha ✨
+            A vida é feita de escolhas. E eu escolhi lutar ao lado dos meus amigos.
+          </p>
+          <p className="text-muted-foreground">
+            Criado por <a href="https://www.wallaceerick.com.br" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 transition-colors">Wallace</a>
           </p>
         </div>
       </footer>

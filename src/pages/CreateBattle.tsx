@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +20,7 @@ const CreateBattle = () => {
   const [winnerTeam, setWinnerTeam] = useState<Knight[]>([]);
   const [loserTeam, setLoserTeam] = useState<Knight[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -49,9 +51,25 @@ const CreateBattle = () => {
   const addToTeam = (knight: Knight, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       if (winnerTeam.find(k => k.id === knight.id)) return;
+      if (winnerTeam.length >= 3) {
+        toast({
+          title: "Limite atingido",
+          description: "Máximo de 3 cavaleiros por time",
+          variant: "destructive"
+        });
+        return;
+      }
       setWinnerTeam([...winnerTeam, knight]);
     } else {
       if (loserTeam.find(k => k.id === knight.id)) return;
+      if (loserTeam.length >= 3) {
+        toast({
+          title: "Limite atingido",
+          description: "Máximo de 3 cavaleiros por time",
+          variant: "destructive"
+        });
+        return;
+      }
       setLoserTeam([...loserTeam, knight]);
     }
   };
@@ -67,6 +85,10 @@ const CreateBattle = () => {
   const isKnightInTeam = (knightId: string) => {
     return winnerTeam.find(k => k.id === knightId) || loserTeam.find(k => k.id === knightId);
   };
+
+  const filteredKnights = knights.filter(knight =>
+    knight.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,11 +155,11 @@ const CreateBattle = () => {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* Time Vencedor */}
+          {/* Vencedor */}
           <Card className="bg-card border-accent/20 shadow-cosmic">
             <CardHeader>
               <CardTitle className="text-accent text-center">
-                🏆 Time Vencedor
+                🏆 Vencedor
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -176,11 +198,11 @@ const CreateBattle = () => {
             </CardContent>
           </Card>
 
-          {/* Time Perdedor */}
+          {/* Perdedor */}
           <Card className="bg-card border-purple-400/20 shadow-cosmic">
             <CardHeader>
               <CardTitle className="text-purple-400 text-center">
-                💀 Time Perdedor
+                💀 Perdedor
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -220,8 +242,32 @@ const CreateBattle = () => {
           </Card>
         </div>
 
+        {/* Botão de Cadastro */}
+        <div className="mt-8 text-center">
+          <Button
+            onClick={handleSubmit}
+            className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg"
+            disabled={winnerTeam.length === 0 || loserTeam.length === 0}
+          >
+            Cadastrar
+          </Button>
+        </div>
+
+        {/* Buscar Cavaleiros */}
+        <div className="mt-8 mb-6">
+          <div className="relative max-w-md mx-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              placeholder="Buscar cavaleiros..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-card border-border"
+            />
+          </div>
+        </div>
+
         {/* Lista de Cavaleiros Disponíveis */}
-        <Card className="bg-card border-border shadow-cosmic mt-6">
+        <Card className="bg-card border-border shadow-cosmic">
           <CardHeader>
             <CardTitle className="text-foreground text-center">
               Cavaleiros Disponíveis
@@ -229,7 +275,7 @@ const CreateBattle = () => {
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {knights.map((knight) => (
+              {filteredKnights.map((knight) => (
                 <div
                   key={knight.id}
                   className={`p-3 rounded-lg border transition-all duration-300 ${
@@ -256,6 +302,7 @@ const CreateBattle = () => {
                         size="sm"
                         onClick={() => addToTeam(knight, 'winner')}
                         className="flex-1 text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20"
+                        disabled={winnerTeam.length >= 3}
                       >
                         Vencedor
                       </Button>
@@ -264,6 +311,7 @@ const CreateBattle = () => {
                         size="sm"
                         onClick={() => addToTeam(knight, 'loser')}
                         className="flex-1 text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20"
+                        disabled={loserTeam.length >= 3}
                       >
                         Perdedor
                       </Button>
@@ -273,24 +321,13 @@ const CreateBattle = () => {
               ))}
             </div>
             
-            {knights.length === 0 && (
+            {filteredKnights.length === 0 && (
               <p className="text-center text-muted-foreground py-8">
-                Nenhum cavaleiro cadastrado. Cadastre cavaleiros primeiro.
+                Nenhum cavaleiro encontrado.
               </p>
             )}
           </CardContent>
         </Card>
-
-        {/* Botão de Cadastro */}
-        <div className="mt-8 text-center">
-          <Button
-            onClick={handleSubmit}
-            className="bg-gradient-cosmic text-primary-foreground hover:opacity-90 px-8 py-3 text-lg"
-            disabled={winnerTeam.length === 0 || loserTeam.length === 0}
-          >
-            Cadastrar
-          </Button>
-        </div>
       </div>
     </div>
   );

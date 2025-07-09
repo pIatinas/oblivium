@@ -75,7 +75,7 @@ const Knights = () => {
 
   const filteredKnights = knights.filter(knight =>
     knight.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ).sort((a, b) => a.name.localeCompare(b.name));
 
   const handleKnightClick = (knight: Knight) => {
     setSelectedKnight(knight);
@@ -159,202 +159,271 @@ const Knights = () => {
     <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
-            Cavaleiros da Guerra dos Tronos
-          </h1>
-          
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-center mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Buscar cavaleiro..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-card border-border w-64"
-              />
+        {!selectedKnight ? (
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
+              Cavaleiros
+            </h1>
+            
+            <div className="flex items-center justify-between mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  placeholder="Buscar cavaleiro..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-card border-border w-64"
+                />
+              </div>
+              
+              <Button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="bg-gradient-cosmic text-white hover:opacity-90"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar Cavaleiro
+              </Button>
+            </div>
+
+            {showAddForm && (
+              <Card className="bg-card border-accent/20 shadow-cosmic mb-6 max-w-md mx-auto">
+                <CardHeader>
+                  <CardTitle className="text-accent">Novo Cavaleiro</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={handleAddKnight} className="space-y-4">
+                    <div>
+                      <Label htmlFor="name">Nome</Label>
+                      <Input
+                        id="name"
+                        value={newKnightName}
+                        onChange={(e) => setNewKnightName(e.target.value)}
+                        placeholder="Nome do cavaleiro"
+                        className="bg-background border-border"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="image">URL da Imagem (opcional)</Label>
+                      <Input
+                        id="image"
+                        value={newKnightImage}
+                        onChange={(e) => setNewKnightImage(e.target.value)}
+                        placeholder="https://exemplo.com/imagem.jpg"
+                        className="bg-background border-border"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90">
+                        Adicionar
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowAddForm(false)}
+                        className="border-border"
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        ) : (
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-4xl font-bold text-foreground">
+                {selectedKnight.name}
+              </h1>
+              <button
+                onClick={() => setSelectedKnight(null)}
+                className="text-accent hover:text-accent/80 transition-colors"
+              >
+                Voltar
+              </button>
             </div>
             
-            <Button
-              onClick={() => setShowAddForm(!showAddForm)}
-              className="bg-gradient-cosmic text-primary-foreground hover:opacity-90"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar Cavaleiro
-            </Button>
+            <div className="text-center mb-6">
+              <img
+                src={selectedKnight.image_url}
+                alt={selectedKnight.name}
+                className="w-[70px] h-[70px] rounded-full mx-auto border-2 border-accent/20"
+              />
+            </div>
           </div>
-
-          {showAddForm && (
-            <Card className="bg-card border-accent/20 shadow-cosmic mb-6 max-w-md mx-auto">
-              <CardHeader>
-                <CardTitle className="text-accent">Novo Cavaleiro</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleAddKnight} className="space-y-4">
-                  <div>
-                    <Label htmlFor="name">Nome</Label>
-                    <Input
-                      id="name"
-                      value={newKnightName}
-                      onChange={(e) => setNewKnightName(e.target.value)}
-                      placeholder="Nome do cavaleiro"
-                      className="bg-background border-border"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="image">URL da Imagem (opcional)</Label>
-                    <Input
-                      id="image"
-                      value={newKnightImage}
-                      onChange={(e) => setNewKnightImage(e.target.value)}
-                      placeholder="https://exemplo.com/imagem.jpg"
-                      className="bg-background border-border"
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                      Adicionar
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setShowAddForm(false)}
-                      className="border-border"
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+        )}
 
         {!selectedKnight ? (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredKnights.map((knight) => (
-              <Card 
+              <div 
                 key={knight.id} 
-                className="bg-card border-border shadow-cosmic hover:shadow-gold transition-all duration-300 cursor-pointer"
+                className="p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors rounded-lg"
                 onClick={() => handleKnightClick(knight)}
               >
-                <CardContent className="p-4 text-center">
-                  <img
-                    src={knight.image_url}
-                    alt={knight.name}
-                    className="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-accent/20"
-                  />
-                  <h3 className="text-foreground font-semibold">{knight.name}</h3>
-                </CardContent>
-              </Card>
+                <img
+                  src={knight.image_url}
+                  alt={knight.name}
+                  className="w-20 h-20 rounded-full mx-auto mb-3 border-2 border-accent/20"
+                />
+                <h3 className="text-foreground font-semibold">{knight.name}</h3>
+              </div>
             ))}
           </div>
         ) : (
           <div className="space-y-6">
             <Card className="bg-card border-border shadow-cosmic">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-accent flex items-center gap-3">
-                    <img
-                      src={selectedKnight.image_url}
-                      alt={selectedKnight.name}
-                      className="w-12 h-12 rounded-full border-2 border-accent/20"
-                    />
-                    Histórico de {selectedKnight.name}
-                  </CardTitle>
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedKnight(null)}
-                    className="border-border"
-                  >
-                    Voltar
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Vitórias */}
-                <div>
-                  <h3 className="text-lg font-semibold text-accent mb-3 flex items-center gap-2">
-                    🏆 Vitórias ({knightHistory?.victories?.length || 0})
-                  </h3>
-                  <div className="space-y-3">
-                    {knightHistory?.victories?.length ? (
-                      knightHistory.victories.map((battle, index) => (
-                        <Card key={index} className="bg-accent/5 border-accent/20">
-                          <CardContent className="pt-4">
-                            <div className="space-y-2">
-                              <p className="text-sm font-medium text-accent">
-                                Time Aliado:
-                              </p>
-                              <div className="flex flex-wrap gap-1 mb-3">
-                                {battle.winner_team.map((ally, i) => (
-                                  <Badge key={i} className="bg-accent/10 text-accent">
-                                    {getKnightName(ally)}
-                                  </Badge>
-                                ))}
-                              </div>
-                              <p className="text-sm font-medium text-muted-foreground">
-                                Derrotou:
-                              </p>
-                              <div className="flex flex-wrap gap-1">
-                                {battle.loser_team.map((enemy, i) => (
-                                  <Badge key={i} variant="outline" className="text-muted-foreground">
-                                    {getKnightName(enemy)}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))
-                    ) : (
-                      <p className="text-center text-muted-foreground py-4">
-                        Nenhuma vitória registrada
-                      </p>
-                    )}
-                  </div>
-                </div>
+              <CardContent className="p-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Derrotas - lado esquerdo */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-primary mb-3 flex items-center gap-2">
+                      💀 Derrotas ({knightHistory?.defeats?.length || 0})
+                    </h3>
+                    <div className="space-y-3">
+                      {knightHistory?.defeats?.length ? (
+                        knightHistory.defeats.map((battle, index) => (
+                          <Card key={index} className="bg-primary/5 border-primary/20">
+                            <CardContent className="pt-4">
+                              <div className="flex items-center justify-between gap-4">
+                                {/* Time Aliado */}
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-primary mb-2">
+                                    Time Aliado:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {battle.loser_team.map((ally, i) => {
+                                      const knight = knights.find(k => k.id === ally);
+                                      return knight ? (
+                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                          <img
+                                            src={knight.image_url}
+                                            alt={knight.name}
+                                            className="w-8 h-8 rounded-full border border-primary/20"
+                                          />
+                                          <span className="text-xs text-foreground hover:text-primary transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                            {knight.name}
+                                          </span>
+                                        </div>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                </div>
 
-                {/* Derrotas */}
-                <div>
-                  <h3 className="text-lg font-semibold text-primary mb-3 flex items-center gap-2">
-                    💀 Derrotas ({knightHistory?.defeats?.length || 0})
-                  </h3>
-                  <div className="space-y-3">
-                    {knightHistory?.defeats?.length ? (
-                      knightHistory.defeats.map((battle, index) => (
-                        <Card key={index} className="bg-primary/5 border-primary/20">
-                          <CardContent className="pt-4">
-                            <div className="space-y-2">
-                              <p className="text-sm font-medium text-primary">
-                                Time Aliado:
-                              </p>
-                              <div className="flex flex-wrap gap-1 mb-3">
-                                {battle.loser_team.map((ally, i) => (
-                                  <Badge key={i} className="bg-primary/10 text-primary">
-                                    {getKnightName(ally)}
-                                  </Badge>
-                                ))}
+                                {/* X Separador */}
+                                <div className="text-xl font-bold text-muted-foreground">
+                                  ✕
+                                </div>
+
+                                {/* Time Inimigo */}
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-muted-foreground mb-2">
+                                    Perdeu para:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {battle.winner_team.map((enemy, i) => {
+                                      const knight = knights.find(k => k.id === enemy);
+                                      return knight ? (
+                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                          <img
+                                            src={knight.image_url}
+                                            alt={knight.name}
+                                            className="w-8 h-8 rounded-full border border-accent/20"
+                                          />
+                                          <span className="text-xs text-foreground hover:text-accent transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                            {knight.name}
+                                          </span>
+                                        </div>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                </div>
                               </div>
-                              <p className="text-sm font-medium text-muted-foreground">
-                                Perdeu para:
-                              </p>
-                              <div className="flex flex-wrap gap-1">
-                                {battle.winner_team.map((enemy, i) => (
-                                  <Badge key={i} variant="outline" className="text-muted-foreground">
-                                    {getKnightName(enemy)}
-                                  </Badge>
-                                ))}
+                            </CardContent>
+                          </Card>
+                        ))
+                      ) : (
+                        <p className="text-center text-muted-foreground py-4">
+                          Nenhuma derrota registrada
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Vitórias - lado direito */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-accent mb-3 flex items-center gap-2">
+                      🏆 Vitórias ({knightHistory?.victories?.length || 0})
+                    </h3>
+                    <div className="space-y-3">
+                      {knightHistory?.victories?.length ? (
+                        knightHistory.victories.map((battle, index) => (
+                          <Card key={index} className="bg-accent/5 border-accent/20">
+                            <CardContent className="pt-4">
+                              <div className="flex items-center justify-between gap-4">
+                                {/* Time Aliado */}
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-accent mb-2">
+                                    Time Aliado:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {battle.winner_team.map((ally, i) => {
+                                      const knight = knights.find(k => k.id === ally);
+                                      return knight ? (
+                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                          <img
+                                            src={knight.image_url}
+                                            alt={knight.name}
+                                            className="w-8 h-8 rounded-full border border-accent/20"
+                                          />
+                                          <span className="text-xs text-foreground hover:text-accent transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                            {knight.name}
+                                          </span>
+                                        </div>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* X Separador */}
+                                <div className="text-xl font-bold text-muted-foreground">
+                                  ✕
+                                </div>
+
+                                {/* Time Inimigo */}
+                                <div className="flex-1">
+                                  <p className="text-sm font-medium text-muted-foreground mb-2">
+                                    Derrotou:
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {battle.loser_team.map((enemy, i) => {
+                                      const knight = knights.find(k => k.id === enemy);
+                                      return knight ? (
+                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                          <img
+                                            src={knight.image_url}
+                                            alt={knight.name}
+                                            className="w-8 h-8 rounded-full border border-primary/20"
+                                          />
+                                          <span className="text-xs text-foreground hover:text-primary transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                            {knight.name}
+                                          </span>
+                                        </div>
+                                      ) : null;
+                                    })}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))
-                    ) : (
-                      <p className="text-center text-muted-foreground py-4">
-                        Nenhuma derrota registrada
-                      </p>
-                    )}
+                            </CardContent>
+                          </Card>
+                        ))
+                      ) : (
+                        <p className="text-center text-muted-foreground py-4">
+                          Nenhuma vitória registrada
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </CardContent>
