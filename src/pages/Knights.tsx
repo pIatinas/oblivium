@@ -274,7 +274,7 @@ const Knights = () => {
             {filteredKnights.map((knight) => (
               <div 
                 key={knight.id} 
-                className="p-4 cursor-pointer hover:bg-muted/50 transition-colors rounded-lg"
+                className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg"
                 onClick={() => handleKnightClick(knight)}
               >
                 <div className="flex items-center gap-3">
@@ -290,7 +290,7 @@ const Knights = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            <Card className="bg-card">
+            <Card className="bg-card border-none shadow-none">
               <CardContent className="p-6">
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Vitórias - lado esquerdo */}
@@ -301,27 +301,28 @@ const Knights = () => {
                     <div className="space-y-3">
                       {knightHistory?.victories?.length ? (
                         knightHistory.victories.map((battle, index) => (
-                          <Card key={index} className="bg-accent/5 border-accent/20">
+                          <Card key={index} className="bg-accent/5 border-none shadow-none">
                             <CardContent className="pt-4">
                               <div className="flex items-center justify-between gap-4">
                                 {/* Time Aliado */}
                                 <div className="flex-1">
                                   <div className="flex flex-wrap gap-2">
-                                    {battle.winner_team.map((ally, i) => {
-                                      const knight = knights.find(k => k.id === ally);
-                                      return knight ? (
-                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                          <img
-                                            src={knight.image_url}
-                                            alt={knight.name}
-                                            className="w-8 h-8 rounded-full border border-accent/20"
-                                          />
-                                          <span className="text-xs text-foreground hover:text-accent transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                            {knight.name}
-                                          </span>
-                                        </div>
-                                      ) : null;
-                                    })}
+                                     {battle.winner_team.map((ally, i) => {
+                                       const knight = knights.find(k => k.id === ally);
+                                       const isCurrentKnight = knight?.id === selectedKnight?.id;
+                                       return knight ? (
+                                         <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                           <img
+                                             src={knight.image_url}
+                                             alt={knight.name}
+                                             className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-accent/20'} transition-transform`}
+                                           />
+                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-accent'}`} onClick={() => handleKnightClick(knight)}>
+                                             {knight.name}
+                                           </span>
+                                         </div>
+                                       ) : null;
+                                     })}
                                   </div>
                                 </div>
 
@@ -333,21 +334,22 @@ const Knights = () => {
                                 {/* Time Inimigo */}
                                 <div className="flex-1">
                                   <div className="flex flex-wrap gap-2">
-                                    {battle.loser_team.map((enemy, i) => {
-                                      const knight = knights.find(k => k.id === enemy);
-                                      return knight ? (
-                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                          <img
-                                            src={knight.image_url}
-                                            alt={knight.name}
-                                            className="w-8 h-8 rounded-full border border-purple-400/20"
-                                          />
-                                          <span className="text-xs text-foreground hover:text-purple-400 transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                            {knight.name}
-                                          </span>
-                                        </div>
-                                      ) : null;
-                                    })}
+                                     {battle.loser_team.map((enemy, i) => {
+                                       const knight = knights.find(k => k.id === enemy);
+                                       const isCurrentKnight = knight?.id === selectedKnight?.id;
+                                       return knight ? (
+                                         <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                           <img
+                                             src={knight.image_url}
+                                             alt={knight.name}
+                                             className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-purple-400/20'} transition-transform`}
+                                           />
+                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-purple-400'}`} onClick={() => handleKnightClick(knight)}>
+                                             {knight.name}
+                                           </span>
+                                         </div>
+                                       ) : null;
+                                     })}
                                   </div>
                                 </div>
                               </div>
@@ -370,27 +372,28 @@ const Knights = () => {
                     <div className="space-y-3">
                       {knightHistory?.defeats?.length ? (
                         knightHistory.defeats.map((battle, index) => (
-                          <Card key={index} className="bg-primary/5 border-primary/20">
+                          <Card key={index} className="bg-primary/5 border-none shadow-none">
                             <CardContent className="pt-4">
                               <div className="flex items-center justify-between gap-4">
                                 {/* Time Aliado */}
                                 <div className="flex-1">
                                   <div className="flex flex-wrap gap-2">
-                                    {battle.loser_team.map((ally, i) => {
-                                      const knight = knights.find(k => k.id === ally);
-                                      return knight ? (
-                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                          <img
-                                            src={knight.image_url}
-                                            alt={knight.name}
-                                            className="w-8 h-8 rounded-full border border-primary/20"
-                                          />
-                                          <span className="text-xs text-foreground hover:text-primary transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                            {knight.name}
-                                          </span>
-                                        </div>
-                                      ) : null;
-                                    })}
+                                     {battle.loser_team.map((ally, i) => {
+                                       const knight = knights.find(k => k.id === ally);
+                                       const isCurrentKnight = knight?.id === selectedKnight?.id;
+                                       return knight ? (
+                                         <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                           <img
+                                             src={knight.image_url}
+                                             alt={knight.name}
+                                             className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-primary/20'} transition-transform`}
+                                           />
+                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-primary'}`} onClick={() => handleKnightClick(knight)}>
+                                             {knight.name}
+                                           </span>
+                                         </div>
+                                       ) : null;
+                                     })}
                                   </div>
                                 </div>
 
@@ -402,21 +405,22 @@ const Knights = () => {
                                 {/* Time Inimigo */}
                                 <div className="flex-1">
                                   <div className="flex flex-wrap gap-2">
-                                    {battle.winner_team.map((enemy, i) => {
-                                      const knight = knights.find(k => k.id === enemy);
-                                      return knight ? (
-                                        <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                          <img
-                                            src={knight.image_url}
-                                            alt={knight.name}
-                                            className="w-8 h-8 rounded-full border border-accent/20"
-                                          />
-                                          <span className="text-xs text-foreground hover:text-accent transition-colors cursor-pointer" onClick={() => handleKnightClick(knight)}>
-                                            {knight.name}
-                                          </span>
-                                        </div>
-                                      ) : null;
-                                    })}
+                                     {battle.winner_team.map((enemy, i) => {
+                                       const knight = knights.find(k => k.id === enemy);
+                                       const isCurrentKnight = knight?.id === selectedKnight?.id;
+                                       return knight ? (
+                                         <div key={i} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => handleKnightClick(knight)}>
+                                           <img
+                                             src={knight.image_url}
+                                             alt={knight.name}
+                                             className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-accent/20'} transition-transform`}
+                                           />
+                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-accent'}`} onClick={() => handleKnightClick(knight)}>
+                                             {knight.name}
+                                           </span>
+                                         </div>
+                                       ) : null;
+                                     })}
                                   </div>
                                 </div>
                               </div>

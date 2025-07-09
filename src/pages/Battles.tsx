@@ -129,7 +129,7 @@ const Battles = () => {
           <div className="relative max-w-md mx-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
-              placeholder="Buscar por personagem..."
+              placeholder="Busca"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 bg-card border-border"
@@ -139,7 +139,7 @@ const Battles = () => {
 
         <div className="grid gap-6 md:grid-cols-2">
           {filteredBattles.map((battle) => (
-            <Card key={battle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative">
+            <Card key={battle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative border-none shadow-none">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between gap-4">
                   {/* Time Vencedor */}
