@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Search, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +25,7 @@ const CreateBattle = () => {
   const [loserTeam, setLoserTeam] = useState<Knight[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMetaAttack, setIsMetaAttack] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -52,7 +55,6 @@ const CreateBattle = () => {
 
   const addToTeam = (knight: Knight, team: 'winner' | 'loser') => {
     if (team === 'winner') {
-      if (winnerTeam.find(k => k.id === knight.id)) return;
       if (winnerTeam.length >= 3) {
         toast({
           title: "Limite atingido",
@@ -63,7 +65,6 @@ const CreateBattle = () => {
       }
       setWinnerTeam([...winnerTeam, knight]);
     } else {
-      if (loserTeam.find(k => k.id === knight.id)) return;
       if (loserTeam.length >= 3) {
         toast({
           title: "Limite atingido",
@@ -84,8 +85,10 @@ const CreateBattle = () => {
     }
   };
 
-  const isKnightInTeam = (knightId: string) => {
-    return winnerTeam.find(k => k.id === knightId) || loserTeam.find(k => k.id === knightId);
+  const getKnightTeamCount = (knightId: string) => {
+    const winnerCount = winnerTeam.filter(k => k.id === knightId).length;
+    const loserCount = loserTeam.filter(k => k.id === knightId).length;
+    return winnerCount + loserCount;
   };
 
   const filteredKnights = knights.filter(knight =>
@@ -111,6 +114,7 @@ const CreateBattle = () => {
           {
             winner_team: winnerTeam.map(k => k.id),
             loser_team: loserTeam.map(k => k.id),
+            meta: isMetaAttack,
             created_by: (await supabase.auth.getUser()).data.user?.id!
           }
         ]);
@@ -159,7 +163,7 @@ const CreateBattle = () => {
 
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Vencedor */}
-          <Card className="bg-card border-accent/20 shadow-cosmic border-[3px]">
+          <Card className="bg-card border-accent border-[3px]">
             <CardHeader>
               <CardTitle className="text-accent text-center">
                 <div className="flex flex-col items-center">
@@ -205,7 +209,7 @@ const CreateBattle = () => {
           </Card>
 
           {/* Perdedor */}
-          <Card className="bg-card border-purple-400/20 shadow-cosmic border-[3px]">
+          <Card className="bg-card border-purple-400 border-[3px]">
             <CardHeader>
               <CardTitle className="text-purple-400 text-center">
                 <div className="flex flex-col items-center">
@@ -251,6 +255,20 @@ const CreateBattle = () => {
           </Card>
         </div>
 
+        {/* Meta de Ataque Checkbox */}
+        <div className="mt-8 mb-6 flex items-center justify-center">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="meta-attack" 
+              checked={isMetaAttack}
+              onCheckedChange={(checked) => setIsMetaAttack(checked as boolean)}
+            />
+            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer">
+              Meta de Ataque
+            </Label>
+          </div>
+        </div>
+
         {/* Buscar Cavaleiros e Botão de Cadastro */}
         <div className="mt-8 mb-6">
           <div className="flex items-center justify-between gap-4">
@@ -278,7 +296,7 @@ const CreateBattle = () => {
         </div>
 
         {/* Lista de Cavaleiros Disponíveis */}
-        <Card className="bg-card">
+        <Card className="bg-card border-none">
           <CardHeader>
             <CardTitle className="text-foreground text-center">
               Cavaleiros
@@ -289,11 +307,7 @@ const CreateBattle = () => {
               {filteredKnights.map((knight) => (
                 <div
                   key={knight.id}
-                  className={`p-3 rounded-lg border transition-all duration-300 ${
-                    isKnightInTeam(knight.id)
-                      ? 'bg-muted/50 border-muted opacity-50'
-                      : 'bg-background border-border hover:border-accent/50 cursor-pointer'
-                  }`}
+                  className="p-3 rounded-lg border transition-all duration-300 bg-background border-border hover:border-accent/50 cursor-pointer"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
@@ -307,28 +321,26 @@ const CreateBattle = () => {
                       </span>
                     </div>
                     
-                    {!isKnightInTeam(knight.id) && (
-                      <div className="flex gap-1">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => addToTeam(knight, 'winner')}
-                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-2 py-1"
-                          disabled={winnerTeam.length >= 3}
-                        >
-                          Vencedor
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => addToTeam(knight, 'loser')}
-                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-2 py-1"
-                          disabled={loserTeam.length >= 3}
-                        >
-                          Perdedor
-                        </Button>
-                      </div>
-                    )}
+                    <div className="flex gap-1">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addToTeam(knight, 'winner')}
+                        className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-2 py-1"
+                        disabled={winnerTeam.length >= 3}
+                      >
+                        Vencedor
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addToTeam(knight, 'loser')}
+                        className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-2 py-1"
+                        disabled={loserTeam.length >= 3}
+                      >
+                        Perdedor
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}

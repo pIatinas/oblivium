@@ -186,7 +186,7 @@ const Battles = () => {
                               alt={knight.name}
                               className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40"
                             />
-                            <span className="text-xs text-foreground hover:text-purple-400 transition-colors">
+                            <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                               {knight.name}
                             </span>
                           </div>
@@ -197,7 +197,7 @@ const Battles = () => {
                 </div>
                 
                 {/* Informação do autor */}
-                <div className="absolute -bottom-2 right-2 bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+                <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
                   por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                 </div>
               </CardContent>
