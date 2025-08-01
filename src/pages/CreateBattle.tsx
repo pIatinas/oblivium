@@ -12,13 +12,11 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
-
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
-
 const CreateBattle = () => {
   const [knights, setKnights] = useState<Knight[]>([]);
   const [winnerTeam, setWinnerTeam] = useState<Knight[]>([]);
@@ -26,20 +24,19 @@ const CreateBattle = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMetaAttack, setIsMetaAttack] = useState(false);
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const navigate = useNavigate();
-
   useEffect(() => {
     fetchKnights();
   }, []);
-
   const fetchKnights = async () => {
     try {
-      const { data, error } = await supabase
-        .from('knights')
-        .select('*')
-        .order('name');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('knights').select('*').order('name');
       if (error) throw error;
       setKnights(data || []);
     } catch (error: any) {
@@ -52,7 +49,6 @@ const CreateBattle = () => {
       setLoading(false);
     }
   };
-
   const addToTeam = (knight: Knight, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       if (winnerTeam.length >= 3) {
@@ -76,7 +72,6 @@ const CreateBattle = () => {
       setLoserTeam([...loserTeam, knight]);
     }
   };
-
   const removeFromTeam = (knightId: string, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       setWinnerTeam(winnerTeam.filter(k => k.id !== knightId));
@@ -84,20 +79,14 @@ const CreateBattle = () => {
       setLoserTeam(loserTeam.filter(k => k.id !== knightId));
     }
   };
-
   const getKnightTeamCount = (knightId: string) => {
     const winnerCount = winnerTeam.filter(k => k.id === knightId).length;
     const loserCount = loserTeam.filter(k => k.id === knightId).length;
     return winnerCount + loserCount;
   };
-
-  const filteredKnights = knights.filter(knight =>
-    knight.name.toLowerCase().includes(searchTerm.toLowerCase())
-  ).sort((a, b) => a.name.localeCompare(b.name));
-
+  const filteredKnights = knights.filter(knight => knight.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (winnerTeam.length === 0 || loserTeam.length === 0) {
       toast({
         title: "Erro",
@@ -106,26 +95,20 @@ const CreateBattle = () => {
       });
       return;
     }
-
     try {
-      const { error } = await supabase
-        .from('battles')
-        .insert([
-          {
-            winner_team: winnerTeam.map(k => k.id),
-            loser_team: loserTeam.map(k => k.id),
-            meta: isMetaAttack,
-            created_by: (await supabase.auth.getUser()).data.user?.id!
-          }
-        ]);
-
+      const {
+        error
+      } = await supabase.from('battles').insert([{
+        winner_team: winnerTeam.map(k => k.id),
+        loser_team: loserTeam.map(k => k.id),
+        meta: isMetaAttack,
+        created_by: (await supabase.auth.getUser()).data.user?.id!
+      }]);
       if (error) throw error;
-
       toast({
         title: "Batalha Registrada!",
-        description: "A batalha foi cadastrada com sucesso",
+        description: "A batalha foi cadastrada com sucesso"
       });
-
       navigate('/battles');
     } catch (error: any) {
       toast({
@@ -135,20 +118,15 @@ const CreateBattle = () => {
       });
     }
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-nebula">
+    return <div className="min-h-screen bg-gradient-nebula">
         <Header />
         <div className="max-w-6xl mx-auto p-6 text-center">
           <div className="text-accent text-xl">Carregando cavaleiros...</div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
         <Breadcrumb />
@@ -174,36 +152,20 @@ const CreateBattle = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3 min-h-[200px]">
-                {winnerTeam.map((knight) => (
-                  <div
-                    key={knight.id}
-                    className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20"
-                  >
+                {winnerTeam.map(knight => <div key={knight.id} className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={knight.image_url}
-                        alt={knight.name}
-                        className="w-10 h-10 rounded-full border border-accent/20"
-                      />
+                      <img src={knight.image_url} alt={knight.name} className="w-10 h-10 rounded-full border border-accent/20" />
                       <span className="text-foreground font-medium">
                         {knight.name}
                       </span>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFromTeam(knight.id, 'winner')}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => removeFromTeam(knight.id, 'winner')} className="text-muted-foreground hover:text-destructive">
                       <X className="w-4 h-4" />
                     </Button>
-                  </div>
-                ))}
-                {winnerTeam.length === 0 && (
-                  <p className="text-center text-muted-foreground py-8">
+                  </div>)}
+                {winnerTeam.length === 0 && <p className="text-center text-muted-foreground pt-16 ">
                     Selecione cavaleiros para o time vencedor
-                  </p>
-                )}
+                  </p>}
               </div>
             </CardContent>
           </Card>
@@ -220,50 +182,30 @@ const CreateBattle = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3 min-h-[200px]">
-                {loserTeam.map((knight) => (
-                  <div
-                    key={knight.id}
-                    className="flex items-center justify-between p-3 bg-purple-400/5 rounded-lg border border-purple-400/20"
-                  >
+                {loserTeam.map(knight => <div key={knight.id} className="flex items-center justify-between p-3 bg-purple-400/5 rounded-lg border border-purple-400/20">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={knight.image_url}
-                        alt={knight.name}
-                        className="w-10 h-10 rounded-full border border-purple-400/20"
-                      />
+                      <img src={knight.image_url} alt={knight.name} className="w-10 h-10 rounded-full border border-purple-400/20" />
                       <span className="text-foreground font-medium">
                         {knight.name}
                       </span>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeFromTeam(knight.id, 'loser')}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => removeFromTeam(knight.id, 'loser')} className="text-muted-foreground hover:text-destructive">
                       <X className="w-4 h-4" />
                     </Button>
-                  </div>
-                ))}
-                {loserTeam.length === 0 && (
-                  <p className="text-center text-muted-foreground py-8">
+                  </div>)}
+                {loserTeam.length === 0 && <p className="text-center text-muted-foreground pt-16 ">
                     Selecione cavaleiros para o time perdedor
-                  </p>
-                )}
+                  </p>}
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Meta de Ataque Checkbox */}
-        <div className="mt-8 mb-6 flex items-center justify-center">
+        <div className="mt-3 mb-6 flex items-center justify-end">
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="meta-attack" 
-              checked={isMetaAttack}
-              onCheckedChange={(checked) => setIsMetaAttack(checked as boolean)}
-            />
-            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer">
+            <Checkbox id="meta-attack" checked={isMetaAttack} onCheckedChange={checked => setIsMetaAttack(checked as boolean)} />
+            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground ">
               Meta de Ataque
             </Label>
           </div>
@@ -275,20 +217,11 @@ const CreateBattle = () => {
             <div className="flex-1 max-w-[300px]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Buscar"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 bg-card border-border"
-                />
+                <Input placeholder="Buscar" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border" />
               </div>
             </div>
             <div className="flex items-end">
-              <Button
-                onClick={handleSubmit}
-                className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg"
-                disabled={winnerTeam.length === 0 || loserTeam.length === 0}
-              >
+              <Button onClick={handleSubmit} className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg" disabled={winnerTeam.length === 0 || loserTeam.length === 0}>
                 Cadastrar
               </Button>
             </div>
@@ -304,59 +237,34 @@ const CreateBattle = () => {
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-              {filteredKnights.map((knight) => (
-                <div
-                  key={knight.id}
-                  className="p-3 rounded-lg border transition-all duration-300 bg-background border-border hover:border-accent/50 cursor-pointer"
-                >
+              {filteredKnights.map(knight => <div key={knight.id} className="p-3 rounded-lg border transition-all duration-300 bg-background border-border hover:border-accent/50 cursor-pointer">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3 flex-1">
-                      <img
-                        src={knight.image_url}
-                        alt={knight.name}
-                        className="w-10 h-10 rounded-full border border-border"
-                      />
+                      <img src={knight.image_url} alt={knight.name} className="w-10 h-10 rounded-full border border-border" />
                       <span className="text-foreground font-medium">
                         {knight.name}
                       </span>
                     </div>
                     
                     <div className="flex gap-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => addToTeam(knight, 'winner')}
-                        className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-2 py-1"
-                        disabled={winnerTeam.length >= 3}
-                      >
+                      <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-2 py-1" disabled={winnerTeam.length >= 3}>
                         Vencedor
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => addToTeam(knight, 'loser')}
-                        className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-2 py-1"
-                        disabled={loserTeam.length >= 3}
-                      >
+                      <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'loser')} className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-2 py-1" disabled={loserTeam.length >= 3}>
                         Perdedor
                       </Button>
                     </div>
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
             
-            {filteredKnights.length === 0 && (
-              <p className="text-center text-muted-foreground py-8">
+            {filteredKnights.length === 0 && <p className="text-center text-muted-foreground py-8">
                 Nenhum cavaleiro encontrado.
-              </p>
-            )}
+              </p>}
           </CardContent>
         </Card>
       </div>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default CreateBattle;
