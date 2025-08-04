@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Index from "./pages/Index";
 import Battles from "./pages/Battles";
+import BattleDetail from "./pages/BattleDetail";
 import CreateBattle from "./pages/CreateBattle";
 import Knights from "./pages/Knights";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/battles" element={<ProtectedRoute><Battles /></ProtectedRoute>} />
+            <Route path="/battles/:id" element={<ProtectedRoute><BattleDetail /></ProtectedRoute>} />
             <Route path="/create-battle" element={<ProtectedRoute><CreateBattle /></ProtectedRoute>} />
             <Route path="/knights" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

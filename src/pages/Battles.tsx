@@ -139,7 +139,7 @@ const Battles = () => {
 
         <div className="grid gap-6 md:grid-cols-2">
           {filteredBattles.map((battle) => (
-            <Card key={battle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative border-none shadow-none">
+            <Card key={battle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between gap-4">
                   {/* Time Vencedor */}
@@ -151,7 +151,7 @@ const Battles = () => {
                       {battle.winner_team.slice(0, 3).map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
-                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => window.location.href = `/knights?knight=${knight.id}`}>
+                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
                             <img
                               src={knight.image_url}
                               alt={knight.name}
@@ -180,7 +180,7 @@ const Battles = () => {
                       {battle.loser_team.slice(0, 3).map((knightId, index) => {
                         const knight = getKnightById(knightId);
                         return knight ? (
-                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={() => window.location.href = `/knights?knight=${knight.id}`}>
+                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
                             <img
                               src={knight.image_url}
                               alt={knight.name}

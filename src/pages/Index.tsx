@@ -79,7 +79,7 @@ const Index = () => {
 
       const sortedKnights = Object.entries(knightUsage)
         .sort(([, a], [, b]) => b - a)
-        .slice(0, 19)
+        .slice(0, 16)
         .map(([knightId]) => knightsRes.data?.find(k => k.id === knightId))
         .filter(Boolean) as Knight[];
 
@@ -145,7 +145,7 @@ const Index = () => {
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground mb-4">
-                Consulte todas as batalhas registradas
+                Consulte todas as batalhas
               </p>
               <Button asChild variant="outline" className="border-none text-accent hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/battles">
@@ -165,7 +165,7 @@ const Index = () => {
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground mb-4">
-                Consultar cavaleiros
+                Consulte todos os cavaleiros
               </p>
               <Button asChild className="bg-secondary text-secondary-foreground hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/knights">
@@ -255,58 +255,69 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {recentBattles.slice(0, 4).map((battle) => (
-                <div key={battle.id} className="bg-card border-none shadow-none rounded-lg p-4 relative">
-                  <div className="flex items-center justify-between gap-4">
-                    {/* Time Vencedor */}
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-accent mb-2">Vencedor</p>
-                      <div className="flex gap-2">
-                        {battle.winner_team.slice(0, 3).map((knightId, index) => {
-                          const knight = getKnightById(knightId);
-                          return knight ? (
-                            <div key={index} className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer" onClick={() => navigateToKnight(knight.id)}>
-                              <img
-                                src={knight.image_url}
-                                alt={knight.name}
-                                className="w-6 h-6 rounded-full border border-accent/20"
-                              />
-                              <span className="text-xs text-foreground">{knight.name}</span>
-                            </div>
-                          ) : null;
-                        })}
+                <Card key={battle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between gap-4">
+                      {/* Time Vencedor */}
+                      <div className="flex-1 space-y-3">
+                        <h3 className="text-accent font-semibold text-center flex items-center justify-center gap-2">
+                          Vencedor
+                        </h3>
+                        <div className="flex gap-2 justify-center">
+                          {battle.winner_team.slice(0, 3).map((knightId, index) => {
+                            const knight = getKnightById(knightId);
+                            return knight ? (
+                              <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); navigateToKnight(knight.id); }}>
+                                <img
+                                  src={knight.image_url}
+                                  alt={knight.name}
+                                  className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40"
+                                />
+                                <span className="text-xs text-foreground hover:text-accent transition-colors">
+                                  {knight.name}
+                                </span>
+                              </div>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+
+                      {/* X Separador */}
+                      <div className="text-3xl font-bold text-muted-foreground">
+                        ✕
+                      </div>
+
+                      {/* Time Perdedor */}
+                      <div className="flex-1 space-y-3">
+                        <h3 className="text-purple-400 font-semibold text-center flex items-center justify-center gap-2">
+                          Perdedor
+                        </h3>
+                        <div className="flex gap-2 justify-center">
+                          {battle.loser_team.slice(0, 3).map((knightId, index) => {
+                            const knight = getKnightById(knightId);
+                            return knight ? (
+                              <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); navigateToKnight(knight.id); }}>
+                                <img
+                                  src={knight.image_url}
+                                  alt={knight.name}
+                                  className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40"
+                                />
+                                <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
+                                  {knight.name}
+                                </span>
+                              </div>
+                            ) : null;
+                          })}
+                        </div>
                       </div>
                     </div>
-
-                    {/* X Separador */}
-                    <div className="text-xl font-bold text-muted-foreground">
-                      ✕
+                    
+                    {/* Informação do autor */}
+                    <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+                      por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                     </div>
-
-                    {/* Time Perdedor */}
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-purple-400 mb-2">Perdedor</p>
-                      <div className="flex gap-2">
-                        {battle.loser_team.slice(0, 3).map((knightId, index) => {
-                          const knight = getKnightById(knightId);
-                          return knight ? (
-                            <div key={index} className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer" onClick={() => navigateToKnight(knight.id)}>
-                              <img
-                                src={knight.image_url}
-                                alt={knight.name}
-                                className="w-6 h-6 rounded-full border border-purple-400/20"
-                              />
-                              <span className="text-xs text-foreground">{knight.name}</span>
-                            </div>
-                          ) : null;
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="absolute -bottom-2 right-2 bg-card px-2 py-1 rounded text-xs text-muted-foreground">
-                    por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               ))}
               {recentBattles.length === 0 && !loading && (
                 <p className="text-center text-muted-foreground py-8 col-span-2">

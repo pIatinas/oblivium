@@ -12,7 +12,7 @@ const Breadcrumb = ({ knightName }: BreadcrumbProps) => {
     '/': 'Home',
     '/knights': 'Cavaleiros',
     '/battles': 'Batalhas',
-    '/create-battle': 'Cadastrar Batalha'
+    '/create-battle': 'Cadastrar'
   };
   
   const currentPage = breadcrumbMap[location.pathname] || 'Home';

@@ -11,6 +11,7 @@ import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
+import CreateKnightModal from "@/components/CreateKnightModal";
 interface Knight {
   id: string;
   name: string;
@@ -32,9 +33,7 @@ const Knights = () => {
   const [selectedKnight, setSelectedKnight] = useState<Knight | null>(null);
   const [knights, setKnights] = useState<Knight[]>([]);
   const [battles, setBattles] = useState<Battle[]>([]);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newKnightName, setNewKnightName] = useState("");
-  const [newKnightImage, setNewKnightImage] = useState("");
+  const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchKnights();
@@ -97,41 +96,8 @@ const Knights = () => {
       defeats
     };
   };
-  const handleAddKnight = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newKnightName.trim()) {
-      toast({
-        title: "Erro",
-        description: "Nome do cavaleiro é obrigatório",
-        variant: "destructive"
-      });
-      return;
-    }
-    try {
-      const {
-        data,
-        error
-      } = await supabase.from('knights').insert([{
-        name: newKnightName.trim(),
-        image_url: newKnightImage || "/placeholder.svg",
-        created_by: (await supabase.auth.getUser()).data.user?.id!
-      }]).select().single();
-      if (error) throw error;
-      setKnights([data, ...knights]);
-      setNewKnightName("");
-      setNewKnightImage("");
-      setShowAddForm(false);
-      toast({
-        title: "Cavaleiro Adicionado!",
-        description: `${data.name} foi adicionado ao sistema`
-      });
-    } catch (error: any) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível adicionar o cavaleiro",
-        variant: "destructive"
-      });
-    }
+  const handleKnightCreated = () => {
+    fetchKnights();
   };
   const getKnightName = (knightId: string) => {
     const knight = knights.find(k => k.id === knightId);
@@ -161,42 +127,17 @@ const Knights = () => {
                 <Input placeholder="Buscar..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border w-64" />
               </div>
               
-              <Button onClick={() => setShowAddForm(!showAddForm)} className="bg-gradient-cosmic text-white hover:opacity-90">
+              <Button onClick={() => setShowModal(true)} className="bg-gradient-cosmic text-white hover:opacity-90">
                 <Plus className="w-4 h-4 mr-2" />
                 Adicionar
               </Button>
             </div>
 
-            {showAddForm && <Card className="bg-card border-accent/20 shadow-cosmic mb-6 max-w-md mx-auto">
-                <CardHeader>
-                  <CardTitle className="text-accent">Novo Cavaleiro</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleAddKnight} className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">Nome</Label>
-                      <Input id="name" value={newKnightName} onChange={e => setNewKnightName(e.target.value)} placeholder="Nome do cavaleiro" className="bg-background border-border" />
-                    </div>
-                    <div>
-                      <Label htmlFor="image">URL da Imagem (opcional)</Label>
-                      <Input id="image" value={newKnightImage} onChange={e => setNewKnightImage(e.target.value)} placeholder="https://exemplo.com/imagem.jpg" className="bg-background border-border" />
-                    </div>
-                    <div className="flex gap-2">
-                      <Button type="submit" className="bg-accent text-accent-foreground hover:bg-accent/90">
-                        Adicionar
-                      </Button>
-                      <Button type="button" variant="outline" onClick={() => setShowAddForm(false)} className="border-border">
-                        Cancelar
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>}
           </div> : <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
                 <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-[110px] h-[110px] rounded-full border-2 border-accent/20" />
-                <h1 className="text-4xl font-bold text-foreground">
+                <h1 className="text-[3.6rem] font-bold text-foreground">
                   {selectedKnight.name}
                 </h1>
               </div>
@@ -220,7 +161,10 @@ const Knights = () => {
                   {/* Vitórias - lado esquerdo */}
                   <div>
                     <h3 className="text-lg font-semibold text-accent mb-3 flex items-center justify-center gap-2 ">
-                      🏆 Vitórias ({knightHistory?.victories?.length || 0})
+                      <div className="flex flex-col items-center">
+                        <div>🏆</div>
+                        <div>Vitórias ({knightHistory?.victories?.length || 0})</div>
+                      </div>
                     </h3>
                     <div className="space-y-3">
                       {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} className="bg-accent/5 border-none shadow-none">
@@ -273,7 +217,10 @@ const Knights = () => {
                   {/* Derrotas - lado direito */}
                   <div>
                     <h3 className="text-lg font-semibold text-primary mb-3 flex items-center justify-center gap-2">
-                      💀 Derrotas ({knightHistory?.defeats?.length || 0})
+                      <div className="flex flex-col items-center">
+                        <div>💀</div>
+                        <div>Derrotas ({knightHistory?.defeats?.length || 0})</div>
+                      </div>
                     </h3>
                     <div className="space-y-3">
                       {knightHistory?.defeats?.length ? knightHistory.defeats.map((battle, index) => <Card key={index} className="bg-primary/5 border-none shadow-none">
@@ -327,6 +274,13 @@ const Knights = () => {
             </Card>
           </div>}
       </div>
+      
+      <CreateKnightModal 
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onKnightCreated={handleKnightCreated}
+      />
+      
       <Footer />
     </div>;
 };
