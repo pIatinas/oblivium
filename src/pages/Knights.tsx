@@ -22,6 +22,7 @@ interface Battle {
   id: string;
   winner_team: string[];
   loser_team: string[];
+  meta: boolean | null;
   created_at: string;
 }
 const Knights = () => {
@@ -33,12 +34,19 @@ const Knights = () => {
   const [selectedKnight, setSelectedKnight] = useState<Knight | null>(null);
   const [knights, setKnights] = useState<Knight[]>([]);
   const [battles, setBattles] = useState<Battle[]>([]);
+  const [relatedKnights, setRelatedKnights] = useState<Knight[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     fetchKnights();
     fetchBattles();
   }, []);
+
+  useEffect(() => {
+    if (selectedKnight && battles.length > 0 && knights.length > 0) {
+      fetchRelatedKnights();
+    }
+  }, [selectedKnight, battles, knights]);
 
   // Handle knight selection from URL parameters
   useEffect(() => {
@@ -79,7 +87,10 @@ const Knights = () => {
         ascending: false
       });
       if (error) throw error;
-      setBattles(data || []);
+      setBattles((data || []).map((battle: any) => ({
+        ...battle,
+        meta: battle.meta || false
+      })));
     } catch (error: any) {
       console.error('Erro ao carregar batalhas:', error);
     }
@@ -102,6 +113,33 @@ const Knights = () => {
   const getKnightName = (knightId: string) => {
     const knight = knights.find(k => k.id === knightId);
     return knight ? knight.name : "Cavaleiro removido";
+  };
+
+  const fetchRelatedKnights = () => {
+    if (!selectedKnight) return;
+    
+    // Find all battles involving the selected knight
+    const knightBattles = battles.filter(battle => 
+      [...battle.winner_team, ...battle.loser_team].includes(selectedKnight.id)
+    );
+    
+    // Extract all knight IDs from these battles
+    const allKnightIds = new Set<string>();
+    knightBattles.forEach(battle => {
+      [...battle.winner_team, ...battle.loser_team].forEach(id => {
+        if (id !== selectedKnight.id) {
+          allKnightIds.add(id);
+        }
+      });
+    });
+    
+    // Get knight objects and limit to 6
+    const related = Array.from(allKnightIds)
+      .map(id => knights.find(k => k.id === id))
+      .filter(Boolean)
+      .slice(0, 6) as Knight[];
+    
+    setRelatedKnights(related);
   };
   if (loading) {
     return <div className="min-h-screen bg-gradient-nebula">
@@ -160,15 +198,20 @@ const Knights = () => {
                 <div className="grid gap-6 md:grid-cols-2">
                   {/* Vitórias - lado esquerdo */}
                   <div>
-                    <h3 className="text-lg font-semibold text-accent mb-3 flex items-center justify-center gap-2 ">
-                      <div className="flex flex-col items-center">
-                        <div>🏆</div>
-                        <div>Vitórias ({knightHistory?.victories?.length || 0})</div>
-                      </div>
-                    </h3>
+                     <h3 className="text-lg font-semibold text-accent mb-3 flex items-center justify-center gap-2 ">
+                       <div className="flex flex-col items-center">
+                         <div>🏆</div>
+                         <div>Vitórias ({knightHistory?.victories?.length || 0})</div>
+                       </div>
+                     </h3>
                     <div className="space-y-3">
-                      {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} className="bg-accent/5 border-none shadow-none">
-                            <CardContent className="px-4 py-7 justify-center text-center ">
+                       {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} className="bg-accent/5 border border-border hover:border-accent/50 shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
+                            {battle.meta && (
+                              <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+                                <span className="text-black text-xs">⭐</span>
+                              </div>
+                            )}
+                            <CardContent className="px-4 py-7 justify-center text-center relative">
                               <div className="flex items-center justify-between gap-2">
                                 {/* Time Aliado */}
                                 <div className="flex-1">
@@ -216,15 +259,20 @@ const Knights = () => {
 
                   {/* Derrotas - lado direito */}
                   <div>
-                    <h3 className="text-lg font-semibold text-primary mb-3 flex items-center justify-center gap-2">
-                      <div className="flex flex-col items-center">
-                        <div>💀</div>
-                        <div>Derrotas ({knightHistory?.defeats?.length || 0})</div>
-                      </div>
-                    </h3>
+                     <h3 className="text-lg font-semibold text-primary mb-3 flex items-center justify-center gap-2">
+                       <div className="flex flex-col items-center">
+                         <div>💀</div>
+                         <div>Derrotas ({knightHistory?.defeats?.length || 0})</div>
+                       </div>
+                     </h3>
                     <div className="space-y-3">
-                      {knightHistory?.defeats?.length ? knightHistory.defeats.map((battle, index) => <Card key={index} className="bg-primary/5 border-none shadow-none">
-                            <CardContent className="px-4 py-7 justify-center text-center ">
+                       {knightHistory?.defeats?.length ? knightHistory.defeats.map((battle, index) => <Card key={index} className="bg-primary/5 border border-border hover:border-accent/50 shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
+                            {battle.meta && (
+                              <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+                                <span className="text-black text-xs">⭐</span>
+                              </div>
+                            )}
+                            <CardContent className="px-4 py-7 justify-center text-center relative">
                               <div className="flex items-center justify-between gap-4">
                                 {/* Time Aliado */}
                                 <div className="flex-1">
@@ -269,10 +317,33 @@ const Knights = () => {
                         </p>}
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>}
+                 </div>
+               </CardContent>
+             </Card>
+
+             {/* Cavaleiros Relacionados */}
+             {relatedKnights.length > 0 && (
+               <Card className="bg-card border-none shadow-none">
+                 <CardHeader>
+                   <CardTitle className="text-foreground text-center">
+                     Cavaleiros Relacionados
+                   </CardTitle>
+                 </CardHeader>
+                 <CardContent>
+                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                     {relatedKnights.map(knight => (
+                       <div key={knight.id} className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg" onClick={() => handleKnightClick(knight)}>
+                         <div className="flex items-center gap-3">
+                           <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full border-2 border-accent/20" />
+                           <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
+                         </div>
+                       </div>
+                     ))}
+                   </div>
+                 </CardContent>
+               </Card>
+             )}
+           </div>}
       </div>
       
       <CreateKnightModal 

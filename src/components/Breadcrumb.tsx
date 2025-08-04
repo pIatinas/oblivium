@@ -3,9 +3,10 @@ import { ChevronRight } from "lucide-react";
 
 interface BreadcrumbProps {
   knightName?: string;
+  battleId?: string;
 }
 
-const Breadcrumb = ({ knightName }: BreadcrumbProps) => {
+const Breadcrumb = ({ knightName, battleId }: BreadcrumbProps) => {
   const location = useLocation();
   
   const breadcrumbMap: { [key: string]: string } = {
@@ -40,6 +41,17 @@ const Breadcrumb = ({ knightName }: BreadcrumbProps) => {
           </Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-foreground">{knightName}</span>
+        </>
+      ) : battleId ? (
+        <>
+          <Link 
+            to="/battles" 
+            className="hover:text-accent transition-colors"
+          >
+            Batalhas
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-foreground">Detalhe</span>
         </>
       ) : (
         <span className="text-foreground">{currentPage}</span>

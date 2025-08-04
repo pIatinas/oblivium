@@ -85,10 +85,10 @@ const CreateBattle = () => {
   const filteredKnights = knights.filter(knight => knight.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (winnerTeam.length === 0 || loserTeam.length === 0) {
+    if (winnerTeam.length !== 3 || loserTeam.length !== 3) {
       toast({
         title: "Erro",
-        description: "Ambos os times devem ter pelo menos um cavaleiro",
+        description: "Ambos os times devem ter exatamente 3 cavaleiros",
         variant: "destructive"
       });
       return;
@@ -229,7 +229,7 @@ const CreateBattle = () => {
               </div>
             </div>
             <div className="flex items-end">
-              <Button onClick={handleSubmit} className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg" disabled={winnerTeam.length === 0 || loserTeam.length === 0}>
+              <Button onClick={handleSubmit} className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg" disabled={winnerTeam.length !== 3 || loserTeam.length !== 3}>
                 Cadastrar
               </Button>
             </div>
@@ -262,7 +262,7 @@ const CreateBattle = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => addToTeam(knight, 'winner')} 
-                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/20 px-2 py-1" 
+                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/15 px-2 py-1" 
                           disabled={winnerTeam.length >= 3 || isInBothTeams}
                         >
                           Vencedor
@@ -271,7 +271,7 @@ const CreateBattle = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => addToTeam(knight, 'loser')} 
-                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/20 px-2 py-1" 
+                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/15 px-2 py-1" 
                           disabled={loserTeam.length >= 3 || isInBothTeams}
                         >
                           Perdedor
