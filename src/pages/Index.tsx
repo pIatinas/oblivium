@@ -6,13 +6,11 @@ import { Sword, Search, Plus, Archive, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
-
 interface Battle {
   id: string;
   winner_team: string[];
@@ -21,13 +19,11 @@ interface Battle {
   created_at: string;
   created_by: string;
 }
-
 interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
 }
-
 const Index = () => {
   const [stats, setStats] = useState({
     users: 0,
@@ -39,24 +35,18 @@ const Index = () => {
   const [knights, setKnights] = useState<Knight[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-
   const navigateToKnight = (knightId: string) => {
     window.location.href = `/knights?knight=${knightId}`;
   };
-
   useEffect(() => {
     fetchData();
   }, []);
-
   const fetchData = async () => {
     try {
       // Fetch all data in parallel
-      const [usersRes, battlesRes, knightsRes, profilesRes] = await Promise.all([
-        supabase.from('profiles').select('*'),
-        supabase.from('battles').select('*').order('created_at', { ascending: false }),
-        supabase.from('knights').select('*'),
-        supabase.from('profiles').select('*')
-      ]);
+      const [usersRes, battlesRes, knightsRes, profilesRes] = await Promise.all([supabase.from('profiles').select('*'), supabase.from('battles').select('*').order('created_at', {
+        ascending: false
+      }), supabase.from('knights').select('*'), supabase.from('profiles').select('*')]);
 
       // Set stats
       setStats({
@@ -74,19 +64,15 @@ const Index = () => {
       })));
 
       // Calculate most used knights
-      const knightUsage: { [key: string]: number } = {};
+      const knightUsage: {
+        [key: string]: number;
+      } = {};
       battlesRes.data?.forEach(battle => {
         [...battle.winner_team, ...battle.loser_team].forEach(knightId => {
           knightUsage[knightId] = (knightUsage[knightId] || 0) + 1;
         });
       });
-
-      const sortedKnights = Object.entries(knightUsage)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 16)
-        .map(([knightId]) => knightsRes.data?.find(k => k.id === knightId))
-        .filter(Boolean) as Knight[];
-
+      const sortedKnights = Object.entries(knightUsage).sort(([, a], [, b]) => b - a).slice(0, 16).map(([knightId]) => knightsRes.data?.find(k => k.id === knightId)).filter(Boolean) as Knight[];
       setMostUsedKnights(sortedKnights);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -94,17 +80,13 @@ const Index = () => {
       setLoading(false);
     }
   };
-
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
   };
-
   const getProfileByUserId = (userId: string) => {
     return profiles.find(p => p.user_id === userId);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen bg-gradient-nebula">
       <Header />
 
       {/* Main Content */}
@@ -222,35 +204,23 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-8 gap-4">
-              {mostUsedKnights.map((knight) => (
-                <div key={knight.id} className="text-center hover:opacity-80 transition-opacity cursor-pointer" onClick={() => navigateToKnight(knight.id)}>
-                  <img
-                    src={knight.image_url}
-                    alt={knight.name}
-                    className="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-accent/20"
-                  />
+              {mostUsedKnights.map(knight => <div key={knight.id} className="text-center hover:opacity-80 transition-opacity cursor-pointer" onClick={() => navigateToKnight(knight.id)}>
+                  <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full mx-auto mb-2 border-2 border-accent/20" />
                   <p className="text-sm text-foreground font-medium">{knight.name}</p>
-                </div>
-              ))}
-              {mostUsedKnights.length === 0 && !loading && (
-                <p className="text-center text-muted-foreground py-8 col-span-8">
+                </div>)}
+              {mostUsedKnights.length === 0 && !loading && <p className="text-center text-muted-foreground py-8 col-span-8">
                   Nenhum cavaleiro usado ainda
-                </p>
-              )}
-              {loading && (
-                <p className="text-center text-muted-foreground py-8 col-span-8">
+                </p>}
+              {loading && <p className="text-center text-muted-foreground py-8 col-span-8">
                   Carregando...
-                </p>
-              )}
+                </p>}
             </div>
           </div>
 
           {/* Recent Battles Section */}
           <div className="bg-card/50 backdrop-blur-sm rounded-lg p-8">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl font-bold text-foreground">
-                Últimas Batalhas
-              </h3>
+              <h3 className="text-2xl font-bold text-foreground">Últimas Batalhas</h3>
               <Button asChild variant="outline" className="border-none text-accent hover:bg-[#f8cc34] hover:text-[#0a0a0b]">
                 <Link to="/battles">
                   Ver Todas
@@ -258,13 +228,10 @@ const Index = () => {
               </Button>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              {recentBattles.slice(0, 4).map((battle) => (
-                <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
-                  {battle.meta && (
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-                      <span className="text-black text-xs">⭐</span>
-                    </div>
-                  )}
+              {recentBattles.slice(0, 4).map(battle => <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
+                  {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
+                      <span className="text-black text-lg">⭐</span>
+                    </div>}
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between gap-4">
                       {/* Time Vencedor */}
@@ -274,20 +241,17 @@ const Index = () => {
                         </h3>
                         <div className="flex gap-2 justify-center">
                           {battle.winner_team.slice(0, 3).map((knightId, index) => {
-                            const knight = getKnightById(knightId);
-                            return knight ? (
-                              <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); navigateToKnight(knight.id); }}>
-                                <img
-                                  src={knight.image_url}
-                                  alt={knight.name}
-                                  className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40"
-                                />
+                        const knight = getKnightById(knightId);
+                        return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                          e.stopPropagation();
+                          navigateToKnight(knight.id);
+                        }}>
+                                <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40" />
                                 <span className="text-xs text-foreground hover:text-accent transition-colors">
                                   {knight.name}
                                 </span>
-                              </div>
-                            ) : null;
-                          })}
+                              </div> : null;
+                      })}
                         </div>
                       </div>
 
@@ -303,20 +267,17 @@ const Index = () => {
                         </h3>
                         <div className="flex gap-2 justify-center">
                           {battle.loser_team.slice(0, 3).map((knightId, index) => {
-                            const knight = getKnightById(knightId);
-                            return knight ? (
-                              <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); navigateToKnight(knight.id); }}>
-                                <img
-                                  src={knight.image_url}
-                                  alt={knight.name}
-                                  className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40"
-                                />
+                        const knight = getKnightById(knightId);
+                        return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                          e.stopPropagation();
+                          navigateToKnight(knight.id);
+                        }}>
+                                <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
                                 <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                                   {knight.name}
                                 </span>
-                              </div>
-                            ) : null;
-                          })}
+                              </div> : null;
+                      })}
                         </div>
                       </div>
                     </div>
@@ -326,21 +287,16 @@ const Index = () => {
                       por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                     </div>
                   </CardContent>
-                </Card>
-              ))}
-              {recentBattles.length === 0 && !loading && (
-                <p className="text-center text-muted-foreground py-8 col-span-2">
+                </Card>)}
+              {recentBattles.length === 0 && !loading && <p className="text-center text-muted-foreground py-8 col-span-2">
                   Nenhuma batalha cadastrada ainda
-                </p>
-              )}
+                </p>}
             </div>
           </div>
         </div>
       </main>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
