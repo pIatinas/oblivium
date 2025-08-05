@@ -82,7 +82,6 @@ const CreateBattle = () => {
   const isKnightInBothTeams = (knightId: string) => {
     return winnerTeam.some(k => k.id === knightId) && loserTeam.some(k => k.id === knightId);
   };
-
   const isKnightInTeam = (knightId: string, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       return winnerTeam.some(k => k.id === knightId);
@@ -148,11 +147,9 @@ const CreateBattle = () => {
         <div className="grid gap-6 lg:grid-cols-2">
         {/* Vencedor */}
           <Card className="bg-card border-accent border-[3px] relative">
-            {isMetaAttack && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+            {isMetaAttack && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
                 <span className="text-black text-xs">⭐</span>
-              </div>
-            )}
+              </div>}
             <CardHeader>
               <CardTitle className="text-accent text-center">
                 <div className="flex flex-col items-center">
@@ -183,11 +180,9 @@ const CreateBattle = () => {
 
           {/* Perdedor */}
           <Card className="bg-card border-purple-400 border-[3px] relative">
-            {isMetaAttack && (
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+            {isMetaAttack && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
                 <span className="text-black text-xs">⭐</span>
-              </div>
-            )}
+              </div>}
             <CardHeader>
               <CardTitle className="text-purple-400 text-center">
                 <div className="flex flex-col items-center">
@@ -205,7 +200,7 @@ const CreateBattle = () => {
                         {knight.name}
                       </span>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => removeFromTeam(knight.id, 'loser')} className="text-muted-foreground hover:text-destructive">
+                    <Button variant="ghost" size="sm" onClick={() => removeFromTeam(knight.id, 'loser')} className="text-muted-foreground hover:accent-violet-950">
                       <X className="w-4 h-4" />
                     </Button>
                   </div>)}
@@ -254,11 +249,10 @@ const CreateBattle = () => {
           <CardContent>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredKnights.map(knight => {
-                const isInBothTeams = isKnightInBothTeams(knight.id);
-                const isInWinnerTeam = isKnightInTeam(knight.id, 'winner');
-                const isInLoserTeam = isKnightInTeam(knight.id, 'loser');
-                return (
-                  <div key={knight.id} className={`p-3 rounded-lg border transition-all duration-300 ${isInBothTeams ? 'bg-muted opacity-50' : 'bg-background'} border-border hover:border-accent/50 cursor-pointer`}>
+              const isInBothTeams = isKnightInBothTeams(knight.id);
+              const isInWinnerTeam = isKnightInTeam(knight.id, 'winner');
+              const isInLoserTeam = isKnightInTeam(knight.id, 'loser');
+              return <div key={knight.id} className={`p-3 rounded-lg border transition-all duration-300 ${isInBothTeams ? 'bg-muted opacity-50' : 'bg-background'} border-border hover:border-accent/50 cursor-pointer`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
                         <img src={knight.image_url} alt={knight.name} className="w-10 h-10 rounded-full border border-border" />
@@ -268,29 +262,16 @@ const CreateBattle = () => {
                       </div>
                       
                       <div className="flex gap-1">
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => addToTeam(knight, 'winner')} 
-                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/10 px-2 py-1" 
-                          disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/10 px-2 py-1" disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam}>
                           Vencedor
                         </Button>
-                        <Button 
-                          variant="outline" 
-                          size="sm" 
-                          onClick={() => addToTeam(knight, 'loser')} 
-                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/10 px-2 py-1" 
-                          disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam}
-                        >
+                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'loser')} className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/10 px-2 py-1" disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam}>
                           Perdedor
                         </Button>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
             </div>
             
             {filteredKnights.length === 0 && <p className="text-center text-muted-foreground py-8">
