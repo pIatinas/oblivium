@@ -8,13 +8,11 @@ import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
-
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
-
 interface Battle {
   id: string;
   winner_team: string[];
@@ -23,34 +21,33 @@ interface Battle {
   created_at: string;
   created_by: string;
 }
-
 interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
 }
-
 const Battles = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [battles, setBattles] = useState<Battle[]>([]);
   const [knights, setKnights] = useState<Knight[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     fetchBattles();
     fetchKnights();
     fetchProfiles();
   }, []);
-
   const fetchBattles = async () => {
     try {
-      const { data, error } = await supabase
-        .from('battles')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
+      const {
+        data,
+        error
+      } = await supabase.from('battles').select('*').order('created_at', {
+        ascending: false
+      });
       if (error) throw error;
       setBattles((data || []).map((battle: any) => ({
         ...battle,
@@ -66,41 +63,36 @@ const Battles = () => {
       setLoading(false);
     }
   };
-
   const fetchKnights = async () => {
     try {
-      const { data, error } = await supabase
-        .from('knights')
-        .select('*');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('knights').select('*');
       if (error) throw error;
       setKnights(data || []);
     } catch (error: any) {
       console.error('Erro ao carregar cavaleiros:', error);
     }
   };
-
   const fetchProfiles = async () => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*');
-      
+      const {
+        data,
+        error
+      } = await supabase.from('profiles').select('*');
       if (error) throw error;
       setProfiles(data || []);
     } catch (error: any) {
       console.error('Erro ao carregar perfis:', error);
     }
   };
-
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
   };
-
   const getProfileByUserId = (userId: string) => {
     return profiles.find(p => p.user_id === userId);
   };
-
   const filteredBattles = battles.filter(battle => {
     const allKnights = [...battle.winner_team, ...battle.loser_team];
     return allKnights.some(knightId => {
@@ -108,20 +100,15 @@ const Battles = () => {
       return knight && knight.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
   });
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-nebula">
+    return <div className="min-h-screen bg-gradient-nebula">
         <Header />
         <div className="max-w-6xl mx-auto p-6 text-center">
           <div className="text-accent text-xl">Carregando batalhas...</div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
         <Breadcrumb />
@@ -132,23 +119,15 @@ const Battles = () => {
           
           <div className="relative max-w-md mx-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Busca"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-card border-border"
-            />
+            <Input placeholder="Busca" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border" />
           </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {filteredBattles.map((battle) => (
-            <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
-              {battle.meta && (
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+          {filteredBattles.map(battle => <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
+              {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
                   <span className="text-black text-xs">⭐</span>
-                </div>
-              )}
+                </div>}
               <CardContent className="p-6">
                 <div className="flex items-center justify-between gap-4">
                   {/* Time Vencedor */}
@@ -158,20 +137,17 @@ const Battles = () => {
                     </h3>
                     <div className="flex gap-2 justify-center">
                       {battle.winner_team.slice(0, 3).map((knightId, index) => {
-                        const knight = getKnightById(knightId);
-                        return knight ? (
-                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
-                            <img
-                              src={knight.image_url}
-                              alt={knight.name}
-                              className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40"
-                            />
+                    const knight = getKnightById(knightId);
+                    return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                      e.stopPropagation();
+                      window.location.href = `/knights?knight=${knight.id}`;
+                    }}>
+                            <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40" />
                             <span className="text-xs text-foreground hover:text-accent transition-colors">
                               {knight.name}
                             </span>
-                          </div>
-                        ) : null;
-                      })}
+                          </div> : null;
+                  })}
                     </div>
                   </div>
 
@@ -187,20 +163,17 @@ const Battles = () => {
                     </h3>
                     <div className="flex gap-2 justify-center">
                       {battle.loser_team.slice(0, 3).map((knightId, index) => {
-                        const knight = getKnightById(knightId);
-                        return knight ? (
-                          <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
-                            <img
-                              src={knight.image_url}
-                              alt={knight.name}
-                              className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40"
-                            />
+                    const knight = getKnightById(knightId);
+                    return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                      e.stopPropagation();
+                      window.location.href = `/knights?knight=${knight.id}`;
+                    }}>
+                            <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
                             <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                               {knight.name}
                             </span>
-                          </div>
-                        ) : null;
-                      })}
+                          </div> : null;
+                  })}
                     </div>
                   </div>
                 </div>
@@ -210,21 +183,16 @@ const Battles = () => {
                   por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
                 </div>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
-        {filteredBattles.length === 0 && (
-          <div className="text-center py-12">
+        {filteredBattles.length === 0 && <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">
               {searchTerm ? `Nenhuma batalha encontrada para "${searchTerm}"` : "Nenhuma batalha cadastrada"}
             </p>
-          </div>
-        )}
+          </div>}
       </div>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Battles;
