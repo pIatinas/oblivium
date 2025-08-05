@@ -16,7 +16,12 @@ const Header = () => {
     { name: "Cavaleiros", href: "/knights" },
   ];
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => {
+    if (path === "/battles") {
+      return location.pathname === path || location.pathname.startsWith("/battles/");
+    }
+    return location.pathname === path;
+  };
 
   return (
     <header className="bg-card/50 backdrop-blur-sm border-b border-border sticky top-0 z-50">

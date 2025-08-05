@@ -17,6 +17,7 @@ interface Battle {
   id: string;
   winner_team: string[];
   loser_team: string[];
+  meta: boolean | null;
   created_at: string;
   created_by: string;
 }
@@ -67,7 +68,10 @@ const Index = () => {
       // Set data for other blocks
       setKnights(knightsRes.data || []);
       setProfiles(profilesRes.data || []);
-      setRecentBattles(battlesRes.data?.slice(0, 4) || []);
+      setRecentBattles((battlesRes.data?.slice(0, 4) || []).map((battle: any) => ({
+        ...battle,
+        meta: battle.meta || false
+      })));
 
       // Calculate most used knights
       const knightUsage: { [key: string]: number } = {};
@@ -255,7 +259,12 @@ const Index = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {recentBattles.slice(0, 4).map((battle) => (
-                <Card key={battle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
+                <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
+                  {battle.meta && (
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+                      <span className="text-black text-xs">⭐</span>
+                    </div>
+                  )}
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between gap-4">
                       {/* Time Vencedor */}

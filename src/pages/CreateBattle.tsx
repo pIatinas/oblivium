@@ -82,6 +82,14 @@ const CreateBattle = () => {
   const isKnightInBothTeams = (knightId: string) => {
     return winnerTeam.some(k => k.id === knightId) && loserTeam.some(k => k.id === knightId);
   };
+
+  const isKnightInTeam = (knightId: string, team: 'winner' | 'loser') => {
+    if (team === 'winner') {
+      return winnerTeam.some(k => k.id === knightId);
+    } else {
+      return loserTeam.some(k => k.id === knightId);
+    }
+  };
   const filteredKnights = knights.filter(knight => knight.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -247,6 +255,8 @@ const CreateBattle = () => {
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredKnights.map(knight => {
                 const isInBothTeams = isKnightInBothTeams(knight.id);
+                const isInWinnerTeam = isKnightInTeam(knight.id, 'winner');
+                const isInLoserTeam = isKnightInTeam(knight.id, 'loser');
                 return (
                   <div key={knight.id} className={`p-3 rounded-lg border transition-all duration-300 ${isInBothTeams ? 'bg-muted opacity-50' : 'bg-background'} border-border hover:border-accent/50 cursor-pointer`}>
                     <div className="flex items-center justify-between">
@@ -262,8 +272,8 @@ const CreateBattle = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => addToTeam(knight, 'winner')} 
-                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/15 px-2 py-1" 
-                          disabled={winnerTeam.length >= 3 || isInBothTeams}
+                          className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/10 px-2 py-1" 
+                          disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam}
                         >
                           Vencedor
                         </Button>
@@ -271,8 +281,8 @@ const CreateBattle = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => addToTeam(knight, 'loser')} 
-                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/15 px-2 py-1" 
-                          disabled={loserTeam.length >= 3 || isInBothTeams}
+                          className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/10 px-2 py-1" 
+                          disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam}
                         >
                           Perdedor
                         </Button>

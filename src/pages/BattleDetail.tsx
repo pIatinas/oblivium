@@ -54,7 +54,7 @@ const BattleDetail = () => {
     if (battle && knights.length > 0) {
       fetchRelatedBattles();
     }
-  }, [id]);
+  }, [battle, knights]);
 
   const fetchBattleDetail = async () => {
     try {
@@ -181,172 +181,159 @@ const BattleDetail = () => {
           </h1>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Vencedor */}
-          <Card className="bg-card border-accent border-[3px] relative">
-            {battle.meta && (
-              <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-                <span className="text-black text-sm">⭐</span>
-              </div>
-            )}
-            <CardHeader>
-              <CardTitle className="text-accent text-center">
-                <div className="flex flex-col items-center">
-                  <div className="text-2xl mb-2">🏆</div>
-                  <div>Vencedor</div>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 min-h-[200px]">
-                {battle.winner_team.map((knightId, index) => {
-                  const knight = getKnightById(knightId);
-                  return knight ? (
-                    <div key={index} className="flex items-center justify-between p-3 bg-accent/5 rounded-lg border border-accent/20">
-                      <div className="flex items-center gap-3">
-                        <img 
-                          src={knight.image_url} 
-                          alt={knight.name} 
-                          className="w-10 h-10 rounded-full border border-accent/20" 
-                        />
-                        <span className="text-foreground font-medium">
-                          {knight.name}
-                        </span>
-                      </div>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Perdedor */}
-          <Card className="bg-card border-purple-400 border-[3px] relative">
-            <CardHeader>
-              <CardTitle className="text-purple-400 text-center">
-                <div className="flex flex-col items-center">
-                  <div className="text-2xl mb-2">💀</div>
-                  <div>Perdedor</div>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 min-h-[200px]">
-                {battle.loser_team.map((knightId, index) => {
-                  const knight = getKnightById(knightId);
-                  return knight ? (
-                    <div key={index} className="flex items-center justify-between p-3 bg-purple-400/5 rounded-lg border border-purple-400/20">
-                      <div className="flex items-center gap-3">
-                        <img 
-                          src={knight.image_url} 
-                          alt={knight.name} 
-                          className="w-10 h-10 rounded-full border border-purple-400/20" 
-                        />
-                        <span className="text-foreground font-medium">
-                          {knight.name}
-                        </span>
-                      </div>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Informações da batalha */}
-        <Card className="bg-card/50 backdrop-blur-sm border-none mt-6">
+        <Card className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none">
+          {battle.meta && (
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+              <span className="text-black text-xs">⭐</span>
+            </div>
+          )}
           <CardContent className="p-6">
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <div>
-                Criado por: {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
+            <div className="flex items-center justify-between gap-4">
+              {/* Time Vencedor */}
+              <div className="flex-1 space-y-3">
+                <h3 className="text-accent font-semibold text-center flex items-center justify-center gap-2">
+                  Vencedor
+                </h3>
+                <div className="flex gap-2 justify-center">
+                  {battle.winner_team.slice(0, 3).map((knightId, index) => {
+                    const knight = getKnightById(knightId);
+                    return knight ? (
+                      <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
+                        <img
+                          src={knight.image_url}
+                          alt={knight.name}
+                          className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40"
+                        />
+                        <span className="text-xs text-foreground hover:text-accent transition-colors">
+                          {knight.name}
+                        </span>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
               </div>
-              <div>
-                {new Date(battle.created_at).toLocaleDateString('pt-BR')} às {new Date(battle.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+
+              {/* X Separador */}
+              <div className="text-3xl font-bold text-muted-foreground">
+                ✕
               </div>
+
+              {/* Time Perdedor */}
+              <div className="flex-1 space-y-3">
+                <h3 className="text-purple-400 font-semibold text-center flex items-center justify-center gap-2">
+                  Perdedor
+                </h3>
+                <div className="flex gap-2 justify-center">
+                  {battle.loser_team.slice(0, 3).map((knightId, index) => {
+                    const knight = getKnightById(knightId);
+                    return knight ? (
+                      <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
+                        <img
+                          src={knight.image_url}
+                          alt={knight.name}
+                          className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40"
+                        />
+                        <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
+                          {knight.name}
+                        </span>
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            </div>
+            
+            {/* Informação do autor */}
+            <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+              por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
             </div>
           </CardContent>
         </Card>
 
         {/* Batalhas Relacionadas */}
-        {relatedBattles.length > 0 && (
-          <Card className="bg-card border-none mt-8">
-            <CardHeader>
-              <CardTitle className="text-foreground text-center">
-                Batalhas Relacionadas
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2">
-                {relatedBattles.map((relatedBattle) => (
-                  <Card key={relatedBattle.id} className="bg-card hover:bg-card/90 transition-all duration-300 relative border border-border hover:border-accent/50 shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${relatedBattle.id}`}>
-                    {relatedBattle.meta && (
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-                        <span className="text-black text-xs">⭐</span>
-                      </div>
-                    )}
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        {/* Time Vencedor */}
-                        <div className="flex-1 space-y-2">
-                          <h4 className="text-accent font-semibold text-center text-sm">
-                            Vencedor
-                          </h4>
-                          <div className="flex gap-1 justify-center">
-                            {relatedBattle.winner_team.slice(0, 3).map((knightId, index) => {
-                              const knight = getKnightById(knightId);
-                              return knight ? (
-                                <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
-                                  <img
-                                    src={knight.image_url}
-                                    alt={knight.name}
-                                    className="w-6 h-6 rounded-full border border-accent/20 hover:border-accent/40"
-                                  />
-                                  <span className="text-xs text-foreground hover:text-accent transition-colors">
-                                    {knight.name}
-                                  </span>
-                                </div>
-                              ) : null;
-                            })}
-                          </div>
-                        </div>
-
-                        {/* X Separador */}
-                        <div className="text-xl font-bold text-muted-foreground">
-                          ✕
-                        </div>
-
-                        {/* Time Perdedor */}
-                        <div className="flex-1 space-y-2">
-                          <h4 className="text-purple-400 font-semibold text-center text-sm">
-                            Perdedor
-                          </h4>
-                          <div className="flex gap-1 justify-center">
-                            {relatedBattle.loser_team.slice(0, 3).map((knightId, index) => {
-                              const knight = getKnightById(knightId);
-                              return knight ? (
-                                <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
-                                  <img
-                                    src={knight.image_url}
-                                    alt={knight.name}
-                                    className="w-6 h-6 rounded-full border border-purple-400/20 hover:border-purple-400/40"
-                                  />
-                                  <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
-                                    {knight.name}
-                                  </span>
-                                </div>
-                              ) : null;
-                            })}
-                          </div>
+        <div className="mt-8">
+          <h3 className="text-2xl font-bold text-foreground mb-6">
+            Batalhas Relacionadas
+          </h3>
+          {relatedBattles.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {relatedBattles.map((relatedBattle) => (
+                <Card key={relatedBattle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${relatedBattle.id}`}>
+                  {relatedBattle.meta && (
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+                      <span className="text-black text-xs">⭐</span>
+                    </div>
+                  )}
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      {/* Time Vencedor */}
+                      <div className="flex-1 space-y-2">
+                        <h4 className="text-accent font-semibold text-center text-sm">
+                          Vencedor
+                        </h4>
+                        <div className="flex gap-1 justify-center">
+                          {relatedBattle.winner_team.slice(0, 3).map((knightId, index) => {
+                            const knight = getKnightById(knightId);
+                            return knight ? (
+                              <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
+                                <img
+                                  src={knight.image_url}
+                                  alt={knight.name}
+                                  className="w-6 h-6 rounded-full border border-accent/20 hover:border-accent/40"
+                                />
+                                <span className="text-xs text-foreground hover:text-accent transition-colors">
+                                  {knight.name}
+                                </span>
+                              </div>
+                            ) : null;
+                          })}
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+
+                      {/* X Separador */}
+                      <div className="text-xl font-bold text-muted-foreground">
+                        ✕
+                      </div>
+
+                      {/* Time Perdedor */}
+                      <div className="flex-1 space-y-2">
+                        <h4 className="text-purple-400 font-semibold text-center text-sm">
+                          Perdedor
+                        </h4>
+                        <div className="flex gap-1 justify-center">
+                          {relatedBattle.loser_team.slice(0, 3).map((knightId, index) => {
+                            const knight = getKnightById(knightId);
+                            return knight ? (
+                              <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={(e) => { e.stopPropagation(); window.location.href = `/knights?knight=${knight.id}`; }}>
+                                <img
+                                  src={knight.image_url}
+                                  alt={knight.name}
+                                  className="w-6 h-6 rounded-full border border-purple-400/20 hover:border-purple-400/40"
+                                />
+                                <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
+                                  {knight.name}
+                                </span>
+                              </div>
+                            ) : null;
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Informação do autor */}
+                    <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+                      por {getProfileByUserId(relatedBattle.created_by)?.full_name || 'Usuário'}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-8">
+              Nenhuma batalha relacionada encontrada
+            </p>
+          )}
+        </div>
       </div>
       <Footer />
     </div>
