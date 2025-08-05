@@ -41,7 +41,6 @@ const Knights = () => {
     fetchKnights();
     fetchBattles();
   }, []);
-
   useEffect(() => {
     if (selectedKnight && battles.length > 0 && knights.length > 0) {
       fetchRelatedKnights();
@@ -114,15 +113,12 @@ const Knights = () => {
     const knight = knights.find(k => k.id === knightId);
     return knight ? knight.name : "Cavaleiro removido";
   };
-
   const fetchRelatedKnights = () => {
     if (!selectedKnight) return;
-    
+
     // Find all battles involving the selected knight
-    const knightBattles = battles.filter(battle => 
-      [...battle.winner_team, ...battle.loser_team].includes(selectedKnight.id)
-    );
-    
+    const knightBattles = battles.filter(battle => [...battle.winner_team, ...battle.loser_team].includes(selectedKnight.id));
+
     // Extract all knight IDs from these battles
     const allKnightIds = new Set<string>();
     knightBattles.forEach(battle => {
@@ -132,13 +128,9 @@ const Knights = () => {
         }
       });
     });
-    
+
     // Get knight objects and limit to 6
-    const related = Array.from(allKnightIds)
-      .map(id => knights.find(k => k.id === id))
-      .filter(Boolean)
-      .slice(0, 6) as Knight[];
-    
+    const related = Array.from(allKnightIds).map(id => knights.find(k => k.id === id)).filter(Boolean).slice(0, 6) as Knight[];
     setRelatedKnights(related);
   };
   if (loading) {
@@ -150,13 +142,11 @@ const Knights = () => {
       </div>;
   }
   const knightHistory = selectedKnight ? getKnightHistory(selectedKnight.id) : null;
-  return (
-    <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
         <Breadcrumb knightName={selectedKnight?.name} />
-        {!selectedKnight ? (
-          <div className="mb-8">
+        {!selectedKnight ? <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
               Cavaleiros
             </h1>
@@ -172,9 +162,7 @@ const Knights = () => {
                 Adicionar
               </Button>
             </div>
-          </div>
-        ) : (
-          <div className="mb-8">
+          </div> : <div className="mb-8">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-4">
                 <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-[110px] h-[110px] rounded-full border-2 border-accent/20" />
@@ -186,22 +174,16 @@ const Knights = () => {
                 Voltar
               </button>
             </div>
-          </div>
-        )}
+          </div>}
 
-        {!selectedKnight ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredKnights.map(knight => (
-              <div key={knight.id} className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg" onClick={() => handleKnightClick(knight)}>
+        {!selectedKnight ? <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredKnights.map(knight => <div key={knight.id} className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg" onClick={() => handleKnightClick(knight)}>
                 <div className="flex items-center gap-3">
                   <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full border-2 border-accent/20" />
                   <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-6">
+              </div>)}
+          </div> : <div className="space-y-6">
             <Card className="bg-card border-none shadow-none">
               <CardContent className="p-6">
                 <div className="grid gap-6 md:grid-cols-2">
@@ -214,12 +196,10 @@ const Knights = () => {
                        </div>
                      </h3>
                     <div className="space-y-3">
-                       {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} className="bg-accent/5 border border-border hover:border-accent/50 shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
-                            {battle.meta && (
-                              <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+                       {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} onClick={() => window.location.href = `/battles/${battle.id}`} className="bg-accent/5 border border-border hover:border-accent-white shadow-none cursor-pointer">
+                            {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
                                 <span className="text-black text-xs">⭐</span>
-                              </div>
-                            )}
+                              </div>}
                             <CardContent className="px-4 py-7 justify-center text-center relative">
                               <div className="flex items-center justify-between gap-2">
                                 {/* Time Aliado */}
@@ -276,11 +256,9 @@ const Knights = () => {
                      </h3>
                     <div className="space-y-3">
                        {knightHistory?.defeats?.length ? knightHistory.defeats.map((battle, index) => <Card key={index} className="bg-primary/5 border border-border hover:border-accent/50 shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
-                            {battle.meta && (
-                              <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+                            {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
                                 <span className="text-black text-xs">⭐</span>
-                              </div>
-                            )}
+                              </div>}
                             <CardContent className="px-4 py-7 justify-center text-center relative">
                               <div className="flex items-center justify-between gap-4">
                                 {/* Time Aliado */}
@@ -331,37 +309,27 @@ const Knights = () => {
               </Card>
 
             {/* Cavaleiros Relacionados */}
-            {relatedKnights.length > 0 && (
-              <div className="mt-8">
+            {relatedKnights.length > 0 && <div className="mt-8">
                 <h3 className="text-2xl font-bold text-foreground mb-6">
                   Cavaleiros Relacionados
                 </h3>
                 <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6">
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {relatedKnights.map(knight => (
-                      <div key={knight.id} className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg" onClick={() => handleKnightClick(knight)}>
+                    {relatedKnights.map(knight => <div key={knight.id} className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg" onClick={() => handleKnightClick(knight)}>
                         <div className="flex items-center gap-3">
                           <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full border-2 border-accent/20" />
                           <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
                         </div>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
+              </div>}
+          </div>}
       </div>
       
-      <CreateKnightModal 
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onKnightCreated={handleKnightCreated}
-      />
+      <CreateKnightModal isOpen={showModal} onClose={() => setShowModal(false)} onKnightCreated={handleKnightCreated} />
       
       <Footer />
-    </div>
-  );
+    </div>;
 };
 export default Knights;
