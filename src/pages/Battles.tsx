@@ -126,7 +126,7 @@ const Battles = () => {
         <div className="grid gap-6 md:grid-cols-2">
           {filteredBattles.map(battle => <Card key={battle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
               {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
-                  <span className="text-black text-xs">⭐</span>
+                  <span className="text-black text-xl">⭐</span>
                 </div>}
               <CardContent className="p-6">
                 <div className="flex items-center justify-between gap-4">
