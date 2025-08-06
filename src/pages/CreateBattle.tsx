@@ -139,9 +139,7 @@ const CreateBattle = () => {
       <div className="max-w-6xl mx-auto p-6">
         <Breadcrumb />
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
-            Cadastrar
-          </h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Cadastro de Batalha</h1>
           <p className="text-muted-foreground text-center">
             Selecione os cavaleiros para compor os times vencedor e perdedor
           </p>
@@ -150,8 +148,8 @@ const CreateBattle = () => {
         <div className="grid gap-6 lg:grid-cols-2">
         {/* Vencedor */}
           <Card className="bg-card border-accent border-[3px] relative">
-            {isMetaAttack && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-                <span className="text-black text-xs">⭐</span>
+            {isMetaAttack && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
+                <span className="text-black text-4xl">⭐</span>
               </div>}
             <CardHeader>
               <CardTitle className="text-accent text-center">
@@ -183,9 +181,7 @@ const CreateBattle = () => {
 
           {/* Perdedor */}
           <Card className="bg-card border-purple-400 border-[3px] relative">
-            {isMetaAttack && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-                <span className="text-black text-xs">⭐</span>
-              </div>}
+            {isMetaAttack}
             <CardHeader>
               <CardTitle className="text-purple-400 text-center">
                 <div className="flex flex-col items-center">
