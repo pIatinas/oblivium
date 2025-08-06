@@ -20,24 +20,33 @@ export type Database = {
           created_by: string
           id: string
           loser_team: string[]
+          loser_team_id: string | null
+          meta: boolean | null
           updated_at: string
           winner_team: string[]
+          winner_team_id: string | null
         }
         Insert: {
           created_at?: string
           created_by: string
           id?: string
           loser_team: string[]
+          loser_team_id?: string | null
+          meta?: boolean | null
           updated_at?: string
           winner_team: string[]
+          winner_team_id?: string | null
         }
         Update: {
           created_at?: string
           created_by?: string
           id?: string
           loser_team?: string[]
+          loser_team_id?: string | null
+          meta?: boolean | null
           updated_at?: string
           winner_team?: string[]
+          winner_team_id?: string | null
         }
         Relationships: []
       }
@@ -48,6 +57,7 @@ export type Database = {
           id: string
           image_url: string | null
           name: string
+          slug: string | null
           updated_at: string
         }
         Insert: {
@@ -56,6 +66,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           name: string
+          slug?: string | null
           updated_at?: string
         }
         Update: {
@@ -64,12 +75,14 @@ export type Database = {
           id?: string
           image_url?: string | null
           name?: string
+          slug?: string | null
           updated_at?: string
         }
         Relationships: []
       }
       profiles: {
         Row: {
+          active: boolean | null
           created_at: string
           email: string
           full_name: string | null
@@ -79,6 +92,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          active?: boolean | null
           created_at?: string
           email: string
           full_name?: string | null
@@ -88,6 +102,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          active?: boolean | null
           created_at?: string
           email?: string
           full_name?: string | null
@@ -103,7 +118,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_unique_knight_slug: {
+        Args: { knight_name: string; knight_id: string }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
