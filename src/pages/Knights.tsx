@@ -196,8 +196,8 @@ const Knights = () => {
                        </div>
                      </h3>
                     <div className="space-y-3">
-                       {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} onClick={() => window.location.href = `/battles/${battle.id}`} className="bg-accent/5 border border-border hover:border-accent-white shadow-none cursor-pointer">
-                            {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
+                       {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} onClick={() => window.location.href = `/battles/${battle.id}`} className="bg-accent/6  shadow-none cursor-pointer">
+                            {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10">
                                 <span className="text-black text-xs">⭐</span>
                               </div>}
                             <CardContent className="px-4 py-7 justify-center text-center relative">
