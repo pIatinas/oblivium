@@ -178,7 +178,7 @@ const BattleDetail = () => {
   }
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
-      <div className="mx-auto max-w-screen-lg ">
+      <div className="mx-auto max-w-6xl mx-auto p-6">
         <Breadcrumb battleId={id} />
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Detalhes da Batalha</h1>
