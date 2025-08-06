@@ -263,9 +263,7 @@ const CreateBattle = () => {
         {/* Lista de Cavaleiros Disponíveis */}
         <Card className="bg-card border-none">
           <CardHeader>
-            <CardTitle className="text-foreground text-center">
-              Cavaleiros
-            </CardTitle>
+            <CardTitle className="text-foreground text-center">Cavaleiros Disponíveis</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -283,7 +281,7 @@ const CreateBattle = () => {
                       </div>
                       
                       <div className="flex gap-1">
-                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam} className="text-xs text-white hover:bg-gradient-cosmic hover:opacity-90 px-2 py-1 bg-yellow-400 hover:bg-yellow-600 hover:text-white ">
+                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam} className="text-xs text-white hover:bg-gradient-cosmic hover:opacity-90 px-2 py-1 bg-yellow-400 hover:text-white ">
                           Vencedor
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'loser')} disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam} className="text-xs bg-gradient-cosmic text-white hover:bg-gradient-cosmic hover:text-white px-2 py-1">
