@@ -181,9 +181,7 @@ const BattleDetail = () => {
       <div className="mx-auto max-w-screen-lg ">
         <Breadcrumb battleId={id} />
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
-            Detalhe da Batalha
-          </h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Detalhes da Batalha</h1>
         </div>
 
         <Card className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none">
@@ -194,7 +192,7 @@ const BattleDetail = () => {
             <div className="flex items-center justify-between gap-4">
               {/* Time Vencedor */}
               <div className="flex-1 space-y-3">
-                <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2">
+                <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2 text-2xl">
                   Vencedor
                   {battle.winner_team_stigma && <img src={getStigmaById(battle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-10 h-10" />}
                 </h3>
@@ -205,7 +203,7 @@ const BattleDetail = () => {
                     e.stopPropagation();
                     window.location.href = `/knights?knight=${knight.id}`;
                   }}>
-                        <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40" />
+                        <img src={knight.image_url} alt={knight.name} className="w-12 h-12 rounded-full border border-accent/20 hover:border-accent/40" />
                         <span className="text-xs text-foreground hover:text-accent transition-colors">
                           {knight.name}
                         </span>
@@ -221,7 +219,7 @@ const BattleDetail = () => {
 
               {/* Time Perdedor */}
               <div className="flex-1 space-y-3">
-                <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2">
+                <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2 text-2xl">
                   Perdedor
                   {battle.loser_team_stigma && <img src={getStigmaById(battle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-10 h-10" />}
                 </h3>
@@ -232,7 +230,7 @@ const BattleDetail = () => {
                     e.stopPropagation();
                     window.location.href = `/knights?knight=${knight.id}`;
                   }}>
-                        <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
+                        <img src={knight.image_url} alt={knight.name} className="w-12 h-12 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
                         <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                           {knight.name}
                         </span>
@@ -274,7 +272,7 @@ const BattleDetail = () => {
                         e.stopPropagation();
                         window.location.href = `/knights?knight=${knight.id}`;
                       }}>
-                                <img src={knight.image_url} alt={knight.name} className="w-6 h-6 rounded-full border border-accent/20 hover:border-accent/40" />
+                                <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40" />
                                 <span className="text-xs text-foreground hover:text-accent transition-colors">
                                   {knight.name}
                                 </span>
@@ -301,7 +299,7 @@ const BattleDetail = () => {
                         e.stopPropagation();
                         window.location.href = `/knights?knight=${knight.id}`;
                       }}>
-                                <img src={knight.image_url} alt={knight.name} className="w-6 h-6 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
+                                <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
                                 <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                                   {knight.name}
                                 </span>
