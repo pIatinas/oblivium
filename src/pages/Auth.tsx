@@ -1,54 +1,74 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Eye, EyeOff } from "lucide-react";
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleAuth = async (e: React.FormEvent) => {
+  useEffect(() => {
+    // Check if user is already authenticated
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate('/');
+      }
+    };
+    checkAuth();
+  }, [navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        
-        if (error) throw error;
-        
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Bem-vindo ao Oblivium.",
-        });
-      } else {
-        const { error } = await supabase.auth.signUp({
+      if (isSignUp) {
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`,
             data: {
               full_name: fullName,
-            },
-          },
+            }
+          }
         });
-        
+
         if (error) throw error;
-        
+
         toast({
-          title: "Cadastro realizado com sucesso!",
-          description: "Você pode fazer login agora.",
+          title: "Cadastro realizado!",
+          description: "Verifique seu email para confirmar sua conta.",
         });
+      } else {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (error) throw error;
+
+        toast({
+          title: "Login realizado!",
+          description: "Bem-vindo de volta!",
+        });
+
+        // Redirect to the original page or home
+        const from = location.state?.from?.pathname || '/';
+        navigate(from, { replace: true });
       }
     } catch (error: any) {
       toast({
@@ -62,75 +82,98 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-6">
-      <Card className="w-full max-w-md bg-card border-border shadow-cosmic">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-accent">
-            ⚔️ Oblivium
-          </CardTitle>
-          <p className="text-muted-foreground">
-            Sistema de Gerenciamento de Lutas
-          </p>
+    <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
+      <Card className="w-full max-w-md bg-card/90 backdrop-blur-sm border-none shadow-xl">
+        <CardHeader className="text-center space-y-4">
+          <div className="text-8xl">⚔️</div>
+          <div>
+            <CardTitle className="text-3xl font-bold text-foreground mb-2">Oblivium</CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Gerenciador de Batalhas
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleAuth} className="space-y-4">
-            {!isLogin && (
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-4">
+            {isSignUp && (
               <div className="space-y-2">
-                <Label htmlFor="fullName">Nome Completo</Label>
+                <Label htmlFor="fullName" className="text-foreground">Nome</Label>
                 <Input
                   id="fullName"
                   type="text"
+                  placeholder="Seu nome completo"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
-                  className="bg-background border-border"
+                  className="bg-background/50 border-border"
                 />
               </div>
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-foreground">Email</Label>
               <Input
                 id="email"
                 type="email"
+                placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-background border-border"
+                className="bg-background/50 border-border"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="bg-background border-border"
-              />
+              <Label htmlFor="password" className="text-foreground">Senha</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="bg-background/50 border-border pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </div>
             </div>
-            
+          </CardContent>
+          
+          <CardFooter className="flex flex-col space-y-4">
             <Button
               type="submit"
-              className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+              className="w-full bg-gradient-cosmic text-white hover:opacity-90"
               disabled={loading}
             >
-              {loading ? "Carregando..." : isLogin ? "Entrar" : "Cadastrar"}
+              {loading ? "Carregando..." : (isSignUp ? "Cadastrar" : "Entrar")}
             </Button>
-          </form>
-          
-          <div className="mt-4 text-center">
-            <button
+            
+            <Button
               type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-accent hover:text-accent/80 text-sm"
+              variant="ghost"
+              className="w-full text-muted-foreground hover:text-foreground"
+              onClick={() => setIsSignUp(!isSignUp)}
             >
-              {isLogin ? "Não tem conta? Cadastre-se" : "Já tem conta? Faça login"}
-            </button>
-          </div>
-        </CardContent>
+              {isSignUp 
+                ? "Já tem uma conta? Faça login" 
+                : "Não tem conta? Cadastre-se"
+              }
+            </Button>
+          </CardFooter>
+        </form>
       </Card>
     </div>
   );

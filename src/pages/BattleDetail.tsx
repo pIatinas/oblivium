@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,10 +16,18 @@ interface Knight {
   image_url: string;
 }
 
+interface Stigma {
+  id: string;
+  nome: string;
+  imagem: string;
+}
+
 interface Battle {
   id: string;
   winner_team: string[];
   loser_team: string[];
+  winner_team_stigma: string | null;
+  loser_team_stigma: string | null;
   meta: boolean | null;
   tipo: string;
   created_at: string;
@@ -38,6 +47,7 @@ const BattleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [battle, setBattle] = useState<Battle | null>(null);
   const [knights, setKnights] = useState<Knight[]>([]);
+  const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [relatedBattles, setRelatedBattles] = useState<Battle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -47,6 +57,7 @@ const BattleDetail = () => {
     if (id) {
       fetchBattleDetail();
       fetchKnights();
+      fetchStigmas();
       fetchProfiles();
     }
   }, [id]);
@@ -94,6 +105,19 @@ const BattleDetail = () => {
     }
   };
 
+  const fetchStigmas = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('stigmas')
+        .select('*');
+      
+      if (error) throw error;
+      setStigmas(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar estigmas:', error);
+    }
+  };
+
   const fetchProfiles = async () => {
     try {
       const { data, error } = await supabase
@@ -109,6 +133,10 @@ const BattleDetail = () => {
 
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
+  };
+
+  const getStigmaById = (stigmaId: string) => {
+    return stigmas.find(s => s.id === stigmaId);
   };
 
   const getProfileByUserId = (userId: string) => {
@@ -192,8 +220,15 @@ const BattleDetail = () => {
             <div className="flex items-center justify-between gap-4">
               {/* Time Vencedor */}
               <div className="flex-1 space-y-3">
-                <h3 className="text-accent font-semibold text-center flex items-center justify-center gap-2">
+                <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2">
                   Vencedor
+                  {battle.winner_team_stigma && (
+                    <img 
+                      src={getStigmaById(battle.winner_team_stigma)?.imagem} 
+                      alt="Estigma do time vencedor"
+                      className="w-10 h-10"
+                    />
+                  )}
                 </h3>
                 <div className="flex gap-2 justify-center">
                   {battle.winner_team.slice(0, 3).map((knightId, index) => {
@@ -221,8 +256,15 @@ const BattleDetail = () => {
 
               {/* Time Perdedor */}
               <div className="flex-1 space-y-3">
-                <h3 className="text-purple-400 font-semibold text-center flex items-center justify-center gap-2">
+                <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2">
                   Perdedor
+                  {battle.loser_team_stigma && (
+                    <img 
+                      src={getStigmaById(battle.loser_team_stigma)?.imagem} 
+                      alt="Estigma do time perdedor"
+                      className="w-10 h-10"
+                    />
+                  )}
                 </h3>
                 <div className="flex gap-2 justify-center">
                   {battle.loser_team.slice(0, 3).map((knightId, index) => {
@@ -269,8 +311,15 @@ const BattleDetail = () => {
                     <div className="flex items-center justify-between gap-4">
                       {/* Time Vencedor */}
                       <div className="flex-1 space-y-2">
-                        <h4 className="text-accent font-semibold text-center text-sm">
+                        <h4 className="text-accent font-semibold text-center text-sm flex flex-col items-center gap-1">
                           Vencedor
+                          {relatedBattle.winner_team_stigma && (
+                            <img 
+                              src={getStigmaById(relatedBattle.winner_team_stigma)?.imagem} 
+                              alt="Estigma do time vencedor"
+                              className="w-8 h-8"
+                            />
+                          )}
                         </h4>
                         <div className="flex gap-1 justify-center">
                           {relatedBattle.winner_team.slice(0, 3).map((knightId, index) => {
@@ -298,8 +347,15 @@ const BattleDetail = () => {
 
                       {/* Time Perdedor */}
                       <div className="flex-1 space-y-2">
-                        <h4 className="text-purple-400 font-semibold text-center text-sm">
+                        <h4 className="text-purple-400 font-semibold text-center text-sm flex flex-col items-center gap-1">
                           Perdedor
+                          {relatedBattle.loser_team_stigma && (
+                            <img 
+                              src={getStigmaById(relatedBattle.loser_team_stigma)?.imagem} 
+                              alt="Estigma do time perdedor"
+                              className="w-8 h-8"
+                            />
+                          )}
                         </h4>
                         <div className="flex gap-1 justify-center">
                           {relatedBattle.loser_team.slice(0, 3).map((knightId, index) => {

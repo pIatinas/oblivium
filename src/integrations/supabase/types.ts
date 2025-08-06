@@ -21,11 +21,13 @@ export type Database = {
           id: string
           loser_team: string[]
           loser_team_id: string | null
+          loser_team_stigma: string | null
           meta: boolean | null
           tipo: string | null
           updated_at: string
           winner_team: string[]
           winner_team_id: string | null
+          winner_team_stigma: string | null
         }
         Insert: {
           created_at?: string
@@ -33,11 +35,13 @@ export type Database = {
           id?: string
           loser_team: string[]
           loser_team_id?: string | null
+          loser_team_stigma?: string | null
           meta?: boolean | null
           tipo?: string | null
           updated_at?: string
           winner_team: string[]
           winner_team_id?: string | null
+          winner_team_stigma?: string | null
         }
         Update: {
           created_at?: string
@@ -45,13 +49,30 @@ export type Database = {
           id?: string
           loser_team?: string[]
           loser_team_id?: string | null
+          loser_team_stigma?: string | null
           meta?: boolean | null
           tipo?: string | null
           updated_at?: string
           winner_team?: string[]
           winner_team_id?: string | null
+          winner_team_stigma?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "battles_loser_team_stigma_fkey"
+            columns: ["loser_team_stigma"]
+            isOneToOne: false
+            referencedRelation: "stigmas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "battles_winner_team_stigma_fkey"
+            columns: ["winner_team_stigma"]
+            isOneToOne: false
+            referencedRelation: "stigmas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       knights: {
         Row: {
@@ -113,6 +134,30 @@ export type Database = {
           role?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      stigmas: {
+        Row: {
+          created_at: string
+          id: string
+          imagem: string | null
+          nome: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          imagem?: string | null
+          nome: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          imagem?: string | null
+          nome?: string
+          updated_at?: string
         }
         Relationships: []
       }
