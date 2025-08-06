@@ -187,8 +187,8 @@ const BattleDetail = () => {
         </div>
 
         <Card className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none">
-          {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-              <span className="text-black text-xs">⭐</span>
+          {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
+              <span className="text-black text-xl">⭐</span>
             </div>}
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-4">
@@ -256,8 +256,8 @@ const BattleDetail = () => {
           </h3>
           {relatedBattles.length > 0 ? <div className="grid gap-4 md:grid-cols-2">
               {relatedBattles.map(relatedBattle => <Card key={relatedBattle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${relatedBattle.id}`}>
-                  {relatedBattle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-                      <span className="text-black text-xs">⭐</span>
+                  {relatedBattle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
+                      <span className="text-black text-lg">⭐</span>
                     </div>}
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between gap-4">
@@ -265,7 +265,7 @@ const BattleDetail = () => {
                       <div className="flex-1 space-y-2">
                         <h4 className="text-accent font-semibold text-center text-sm flex flex-col items-center gap-1">
                           Vencedor
-                          {relatedBattle.winner_team_stigma && <img src={getStigmaById(relatedBattle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-8 h-8" />}
+                          {relatedBattle.winner_team_stigma && <img src={getStigmaById(relatedBattle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-6 h-6" />}
                         </h4>
                         <div className="flex gap-1 justify-center">
                           {relatedBattle.winner_team.slice(0, 3).map((knightId, index) => {
@@ -292,7 +292,7 @@ const BattleDetail = () => {
                       <div className="flex-1 space-y-2">
                         <h4 className="text-purple-400 font-semibold text-center text-sm flex flex-col items-center gap-1">
                           Perdedor
-                          {relatedBattle.loser_team_stigma && <img src={getStigmaById(relatedBattle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-8 h-8" />}
+                          {relatedBattle.loser_team_stigma && <img src={getStigmaById(relatedBattle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-6 h-6" />}
                         </h4>
                         <div className="flex gap-1 justify-center">
                           {relatedBattle.loser_team.slice(0, 3).map((knightId, index) => {
