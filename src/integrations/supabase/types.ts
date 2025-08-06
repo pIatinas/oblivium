@@ -22,6 +22,7 @@ export type Database = {
           loser_team: string[]
           loser_team_id: string | null
           meta: boolean | null
+          tipo: string | null
           updated_at: string
           winner_team: string[]
           winner_team_id: string | null
@@ -33,6 +34,7 @@ export type Database = {
           loser_team: string[]
           loser_team_id?: string | null
           meta?: boolean | null
+          tipo?: string | null
           updated_at?: string
           winner_team: string[]
           winner_team_id?: string | null
@@ -44,6 +46,7 @@ export type Database = {
           loser_team?: string[]
           loser_team_id?: string | null
           meta?: boolean | null
+          tipo?: string | null
           updated_at?: string
           winner_team?: string[]
           winner_team_id?: string | null

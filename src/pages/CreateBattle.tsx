@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -24,6 +25,7 @@ const CreateBattle = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [isMetaAttack, setIsMetaAttack] = useState(false);
+  const [battleType, setBattleType] = useState('Padrão');
   const {
     toast
   } = useToast();
@@ -107,6 +109,7 @@ const CreateBattle = () => {
         winner_team: winnerTeam.map(k => k.id),
         loser_team: loserTeam.map(k => k.id),
         meta: isMetaAttack,
+        tipo: battleType,
         created_by: (await supabase.auth.getUser()).data.user?.id!
       }]);
       if (error) throw error;
@@ -212,8 +215,26 @@ const CreateBattle = () => {
           </Card>
         </div>
 
-        {/* Meta de Ataque Checkbox */}
-        <div className="mt-3 mb-6 flex items-center justify-end">
+        {/* Meta de Ataque e Tipo */}
+        <div className="mt-3 mb-6 flex items-center justify-end gap-6">
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="tipo" className="text-foreground text-muted-foreground">
+              Tipo
+            </Label>
+            <Select value={battleType} onValueChange={setBattleType}>
+              <SelectTrigger className="w-[200px] bg-card border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Padrão">Padrão</SelectItem>
+                <SelectItem value="Cavaleiros de Hades">Cavaleiros de Hades</SelectItem>
+                <SelectItem value="Cavaleiros da Lua">Cavaleiros da Lua</SelectItem>
+                <SelectItem value="Cavaleiros de Athena">Cavaleiros de Athena</SelectItem>
+                <SelectItem value="Cavaleiros de Poseidon">Cavaleiros de Poseidon</SelectItem>
+                <SelectItem value="Cavaleiros Econômicos">Cavaleiros Econômicos</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="flex items-center space-x-2">
             <Checkbox id="meta-attack" checked={isMetaAttack} onCheckedChange={checked => setIsMetaAttack(checked as boolean)} />
             <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground ">
@@ -262,10 +283,10 @@ const CreateBattle = () => {
                       </div>
                       
                       <div className="flex gap-1">
-                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} className="text-xs bg-accent/10 border-accent/20 text-accent hover:bg-accent/10 px-2 py-1" disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam}>
+                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} className="text-xs bg-gradient-cosmic text-white border-accent hover:bg-gradient-cosmic hover:opacity-90 px-2 py-1" disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam}>
                           Vencedor
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'loser')} className="text-xs bg-purple-400/10 border-purple-400/20 text-purple-400 hover:bg-purple-400/10 px-2 py-1" disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam}>
+                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'loser')} className="text-xs bg-gradient-cosmic text-white border-accent hover:bg-gradient-cosmic hover:opacity-90 px-2 py-1" disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam}>
                           Perdedor
                         </Button>
                       </div>

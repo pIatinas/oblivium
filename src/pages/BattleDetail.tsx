@@ -20,6 +20,7 @@ interface Battle {
   winner_team: string[];
   loser_team: string[];
   meta: boolean | null;
+  tipo: string;
   created_at: string;
   created_by: string;
   updated_at?: string;
