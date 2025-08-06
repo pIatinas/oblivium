@@ -200,9 +200,7 @@ const CreateBattle = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <Label htmlFor="winner-stigma" className="text-foreground mb-2 block">
-                  Estigma
-                </Label>
+                
                 <Select value={winnerStigma} onValueChange={setWinnerStigma}>
                   <SelectTrigger className="bg-card border-border">
                     <SelectValue placeholder="Selecione um estigma" />
@@ -250,9 +248,7 @@ const CreateBattle = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <Label htmlFor="loser-stigma" className="text-foreground mb-2 block">
-                  Estigma
-                </Label>
+                
                 <Select value={loserStigma} onValueChange={setLoserStigma}>
                   <SelectTrigger className="bg-card border-border">
                     <SelectValue placeholder="Selecione um estigma" />
