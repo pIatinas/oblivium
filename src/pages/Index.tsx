@@ -1,10 +1,19 @@
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus, Trophy, Users, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+
+interface Stats {
+  totalBattles: number;
+  totalKnights: number;
+  recentBattles: number;
+}
 
 interface Knight {
   id: string;
@@ -12,110 +21,98 @@ interface Knight {
   image_url: string;
 }
 
-interface Stigma {
-  id: string;
-  nome: string;
-  imagem: string;
-}
-
 interface Battle {
   id: string;
   winner_team: string[];
   loser_team: string[];
-  winner_team_stigma: string | null;
-  loser_team_stigma: string | null;
+  created_at: string;
   meta: boolean | null;
   tipo: string;
-  created_at: string;
-  created_by: string;
-}
-
-interface Profile {
-  id: string;
-  full_name: string | null;
-  user_id: string;
-}
-
-interface Stats {
-  totalBattles: number;
-  totalKnights: number;
-  metaAttacks: number;
-  battlesByType: { [key: string]: number };
 }
 
 const Index = () => {
-  const [recentBattles, setRecentBattles] = useState<Battle[]>([]);
-  const [knights, setKnights] = useState<Knight[]>([]);
-  const [stigmas, setStigmas] = useState<Stigma[]>([]);
-  const [profiles, setProfiles] = useState<Profile[]>([]);
   const [stats, setStats] = useState<Stats>({
     totalBattles: 0,
     totalKnights: 0,
-    metaAttacks: 0,
-    battlesByType: {}
+    recentBattles: 0,
   });
+  const [recentBattles, setRecentBattles] = useState<Battle[]>([]);
+  const [knights, setKnights] = useState<Knight[]>([]);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchData();
+    fetchStats();
+    fetchRecentBattles();
+    fetchKnights();
   }, []);
 
-  const fetchData = async () => {
+  const fetchStats = async () => {
     try {
-      // Fetch recent battles
-      const { data: battlesData, error: battlesError } = await supabase
+      // Fetch total battles
+      const { count: battlesCount, error: battlesError } = await supabase
         .from('battles')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(6);
+        .select('*', { count: 'exact', head: true });
 
       if (battlesError) throw battlesError;
 
-      // Fetch knights
-      const { data: knightsData, error: knightsError } = await supabase
+      // Fetch total knights
+      const { count: knightsCount, error: knightsError } = await supabase
         .from('knights')
-        .select('*');
+        .select('*', { count: 'exact', head: true });
 
       if (knightsError) throw knightsError;
 
-      // Fetch stigmas
-      const { data: stigmasData, error: stigmasError } = await supabase
-        .from('stigmas')
-        .select('*');
+      // Fetch recent battles (last 7 days)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-      if (stigmasError) throw stigmasError;
+      const { count: recentCount, error: recentError } = await supabase
+        .from('battles')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', sevenDaysAgo.toISOString());
 
-      // Fetch profiles
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('*');
-
-      if (profilesError) throw profilesError;
-
-      setRecentBattles(battlesData || []);
-      setKnights(knightsData || []);
-      setStigmas(stigmasData || []);
-      setProfiles(profilesData || []);
-
-      // Calculate stats
-      const totalBattles = battlesData?.length || 0;
-      const totalKnights = knightsData?.length || 0;
-      const metaAttacks = battlesData?.filter(battle => battle.meta)?.length || 0;
-      
-      const battlesByType = (battlesData || []).reduce((acc: any, battle) => {
-        acc[battle.tipo] = (acc[battle.tipo] || 0) + 1;
-        return acc;
-      }, {});
+      if (recentError) throw recentError;
 
       setStats({
-        totalBattles,
-        totalKnights,
-        metaAttacks,
-        battlesByType
+        totalBattles: battlesCount || 0,
+        totalKnights: knightsCount || 0,
+        recentBattles: recentCount || 0,
       });
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar as estatísticas",
+        variant: "destructive",
+      });
+    }
+  };
 
-    } catch (error) {
-      console.error('Erro ao carregar dados:', error);
+  const fetchRecentBattles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('battles')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      setRecentBattles(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar batalhas recentes:', error);
+    }
+  };
+
+  const fetchKnights = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('knights')
+        .select('*');
+
+      if (error) throw error;
+      setKnights(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar cavaleiros:', error);
     } finally {
       setLoading(false);
     }
@@ -123,14 +120,6 @@ const Index = () => {
 
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
-  };
-
-  const getStigmaById = (stigmaId: string) => {
-    return stigmas.find(s => s.id === stigmaId);
-  };
-
-  const getProfileByUserId = (userId: string) => {
-    return profiles.find(p => p.user_id === userId);
   };
 
   if (loading) {
@@ -147,174 +136,162 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-nebula">
       <Header />
-      
       <div className="max-w-6xl mx-auto p-6">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold text-foreground mb-4">⚔️ Oblivium ⚔️</h1>
+          <div className="text-8xl mb-4">⚔️</div>
+          <h1 className="text-5xl font-bold text-foreground mb-4">
+            Oblivium
+          </h1>
           <p className="text-xl text-muted-foreground mb-8">
             Gerenciador de Batalhas
           </p>
+          <Button asChild size="lg" className="bg-gradient-cosmic text-white hover:opacity-90">
+            <Link to="/create-battle">
+              <Plus className="w-5 h-5 mr-2" />
+              Nova Batalha
+            </Link>
+          </Button>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="bg-card border-none shadow-none">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-accent mb-2">{stats.totalBattles}</div>
-              <div className="text-muted-foreground">Batalhas Registradas</div>
+        <div className="grid gap-6 md:grid-cols-3 mb-12">
+          <Card className="bg-card/60 backdrop-blur-sm border-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total de Batalhas
+              </CardTitle>
+              <Trophy className="h-4 w-4 text-accent" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">{stats.totalBattles}</div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-card border-none shadow-none">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-accent mb-2">{stats.totalKnights}</div>
-              <div className="text-muted-foreground">Cavaleiros Ativos</div>
+
+          <Card className="bg-card/60 backdrop-blur-sm border-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Cavaleiros
+              </CardTitle>
+              <Users className="h-4 w-4 text-accent" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">{stats.totalKnights}</div>
             </CardContent>
           </Card>
-          
-          <Card className="bg-card border-none shadow-none">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold text-accent mb-2">{stats.metaAttacks}</div>
-              <div className="text-muted-foreground">Meta de Ataques</div>
+
+          <Card className="bg-card/60 backdrop-blur-sm border-none">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Batalhas Recentes
+              </CardTitle>
+              <TrendingUp className="h-4 w-4 text-accent" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-foreground">{stats.recentBattles}</div>
+              <p className="text-xs text-muted-foreground">
+                Últimos 7 dias
+              </p>
             </CardContent>
           </Card>
         </div>
 
         {/* Recent Battles */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-foreground">Batalhas Recentes</h2>
-            <Link 
-              to="/battles" 
-              className="text-accent hover:text-accent/80 transition-colors"
-            >
-              Ver todas →
-            </Link>
-          </div>
-          
-          <div className="grid gap-6 md:grid-cols-2">
-            {recentBattles.map(battle => (
-              <Card 
-                key={battle.id} 
-                className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer"
-                onClick={() => window.location.href = `/battles/${battle.id}`}
-              >
-                {battle.meta && (
-                  <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
-                    <span className="text-black text-xl">⭐</span>
-                  </div>
-                )}
-                
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between gap-4">
-                    {/* Time Vencedor */}
-                    <div className="flex-1 space-y-3">
-                      <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2">
-                        Vencedor
-                        {battle.winner_team_stigma && (
-                          <img 
-                            src={getStigmaById(battle.winner_team_stigma)?.imagem} 
-                            alt="Estigma do time vencedor"
-                            className="w-10 h-10"
-                          />
-                        )}
-                      </h3>
-                      <div className="flex gap-2 justify-center">
-                        {battle.winner_team.slice(0, 3).map((knightId, index) => {
-                          const knight = getKnightById(knightId);
-                          return knight ? (
-                            <div 
-                              key={index} 
-                              className="flex flex-col items-center gap-1 cursor-pointer"
-                              onClick={(e) => { 
-                                e.stopPropagation(); 
-                                window.location.href = `/knights?knight=${knight.id}`; 
-                              }}
-                            >
-                              <img
-                                src={knight.image_url}
-                                alt={knight.name}
-                                className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40"
-                              />
-                              <span className="text-xs text-foreground hover:text-accent transition-colors">
-                                {knight.name}
-                              </span>
-                            </div>
-                          ) : null;
-                        })}
+        <Card className="bg-card/60 backdrop-blur-sm border-none">
+          <CardHeader>
+            <CardTitle className="text-foreground">Batalhas Recentes</CardTitle>
+            <CardDescription>
+              Últimas batalhas registradas no sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {recentBattles.length > 0 ? (
+              <div className="space-y-4">
+                {recentBattles.map((battle) => (
+                  <Link 
+                    key={battle.id} 
+                    to={`/battles/${battle.id}`}
+                    className="block"
+                  >
+                    <div className="flex items-center justify-between p-4 rounded-lg bg-background/50 hover:bg-background/70 transition-colors cursor-pointer relative">
+                      {battle.meta && (
+                        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center z-10 bg-transparent">
+                          <span className="text-black text-sm">⭐</span>
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center gap-6 flex-1">
+                        {/* Winner Team */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-accent">Vencedor:</span>
+                          <div className="flex -space-x-2">
+                            {battle.winner_team.slice(0, 3).map((knightId, index) => {
+                              const knight = getKnightById(knightId);
+                              return knight ? (
+                                <img
+                                  key={index}
+                                  src={knight.image_url}
+                                  alt={knight.name}
+                                  className="w-8 h-8 rounded-full border-2 border-background"
+                                  title={knight.name}
+                                />
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+
+                        <div className="text-lg text-muted-foreground">×</div>
+
+                        {/* Loser Team */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-purple-400">Perdedor:</span>
+                          <div className="flex -space-x-2">
+                            {battle.loser_team.slice(0, 3).map((knightId, index) => {
+                              const knight = getKnightById(knightId);
+                              return knight ? (
+                                <img
+                                  key={index}
+                                  src={knight.image_url}
+                                  alt={knight.name}
+                                  className="w-8 h-8 rounded-full border-2 border-background"
+                                  title={knight.name}
+                                />
+                              ) : null;
+                            })}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className="text-sm text-muted-foreground">
+                          {new Date(battle.created_at).toLocaleDateString('pt-BR')}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {battle.tipo}
+                        </div>
                       </div>
                     </div>
-
-                    {/* X Separador */}
-                    <div className="text-3xl font-bold text-muted-foreground">
-                      ✕
-                    </div>
-
-                    {/* Time Perdedor */}
-                    <div className="flex-1 space-y-3">
-                      <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2">
-                        Perdedor
-                        {battle.loser_team_stigma && (
-                          <img 
-                            src={getStigmaById(battle.loser_team_stigma)?.imagem} 
-                            alt="Estigma do time perdedor"
-                            className="w-10 h-10"
-                          />
-                        )}
-                      </h3>
-                      <div className="flex gap-2 justify-center">
-                        {battle.loser_team.slice(0, 3).map((knightId, index) => {
-                          const knight = getKnightById(knightId);
-                          return knight ? (
-                            <div 
-                              key={index} 
-                              className="flex flex-col items-center gap-1 cursor-pointer"
-                              onClick={(e) => { 
-                                e.stopPropagation(); 
-                                window.location.href = `/knights?knight=${knight.id}`; 
-                              }}
-                            >
-                              <img
-                                src={knight.image_url}
-                                alt={knight.name}
-                                className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40"
-                              />
-                              <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
-                                {knight.name}
-                              </span>
-                            </div>
-                          ) : null;
-                        })}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Informação do autor */}
-                  <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
-                    por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {recentBattles.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg mb-4">
-                Nenhuma batalha registrada ainda
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-muted-foreground py-8">
+                Nenhuma batalha registrada ainda.
               </p>
-              <Link 
-                to="/create-battle"
-                className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors bg-gradient-cosmic text-white hover:opacity-90 h-10 px-4 py-2"
-              >
-                Cadastrar Primeira Batalha
-              </Link>
-            </div>
-          )}
-        </div>
+            )}
+
+            {recentBattles.length > 0 && (
+              <div className="mt-6 text-center">
+                <Button asChild variant="outline">
+                  <Link to="/battles">
+                    Ver Todas as Batalhas
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-      
       <Footer />
     </div>
   );

@@ -83,7 +83,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-card/90 backdrop-blur-sm border-none shadow-xl">
+      <Card className="w-full max-w-md bg-card/90 backdrop-blur-sm shadow-xl border-none">
         <CardHeader className="text-center space-y-4">
           <div className="text-8xl">⚔️</div>
           <div>
@@ -164,7 +164,7 @@ const Auth = () => {
             <Button
               type="button"
               variant="ghost"
-              className="w-full text-muted-foreground hover:text-foreground"
+              className="w-full text-muted-foreground hover:text-accent hover:bg-transparent"
               onClick={() => setIsSignUp(!isSignUp)}
             >
               {isSignUp 
