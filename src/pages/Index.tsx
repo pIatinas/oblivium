@@ -21,18 +21,10 @@ interface Knight {
   image_url: string;
 }
 
-interface Stigma {
-  id: string;
-  nome: string;
-  imagem: string;
-}
-
 interface Battle {
   id: string;
   winner_team: string[];
   loser_team: string[];
-  winner_team_stigma: string | null;
-  loser_team_stigma: string | null;
   created_at: string;
   meta: boolean | null;
   tipo: string;
@@ -44,25 +36,16 @@ const Index = () => {
     totalKnights: 0,
     recentBattles: 0,
   });
-  const [topKnights, setTopKnights] = useState<Knight[]>([]);
-  const [latestBattles, setLatestBattles] = useState<Battle[]>([]);
+  const [recentBattles, setRecentBattles] = useState<Battle[]>([]);
   const [knights, setKnights] = useState<Knight[]>([]);
-  const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
     fetchStats();
+    fetchRecentBattles();
     fetchKnights();
-    fetchStigmas();
-    fetchLatestBattles();
   }, []);
-
-  useEffect(() => {
-    if (knights.length > 0) {
-      calculateTopKnights();
-    }
-  }, [knights]);
 
   const fetchStats = async () => {
     try {
@@ -105,6 +88,21 @@ const Index = () => {
     }
   };
 
+  const fetchRecentBattles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('battles')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      setRecentBattles(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar batalhas recentes:', error);
+    }
+  };
+
   const fetchKnights = async () => {
     try {
       const { data, error } = await supabase
@@ -120,68 +118,8 @@ const Index = () => {
     }
   };
 
-  const fetchStigmas = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('stigmas')
-        .select('*');
-
-      if (error) throw error;
-      setStigmas(data || []);
-    } catch (error: any) {
-      console.error('Erro ao carregar estigmas:', error);
-    }
-  };
-
-  const fetchLatestBattles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('battles')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(6);
-
-      if (error) throw error;
-      setLatestBattles(data || []);
-    } catch (error: any) {
-      console.error('Erro ao carregar últimas batalhas:', error);
-    }
-  };
-
-  const calculateTopKnights = async () => {
-    try {
-      const { data: battles, error } = await supabase
-        .from('battles')
-        .select('winner_team, loser_team');
-
-      if (error) throw error;
-
-      const knightUsage: { [key: string]: number } = {};
-
-      battles?.forEach((battle) => {
-        [...battle.winner_team, ...battle.loser_team].forEach((knightId) => {
-          knightUsage[knightId] = (knightUsage[knightId] || 0) + 1;
-        });
-      });
-
-      const sortedKnights = Object.entries(knightUsage)
-        .sort(([, a], [, b]) => b - a)
-        .slice(0, 16)
-        .map(([knightId]) => knights.find(k => k.id === knightId))
-        .filter(Boolean) as Knight[];
-
-      setTopKnights(sortedKnights);
-    } catch (error: any) {
-      console.error('Erro ao calcular cavaleiros mais utilizados:', error);
-    }
-  };
-
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
-  };
-
-  const getStigmaById = (stigmaId: string) => {
-    return stigmas.find(s => s.id === stigmaId);
   };
 
   if (loading) {
@@ -258,66 +196,18 @@ const Index = () => {
           </Card>
         </div>
 
-        {/* Principais Cavaleiros */}
-        <Card className="bg-card/60 backdrop-blur-sm border-none mb-8">
-          <CardHeader>
-            <CardTitle className="text-foreground">
-              Principais <span className="font-bold">Cavaleiros</span>
-            </CardTitle>
-            <CardDescription>
-              Os cavaleiros mais utilizados nas batalhas
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {topKnights.length > 0 ? (
-              <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-8 mb-6">
-                {topKnights.map((knight) => (
-                  <Link 
-                    key={knight.id} 
-                    to={`/knights?knight=${knight.id}`}
-                    className="flex flex-col items-center gap-2 p-3 rounded-lg hover:bg-background/50 transition-colors"
-                  >
-                    <img
-                      src={knight.image_url}
-                      alt={knight.name}
-                      className="w-12 h-12 rounded-full border-2 border-accent/20"
-                    />
-                    <span className="text-xs text-center text-foreground">
-                      {knight.name}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center text-muted-foreground py-8">
-                Nenhum cavaleiro encontrado ainda.
-              </p>
-            )}
-
-            <div className="text-center">
-              <Button asChild variant="outline">
-                <Link to="/knights">
-                  Ver Todos
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Últimas Batalhas */}
+        {/* Recent Battles */}
         <Card className="bg-card/60 backdrop-blur-sm border-none">
           <CardHeader>
-            <CardTitle className="text-foreground">
-              Últimas <span className="font-bold">Batalhas</span>
-            </CardTitle>
+            <CardTitle className="text-foreground">Batalhas Recentes</CardTitle>
             <CardDescription>
               Últimas batalhas registradas no sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {latestBattles.length > 0 ? (
-              <div className="space-y-4 mb-6">
-                {latestBattles.map((battle) => (
+            {recentBattles.length > 0 ? (
+              <div className="space-y-4">
+                {recentBattles.map((battle) => (
                   <Link 
                     key={battle.id} 
                     to={`/battles/${battle.id}`}
@@ -334,13 +224,6 @@ const Index = () => {
                         {/* Winner Team */}
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-accent">Vencedor:</span>
-                          {battle.winner_team_stigma && (
-                            <img 
-                              src={getStigmaById(battle.winner_team_stigma)?.imagem} 
-                              alt="Estigma do time vencedor" 
-                              className="w-10 h-10" 
-                            />
-                          )}
                           <div className="flex -space-x-2">
                             {battle.winner_team.slice(0, 3).map((knightId, index) => {
                               const knight = getKnightById(knightId);
@@ -362,13 +245,6 @@ const Index = () => {
                         {/* Loser Team */}
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium text-purple-400">Perdedor:</span>
-                          {battle.loser_team_stigma && (
-                            <img 
-                              src={getStigmaById(battle.loser_team_stigma)?.imagem} 
-                              alt="Estigma do time perdedor" 
-                              className="w-10 h-10" 
-                            />
-                          )}
                           <div className="flex -space-x-2">
                             {battle.loser_team.slice(0, 3).map((knightId, index) => {
                               const knight = getKnightById(knightId);
@@ -404,13 +280,15 @@ const Index = () => {
               </p>
             )}
 
-            <div className="text-center">
-              <Button asChild variant="outline">
-                <Link to="/battles">
-                  Ver Todas
-                </Link>
-              </Button>
-            </div>
+            {recentBattles.length > 0 && (
+              <div className="mt-6 text-center">
+                <Button asChild variant="outline">
+                  <Link to="/battles">
+                    Ver Todas as Batalhas
+                  </Link>
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
