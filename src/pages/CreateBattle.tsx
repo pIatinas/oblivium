@@ -354,8 +354,8 @@ const CreateBattle = () => {
         </div>
 
         {/* Lista de Cavaleiros Disponíveis */}
-        <Card className="lg:bg-card border-none">
-          <CardContent className="lg:p-6">
+        <Card className="lg:bg-card border-none p-0 ">
+          <CardContent className="p-0 lg:p-6">
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredKnights.map(knight => {
               const isInBothTeams = isKnightInBothTeams(knight.id);
