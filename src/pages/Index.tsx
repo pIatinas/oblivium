@@ -140,7 +140,7 @@ const Index = () => {
   }
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-3 md:p-6 ">
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="font-bold text-foreground mb-4 text-7xl">⚔️ </h1>
@@ -189,31 +189,31 @@ const Index = () => {
         </div>
 
         {/* Estatísticas */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <Card className="bg-card border-none shadow-lg">
-            <CardContent className="p-6 text-center">
+        <div className="grid grid-cols-3 gap-2 md:gap-6 mb-12">
+          <Card className="bg-card border-none ">
+            <CardContent className="p-4 lg:p-6 text-center">
               <div className="flex justify-center mb-4">
-                <Sword className="w-12 h-12 text-accent" />
+                <Sword className="w-9 h-9 lg:w-12 lg:h-12 text-accent" />
               </div>
               <div className="text-4xl font-bold text-foreground mb-2">{stats.totalBattles}</div>
-              <p className="text-muted-foreground -mt-2">Batalhas</p>
+              <p className="text-muted-foreground mt-2 lg:-mt-2 ">Batalhas</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-none shadow-lg">
-            <CardContent className="p-6 text-center">
+          <Card className="bg-card border-none ">
+            <CardContent className="p-4 lg:p-6 text-center">
               <div className="flex justify-center mb-4">
-                <Users className="w-12 h-12 text-accent" />
+                <Users className="w-9 h-9 lg:w-12 lg:h-12 text-accent" />
               </div>
               <div className="text-4xl font-bold text-foreground mb-2">{stats.totalKnights}</div>
               <p className="text-muted-foreground">Cavaleiros</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-card border-none shadow-lg">
-            <CardContent className="p-6 text-center">
+          <Card className="bg-card border-none ">
+            <CardContent className="p-4 lg:p-6 text-center">
               <div className="flex justify-center mb-4">
-                <Trophy className="w-12 h-12 text-accent" />
+                <Trophy className="w-9 h-9 lg:w-12 lg:h-12 text-accent" />
               </div>
               <div className="text-4xl font-bold text-foreground mb-2">{stats.totalVictories}</div>
               <p className="text-muted-foreground">Vitórias</p>
@@ -224,7 +224,7 @@ const Index = () => {
         {/* Principais Cavaleiros */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-light text-foreground">
+            <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
               Principais <span className="font-bold">Cavaleiros</span>
             </h2>
             <Button asChild variant="outline" className="bg-card border-border">
@@ -235,7 +235,7 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="grid gap-6 grid-cols-2 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="grid gap-2 mgap-6 grid-cols-2 lg:grid-cols-5 xl:grid-cols-6">
             {topKnights.map(knight => <Link key={knight.id} to={`/knights?knight=${knight.id}`}>
                 <Card className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
@@ -250,7 +250,7 @@ const Index = () => {
         {/* Batalhas Recentes */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-light text-foreground">
+            <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
               Últimas <span className="font-bold">Batalhas</span>
             </h2>
             <Button asChild variant="outline" className="bg-card border-border">
