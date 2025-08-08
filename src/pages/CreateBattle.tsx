@@ -202,7 +202,7 @@ const CreateBattle = () => {
         <Breadcrumb />
         
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Cadastro de Batalhas</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Cadastro</h1>
           <p className="text-muted-foreground text-center">Selecione três cavaleiros para cada um dos times</p>
         </div>
 
@@ -354,8 +354,8 @@ const CreateBattle = () => {
         </div>
 
         {/* Lista de Cavaleiros Disponíveis */}
-        <Card className="bg-card border-none">
-          <CardContent className="p-3 lg:p-6">
+        <Card className="lg:bg-card border-none">
+          <CardContent className="lg:p-6">
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredKnights.map(knight => {
               const isInBothTeams = isKnightInBothTeams(knight.id);
