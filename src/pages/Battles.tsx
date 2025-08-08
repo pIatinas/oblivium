@@ -171,7 +171,7 @@ const Battles = () => {
               <Input placeholder="Buscar por cavaleiro..." value={searchTerm} onChange={e => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
-            }} className="pl-10 bg-card border-border" />
+            }} className="pl-3 lg:pl-10 bg-card border-border  " />
             </div>
             
             <Select value={typeFilter} onValueChange={value => {
