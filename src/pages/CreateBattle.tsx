@@ -198,7 +198,7 @@ const CreateBattle = () => {
   }
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-3 lg:p-6">
         <Breadcrumb />
         
         <div className="mb-8">
@@ -306,7 +306,7 @@ const CreateBattle = () => {
         </div>
 
         {/* Meta de Ataque e Categoria */}
-        <div className="mt-3 mb-6 flex items-center justify-end gap-6">
+        <div className="mt-3 mb-6 flex items-center justify-end gap-6 flex-wrap">
           <div className="flex items-center space-x-2">
             
             <Select value={battleType} onValueChange={setBattleType}>
@@ -355,7 +355,7 @@ const CreateBattle = () => {
 
         {/* Lista de Cavaleiros Disponíveis */}
         <Card className="bg-card border-none">
-          <CardContent className="p-6">
+          <CardContent className="p-3 lg:p-6">
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredKnights.map(knight => {
               const isInBothTeams = isKnightInBothTeams(knight.id);
