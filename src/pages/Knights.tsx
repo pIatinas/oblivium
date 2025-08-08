@@ -162,7 +162,7 @@ const Knights = () => {
         <Header />
         <div className="max-w-6xl mx-auto p-6">
           <div className="mb-6">
-            <Button onClick={() => setSelectedKnight(null)} className="bg-gray-800 text-white hover:bg-gray-700">
+            <Button onClick={() => setSelectedKnight(null)} className="bg-transparent text-amber-200 text-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </Button>
@@ -174,7 +174,7 @@ const Knights = () => {
             <p className="text-muted-foreground -mt-4 text-xl">{totalAppearances} times</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-2 gap-6 mb-8">
             <Card className="bg-card border-none shadow-lg">
               <CardHeader className="text-center">
                 <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-4">
