@@ -186,7 +186,7 @@ const Knights = () => {
 
             <Card className="bg-card border-none shadow-lg">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                   <Sword className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-2xl text-purple-400">{defeats.length}</CardTitle>
