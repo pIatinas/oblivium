@@ -260,14 +260,14 @@ const Knights = () => {
         </div>
 
         {/* Lista de Cavaleiros */}
-        {filteredKnights.length > 0 ? <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
+        {filteredKnights.length > 0 ? <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 ">
             {filteredKnights.map(knight => {
           const appearances = getKnightAppearances(knight.id);
           return <Card key={knight.id} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none shadow-lg" onClick={() => setSelectedKnight(knight)}>
-                  <CardContent className="p-6 text-center">
+                  <CardContent className="p-6 text-center bg-transparent">
                     <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-4 border border-accent/20" />
                     <h3 className="text-lg font-semibold text-foreground mb-2">{knight.name}</h3>
-                    <p className="text-sm text-muted-foreground">{appearances} times</p>
+                    <p className="text-sm text-muted-foreground -mt-3">{appearances} times</p>
                   </CardContent>
                 </Card>;
         })}
