@@ -25,11 +25,27 @@ const Auth = () => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate('/');
+        // Check if user is active
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('active')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        if (profile?.active) {
+          navigate('/');
+        } else {
+          await supabase.auth.signOut();
+          toast({
+            title: "Conta inativa",
+            description: "Sua conta ainda não foi ativada. Entre em contato com um administrador.",
+            variant: "destructive",
+          });
+        }
       }
     };
     checkAuth();
-  }, [navigate]);
+  }, [navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,7 +67,7 @@ const Auth = () => {
 
         toast({
           title: "Cadastro realizado!",
-          description: "Verifique seu email para confirmar sua conta.",
+          description: "Aguarde a ativação da sua conta por um administrador.",
         });
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -60,6 +76,23 @@ const Auth = () => {
         });
 
         if (error) throw error;
+
+        // Check if user is active after login
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('active')
+          .eq('user_id', data.user.id)
+          .single();
+
+        if (!profile?.active) {
+          await supabase.auth.signOut();
+          toast({
+            title: "Conta inativa",
+            description: "Sua conta ainda não foi ativada. Entre em contato com um administrador.",
+            variant: "destructive",
+          });
+          return;
+        }
 
         toast({
           title: "Login realizado!",
@@ -164,7 +197,7 @@ const Auth = () => {
             <Button
               type="button"
               variant="ghost"
-              className="w-full text-muted-foreground hover:text-accent hover:bg-transparent"
+              className="w-full text-accent hover:text-accent hover:bg-transparent"
               onClick={() => setIsSignUp(!isSignUp)}
             >
               {isSignUp 

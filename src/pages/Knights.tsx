@@ -1,335 +1,362 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Search, Plus } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Search, Plus, ArrowLeft, Trophy, Sword } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useSearchParams } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useSearchParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import CreateKnightModal from "@/components/CreateKnightModal";
+import BattleCard from "@/components/BattleCard";
+
 interface Knight {
   id: string;
   name: string;
   image_url: string;
-  created_at: string;
+  slug: string | null;
 }
+
+interface Stigma {
+  id: string;
+  nome: string;
+  imagem: string;
+}
+
+interface Profile {
+  id: string;
+  full_name: string | null;
+  user_id: string;
+}
+
 interface Battle {
   id: string;
   winner_team: string[];
   loser_team: string[];
-  meta: boolean | null;
+  winner_team_stigma: string | null;
+  loser_team_stigma: string | null;
   created_at: string;
+  created_by: string;
+  meta: boolean | null;
+  tipo: string;
 }
+
 const Knights = () => {
-  const {
-    toast
-  } = useToast();
-  const [searchParams] = useSearchParams();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedKnight, setSelectedKnight] = useState<Knight | null>(null);
   const [knights, setKnights] = useState<Knight[]>([]);
   const [battles, setBattles] = useState<Battle[]>([]);
-  const [relatedKnights, setRelatedKnights] = useState<Knight[]>([]);
-  const [showModal, setShowModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("name");
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    fetchKnights();
-    fetchBattles();
-  }, []);
-  useEffect(() => {
-    if (selectedKnight && battles.length > 0 && knights.length > 0) {
-      fetchRelatedKnights();
-    }
-  }, [selectedKnight, battles, knights]);
+  const [selectedKnight, setSelectedKnight] = useState<Knight | null>(null);
+  const [stigmas, setStigmas] = useState<Stigma[]>([]);
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const { toast } = useToast();
+  const [searchParams] = useSearchParams();
 
-  // Handle knight selection from URL parameters
   useEffect(() => {
-    const knightId = searchParams.get('knight');
-    if (knightId && knights.length > 0) {
-      const knight = knights.find(k => k.id === knightId);
-      if (knight) {
-        setSelectedKnight(knight);
-      }
+    const knightParam = searchParams.get("knight");
+    if (knightParam) {
+      const initialSelectedKnight = knights.find((knight) => knight.id === knightParam);
+      setSelectedKnight(initialSelectedKnight || null);
     }
-  }, [searchParams, knights]);
-  const fetchKnights = async () => {
+  }, [knights, searchParams]);
+
+  useEffect(() => {
+    fetchData();
+  }, [sortBy, searchTerm]);
+
+  const fetchData = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('knights').select('*').order('created_at', {
-        ascending: false
-      });
-      if (error) throw error;
-      setKnights(data || []);
-    } catch (error: any) {
+      setLoading(true);
+      await Promise.all([
+        fetchKnights(),
+        fetchBattles(),
+        fetchStigmas(),
+        fetchProfiles()
+      ]);
+    } catch (error) {
+      console.error("Erro ao carregar dados:", error);
       toast({
         title: "Erro",
-        description: "Não foi possível carregar os cavaleiros",
-        variant: "destructive"
+        description: "Não foi possível carregar os dados",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
   };
-  const fetchBattles = async () => {
+
+  const fetchKnights = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('battles').select('*').order('created_at', {
-        ascending: false
-      });
+      let query = supabase.from('knights').select('*');
+
+      if (sortBy === 'name') {
+        query = query.order('name', { ascending: true });
+      }
+
+      const { data, error } = await query;
+
       if (error) throw error;
-      setBattles((data || []).map((battle: any) => ({
-        ...battle,
-        meta: battle.meta || false
-      })));
+      setKnights(data || []);
     } catch (error: any) {
-      console.error('Erro ao carregar batalhas:', error);
+      console.error("Erro ao carregar cavaleiros:", error);
     }
   };
-  const filteredKnights = knights.filter(knight => knight.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
-  const handleKnightClick = (knight: Knight) => {
-    setSelectedKnight(knight);
-  };
-  const getKnightHistory = (knightId: string) => {
-    const victories = battles.filter(battle => battle.winner_team.includes(knightId));
-    const defeats = battles.filter(battle => battle.loser_team.includes(knightId));
-    return {
-      victories,
-      defeats
-    };
-  };
-  const handleKnightCreated = () => {
-    fetchKnights();
-  };
-  const getKnightName = (knightId: string) => {
-    const knight = knights.find(k => k.id === knightId);
-    return knight ? knight.name : "Cavaleiro removido";
-  };
-  const fetchRelatedKnights = () => {
-    if (!selectedKnight) return;
 
-    // Find all battles involving the selected knight
-    const knightBattles = battles.filter(battle => [...battle.winner_team, ...battle.loser_team].includes(selectedKnight.id));
-
-    // Extract all knight IDs from these battles
-    const allKnightIds = new Set<string>();
-    knightBattles.forEach(battle => {
-      [...battle.winner_team, ...battle.loser_team].forEach(id => {
-        if (id !== selectedKnight.id) {
-          allKnightIds.add(id);
-        }
-      });
-    });
-
-    // Get knight objects and limit to 6
-    const related = Array.from(allKnightIds).map(id => knights.find(k => k.id === id)).filter(Boolean).slice(0, 6) as Knight[];
-    setRelatedKnights(related);
+  const fetchBattles = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('battles')
+        .select('*');
+      if (error) throw error;
+      setBattles(data || []);
+    } catch (error: any) {
+      console.error("Erro ao carregar batalhas:", error);
+    }
   };
+
+  const fetchStigmas = async () => {
+    try {
+      const { data, error } = await supabase.from('stigmas').select('*');
+      if (error) throw error;
+      setStigmas(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar estigmas:', error);
+    }
+  };
+
+  const fetchProfiles = async () => {
+    try {
+      const { data, error } = await supabase.from('profiles').select('*');
+      if (error) throw error;
+      setProfiles(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar perfis:', error);
+    }
+  };
+
+  const getKnightAppearances = (knightId: string) => {
+    return battles.filter(battle => 
+      battle.winner_team.includes(knightId) || battle.loser_team.includes(knightId)
+    ).length;
+  };
+
+  const filteredKnights = knights.filter((knight) =>
+    knight.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ).sort((a, b) => {
+    if (sortBy === "most_used") {
+      return getKnightAppearances(b.id) - getKnightAppearances(a.id);
+    } else if (sortBy === "least_used") {
+      return getKnightAppearances(a.id) - getKnightAppearances(b.id);
+    }
+    return 0;
+  });
+
   if (loading) {
-    return <div className="min-h-screen bg-gradient-nebula">
+    return (
+      <div className="min-h-screen bg-gradient-nebula">
         <Header />
         <div className="max-w-6xl mx-auto p-6 text-center">
           <div className="text-accent text-xl">Carregando cavaleiros...</div>
         </div>
-      </div>;
+      </div>
+    );
   }
-  const knightHistory = selectedKnight ? getKnightHistory(selectedKnight.id) : null;
-  return <div className="min-h-screen bg-gradient-nebula">
+
+  if (selectedKnight) {
+    const knightBattles = battles.filter(battle =>
+      battle.winner_team.includes(selectedKnight.id) || battle.loser_team.includes(selectedKnight.id)
+    );
+    
+    const victories = battles.filter(battle => battle.winner_team.includes(selectedKnight.id));
+    const defeats = battles.filter(battle => battle.loser_team.includes(selectedKnight.id));
+    const totalAppearances = getKnightAppearances(selectedKnight.id);
+
+    return (
+      <div className="min-h-screen bg-gradient-nebula">
+        <Header />
+        <div className="max-w-6xl mx-auto p-6">
+          <div className="mb-6">
+            <Button 
+              onClick={() => setSelectedKnight(null)}
+              className="bg-gray-800 text-white hover:bg-gray-700"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Voltar
+            </Button>
+          </div>
+
+          <div className="text-center mb-8">
+            <img 
+              src={selectedKnight.image_url} 
+              alt={selectedKnight.name}
+              className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent" 
+            />
+            <h1 className="text-4xl font-bold text-foreground mb-2">{selectedKnight.name}</h1>
+            <p className="text-muted-foreground">{totalAppearances} times</p>
+          </div>
+
+          {/* Estatísticas */}
+          <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <Card className="bg-card border-none shadow-lg">
+              <CardHeader className="text-center">
+                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                  <Trophy className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-accent">{victories.length}</CardTitle>
+                <CardDescription>Vitórias</CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="bg-card border-none shadow-lg">
+              <CardHeader className="text-center">
+                <div className="mx-auto w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4">
+                  <Sword className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-2xl text-purple-400">{defeats.length}</CardTitle>
+                <CardDescription>Derrotas</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* Batalhas */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-foreground mb-6">Histórico de Batalhas</h2>
+            
+            {knightBattles.length > 0 ? (
+              <div className="grid md:grid-cols-2 gap-6">
+                {knightBattles.map(battle => (
+                  <BattleCard
+                    key={battle.id}
+                    battle={battle}
+                    knights={knights}
+                    stigmas={stigmas}
+                    profiles={profiles}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground text-lg">
+                  Este cavaleiro ainda não participou de batalhas
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
-        <Breadcrumb knightName={selectedKnight?.name} />
-        {!selectedKnight ? <div className="mb-8">
-            <h1 className="text-4xl font-bold text-foreground mb-4 text-center">
-              Cavaleiros
-            </h1>
+        <Breadcrumb />
+        
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Cavaleiros</h1>
+          <p className="text-muted-foreground text-center">
+            Explore todos os cavaleiros cadastrados
+          </p>
+        </div>
+
+        {/* Filtros e Busca */}
+        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="flex gap-4 flex-1 max-w-md">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Buscar por nome..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-card border-border"
+              />
+            </div>
             
-            <div className="flex items-center justify-between mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input placeholder="Buscar..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border w-64" />
-              </div>
-              
-              <Button onClick={() => setShowModal(true)} className="bg-gradient-cosmic text-white hover:opacity-90">
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[180px] bg-card border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name">Nome</SelectItem>
+                <SelectItem value="most_used">Mais Usado</SelectItem>
+                <SelectItem value="least_used">Menos Usado</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-cosmic text-white hover:opacity-90">
                 <Plus className="w-4 h-4 mr-2" />
-                Adicionar
+                Novo Cavaleiro
               </Button>
-            </div>
-          </div> : <div className="mb-8">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-[110px] h-[110px] rounded-full border-2 border-accent/20" />
-                <h1 className="text-[3.6rem] font-bold text-foreground">
-                  {selectedKnight.name}
-                </h1>
-              </div>
-              <button onClick={() => setSelectedKnight(null)} className="text-accent hover:text-accent/80 transition-colors">
-                Voltar
-              </button>
-            </div>
-          </div>}
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Cadastrar Novo Cavaleiro</DialogTitle>
+              </DialogHeader>
+              <CreateKnightModal onKnightCreated={fetchKnights} />
+            </DialogContent>
+          </Dialog>
+        </div>
 
-        {!selectedKnight ? <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredKnights.map(knight => <div key={knight.id} className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg" onClick={() => handleKnightClick(knight)}>
-                <div className="flex items-center gap-3">
-                  <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full border-2 border-accent/20" />
-                  <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
-                </div>
-              </div>)}
-          </div> : <div className="space-y-6">
-            <Card className="bg-card border-none shadow-none">
-              <CardContent className="p-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  {/* Vitórias - lado esquerdo */}
-                  <div>
-                     <h3 className="text-lg font-semibold text-accent mb-3 flex items-center justify-center gap-2 ">
-                       <div className="flex flex-col items-center">
-                         <div>🏆</div>
-                         <div>Vitórias ({knightHistory?.victories?.length || 0})</div>
-                       </div>
-                     </h3>
-                    <div className="space-y-3">
-                       {knightHistory?.victories?.length ? knightHistory.victories.map((battle, index) => <Card key={index} onClick={() => window.location.href = `/battles/${battle.id}`} className="bg-accent/6  shadow-none cursor-pointer">
-                            {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10">
-                                <span className="text-black text-xs">⭐</span>
-                              </div>}
-                            <CardContent className="px-4 py-7 justify-center text-center relative">
-                              <div className="flex items-center justify-between gap-2">
-                                {/* Time Aliado */}
-                                <div className="flex-1">
-                                  <div className="flex flex-wrap gap-2">
-                                     {battle.winner_team.map((ally, i) => {
-                              const knight = knights.find(k => k.id === ally);
-                              const isCurrentKnight = knight?.id === selectedKnight?.id;
-                              return knight ? <div key={i} onClick={() => handleKnightClick(knight)} className="flex flex-col items-center gap-1 cursor-pointer m-auto">
-                                           <img src={knight.image_url} alt={knight.name} className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-accent/20'} transition-transform`} />
-                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-accent'}`} onClick={() => handleKnightClick(knight)}>
-                                             {knight.name}
-                                           </span>
-                                         </div> : null;
-                            })}
-                                  </div>
-                                </div>
-
-                                {/* X Separador */}
-                                <div className="text-xl font-bold text-muted-foreground">
-                                  ✕
-                                </div>
-
-                                {/* Time Inimigo */}
-                                <div className="flex-1">
-                                  <div className="flex flex-wrap gap-2">
-                                     {battle.loser_team.map((enemy, i) => {
-                              const knight = knights.find(k => k.id === enemy);
-                              const isCurrentKnight = knight?.id === selectedKnight?.id;
-                              return knight ? <div key={i} onClick={() => handleKnightClick(knight)} className="flex flex-col items-center gap-1 cursor-pointer m-auto">
-                                           <img src={knight.image_url} alt={knight.name} className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-purple-400/20'} transition-transform`} />
-                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-purple-400'}`} onClick={() => handleKnightClick(knight)}>
-                                             {knight.name}
-                                           </span>
-                                         </div> : null;
-                            })}
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>) : <p className="text-center text-muted-foreground py-4">
-                          Nenhuma vitória registrada
-                        </p>}
-                    </div>
-                  </div>
-
-                  {/* Derrotas - lado direito */}
-                  <div>
-                     <h3 className="text-lg font-semibold text-primary mb-3 flex items-center justify-center gap-2">
-                       <div className="flex flex-col items-center">
-                         <div>💀</div>
-                         <div>Derrotas ({knightHistory?.defeats?.length || 0})</div>
-                       </div>
-                     </h3>
-                    <div className="space-y-3">
-                       {knightHistory?.defeats?.length ? knightHistory.defeats.map((battle, index) => <Card key={index} className="bg-primary/5 border border-border hover:border-accent/50 shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${battle.id}`}>
-                            {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center z-10">
-                                <span className="text-black text-xs">⭐</span>
-                              </div>}
-                            <CardContent className="px-4 py-7 justify-center text-center relative">
-                              <div className="flex items-center justify-between gap-4">
-                                {/* Time Aliado */}
-                                <div className="flex-1">
-                                  <div className="flex flex-wrap gap-2">
-                                     {battle.loser_team.map((ally, i) => {
-                              const knight = knights.find(k => k.id === ally);
-                              const isCurrentKnight = knight?.id === selectedKnight?.id;
-                              return knight ? <div key={i} onClick={() => handleKnightClick(knight)} className="flex flex-col items-center gap-1 cursor-pointer m-auto">
-                                           <img src={knight.image_url} alt={knight.name} className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-primary/20'} transition-transform`} />
-                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-primary'}`} onClick={() => handleKnightClick(knight)}>
-                                             {knight.name}
-                                           </span>
-                                         </div> : null;
-                            })}
-                                  </div>
-                                </div>
-
-                                {/* X Separador */}
-                                <div className="text-xl font-bold text-muted-foreground">
-                                  ✕
-                                </div>
-
-                                {/* Time Inimigo */}
-                                <div className="flex-1">
-                                  <div className="flex flex-wrap gap-2">
-                                     {battle.winner_team.map((enemy, i) => {
-                              const knight = knights.find(k => k.id === enemy);
-                              const isCurrentKnight = knight?.id === selectedKnight?.id;
-                              return knight ? <div key={i} onClick={() => handleKnightClick(knight)} className="flex flex-col items-center gap-1 cursor-pointer m-auto">
-                                           <img src={knight.image_url} alt={knight.name} className={`w-8 h-8 rounded-full border ${isCurrentKnight ? 'border-white scale-105' : 'border-accent/20'} transition-transform`} />
-                                           <span className={`text-xs transition-colors cursor-pointer ${isCurrentKnight ? 'text-white' : 'text-foreground hover:text-accent'}`} onClick={() => handleKnightClick(knight)}>
-                                             {knight.name}
-                                           </span>
-                                         </div> : null;
-                            })}
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>) : <p className="text-center text-muted-foreground py-4">
-                          Nenhuma derrota registrada
-                        </p>}
-                    </div>
-                  </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-            {/* Cavaleiros Relacionados */}
-            {relatedKnights.length > 0 && <div className="mt-8">
-                <h3 className="text-2xl font-bold text-foreground mb-6">
-                  Cavaleiros Relacionados
-                </h3>
-                <div className="bg-card/50 backdrop-blur-sm rounded-lg p-6">
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {relatedKnights.map(knight => <div key={knight.id} className="p-4 cursor-pointer hover:bg-muted/65 transition-colors rounded-lg" onClick={() => handleKnightClick(knight)}>
-                        <div className="flex items-center gap-3">
-                          <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full border-2 border-accent/20" />
-                          <h3 className="text-foreground/80 hover:text-foreground transition-colors">{knight.name}</h3>
-                        </div>
-                      </div>)}
-                  </div>
-                </div>
-              </div>}
-          </div>}
+        {/* Lista de Cavaleiros */}
+        {filteredKnights.length > 0 ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredKnights.map((knight) => {
+              const appearances = getKnightAppearances(knight.id);
+              
+              return (
+                <Card
+                  key={knight.id}
+                  className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none shadow-lg"
+                  onClick={() => setSelectedKnight(knight)}
+                >
+                  <CardContent className="p-6 text-center">
+                    <img 
+                      src={knight.image_url} 
+                      alt={knight.name}
+                      className="w-20 h-20 rounded-full mx-auto mb-4 border border-accent/20" 
+                    />
+                    <h3 className="text-lg font-semibold text-foreground mb-2">{knight.name}</h3>
+                    <p className="text-sm text-muted-foreground">{appearances} times</p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-xl mb-4">
+              Nenhum cavaleiro encontrado
+            </p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-cosmic text-white hover:opacity-90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Cadastrar Primeiro Cavaleiro
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Cadastrar Novo Cavaleiro</DialogTitle>
+                </DialogHeader>
+                <CreateKnightModal onKnightCreated={fetchKnights} />
+              </DialogContent>
+            </Dialog>
+          </div>
+        )}
       </div>
-      
-      <CreateKnightModal isOpen={showModal} onClose={() => setShowModal(false)} onKnightCreated={handleKnightCreated} />
-      
       <Footer />
-    </div>;
+    </div>
+  );
 };
+
 export default Knights;
