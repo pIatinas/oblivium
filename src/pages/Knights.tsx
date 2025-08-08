@@ -223,7 +223,7 @@ const Knights = () => {
           </p>
         </div>
 
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div className="mb-6 flex flex-col-reverse sm:flex-row gap-4 items-center justify-between flex-wrap-reverse w-full ">
           <div className="flex gap-4 flex-1 max-w-md">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
