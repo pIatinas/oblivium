@@ -249,7 +249,7 @@ const Knights = () => {
                 Novo Cavaleiro
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="border-none ">
               <DialogHeader>
                 <DialogTitle className="mb-5 text-2xl ">Novo Cavaleiro</DialogTitle>
               </DialogHeader>
