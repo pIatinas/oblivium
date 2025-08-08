@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Plus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Search, Filter, Calendar, Trophy, Sword, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
@@ -10,16 +12,26 @@ import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
+
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
+
 interface Stigma {
   id: string;
   nome: string;
   imagem: string;
 }
+
+interface Profile {
+  id: string;
+  full_name: string | null;
+  user_id: string;
+  role: string;
+}
+
 interface Battle {
   id: string;
   winner_team: string[];
@@ -31,12 +43,9 @@ interface Battle {
   meta: boolean | null;
   tipo: string;
 }
-interface Profile {
-  id: string;
-  full_name: string | null;
-  user_id: string;
-}
+
 const ITEMS_PER_PAGE = 12;
+
 const Battles = () => {
   const [battles, setBattles] = useState<Battle[]>([]);
   const [knights, setKnights] = useState<Knight[]>([]);
@@ -50,12 +59,14 @@ const Battles = () => {
   const {
     toast
   } = useToast();
+
   useEffect(() => {
     fetchBattles();
     fetchKnights();
     fetchStigmas();
     fetchProfiles();
   }, [searchTerm, typeFilter, currentPage]);
+
   const fetchBattles = async () => {
     try {
       let query = supabase.from('battles').select('*', {
@@ -87,6 +98,7 @@ const Battles = () => {
       setLoading(false);
     }
   };
+
   const fetchKnights = async () => {
     try {
       const {
@@ -99,6 +111,7 @@ const Battles = () => {
       console.error('Erro ao carregar cavaleiros:', error);
     }
   };
+
   const fetchStigmas = async () => {
     try {
       const {
@@ -111,6 +124,7 @@ const Battles = () => {
       console.error('Erro ao carregar estigmas:', error);
     }
   };
+
   const fetchProfiles = async () => {
     try {
       const {
@@ -123,15 +137,19 @@ const Battles = () => {
       console.error('Erro ao carregar perfis:', error);
     }
   };
+
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
   };
+
   const getStigmaById = (stigmaId: string) => {
     return stigmas.find(s => s.id === stigmaId);
   };
+
   const getProfileByUserId = (userId: string) => {
     return profiles.find(p => p.user_id === userId);
   };
+
   const filteredBattles = battles.filter(battle => {
     const matchesSearch = battle.winner_team.some(knightId => {
       const knight = getKnightById(knightId);
@@ -142,7 +160,9 @@ const Battles = () => {
     });
     return matchesSearch;
   });
+
   const totalPages = Math.ceil(totalBattles / ITEMS_PER_PAGE);
+
   if (loading) {
     return <div className="min-h-screen bg-gradient-nebula">
         <Header />
@@ -151,6 +171,7 @@ const Battles = () => {
         </div>
       </div>;
   }
+
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-3 md:p-6 ">
@@ -241,4 +262,5 @@ const Battles = () => {
       <Footer />
     </div>;
 };
+
 export default Battles;

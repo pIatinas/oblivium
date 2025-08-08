@@ -13,23 +13,27 @@ import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import CreateKnightForm from "@/components/CreateKnightForm";
 import BattleCard from "@/components/BattleCard";
+
 interface Knight {
   id: string;
   name: string;
   image_url: string;
   slug: string | null;
 }
+
 interface Stigma {
   id: string;
   nome: string;
   imagem: string;
 }
+
 interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
   role: string;
 }
+
 interface Battle {
   id: string;
   winner_team: string[];
@@ -41,6 +45,7 @@ interface Battle {
   meta: boolean | null;
   tipo: string;
 }
+
 const Knights = () => {
   const [knights, setKnights] = useState<Knight[]>([]);
   const [battles, setBattles] = useState<Battle[]>([]);
@@ -55,6 +60,7 @@ const Knights = () => {
     toast
   } = useToast();
   const [searchParams] = useSearchParams();
+
   useEffect(() => {
     const knightParam = searchParams.get("knight");
     if (knightParam) {
@@ -62,9 +68,11 @@ const Knights = () => {
       setSelectedKnight(initialSelectedKnight || null);
     }
   }, [knights, searchParams]);
+
   useEffect(() => {
     fetchData();
   }, [sortBy, searchTerm]);
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -80,6 +88,7 @@ const Knights = () => {
       setLoading(false);
     }
   };
+
   const fetchKnights = async () => {
     try {
       let query = supabase.from('knights').select('*');
@@ -98,6 +107,7 @@ const Knights = () => {
       console.error("Erro ao carregar cavaleiros:", error);
     }
   };
+
   const fetchBattles = async () => {
     try {
       const {
@@ -110,6 +120,7 @@ const Knights = () => {
       console.error("Erro ao carregar batalhas:", error);
     }
   };
+
   const fetchStigmas = async () => {
     try {
       const {
@@ -122,6 +133,7 @@ const Knights = () => {
       console.error('Erro ao carregar estigmas:', error);
     }
   };
+
   const fetchProfiles = async () => {
     try {
       const {
@@ -134,9 +146,11 @@ const Knights = () => {
       console.error('Erro ao carregar perfis:', error);
     }
   };
+
   const getKnightAppearances = (knightId: string) => {
     return battles.filter(battle => battle.winner_team.includes(knightId) || battle.loser_team.includes(knightId)).length;
   };
+
   const filteredKnights = knights.filter(knight => knight.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => {
     if (sortBy === "most_used") {
       return getKnightAppearances(b.id) - getKnightAppearances(a.id);
@@ -145,6 +159,7 @@ const Knights = () => {
     }
     return 0;
   });
+
   if (loading) {
     return <div className="min-h-screen bg-gradient-nebula">
         <Header />
@@ -153,14 +168,18 @@ const Knights = () => {
         </div>
       </div>;
   }
+
   if (selectedKnight) {
     const knightBattles = battles.filter(battle => battle.winner_team.includes(selectedKnight.id) || battle.loser_team.includes(selectedKnight.id));
     const victories = battles.filter(battle => battle.winner_team.includes(selectedKnight.id));
     const defeats = battles.filter(battle => battle.loser_team.includes(selectedKnight.id));
     const totalAppearances = getKnightAppearances(selectedKnight.id);
+    
     return <div className="min-h-screen bg-gradient-nebula">
         <Header />
         <div className="max-w-6xl mx-auto p-3 md:p-6">
+          <Breadcrumb knightName={selectedKnight.name} />
+          
           <div className="mb-6">
             <Button onClick={() => setSelectedKnight(null)} className="bg-transparent text-amber-200 text-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -200,7 +219,7 @@ const Knights = () => {
             <h2 className="text-2xl font-bold text-foreground mb-6">Histórico de Batalhas</h2>
             
             {knightBattles.length > 0 ? <div className="grid md:grid-cols-2 gap-6">
-                {knightBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} />)}
+                {knightBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} highlightKnightId={selectedKnight.id} />)}
               </div> : <div className="text-center py-8">
                 <p className="text-muted-foreground text-lg">
                   Este cavaleiro ainda não participou de batalhas
@@ -211,6 +230,7 @@ const Knights = () => {
         <Footer />
       </div>;
   }
+
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
@@ -295,4 +315,5 @@ const Knights = () => {
       <Footer />
     </div>;
 };
+
 export default Knights;

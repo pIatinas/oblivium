@@ -1,80 +1,124 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
 interface CreateKnightFormProps {
   onKnightCreated: () => void;
   onClose?: () => void;
 }
-const CreateKnightForm = ({
-  onKnightCreated,
-  onClose
-}: CreateKnightFormProps) => {
+
+const CreateKnightForm = ({ onKnightCreated, onClose }: CreateKnightFormProps) => {
   const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!name.trim() || !imageUrl.trim()) {
+      toast({
+        title: "Erro",
+        description: "Nome e URL da imagem são obrigatórios",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setLoading(true);
+    
     try {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
+      const { data: { user } } = await supabase.auth.getUser();
+      
       if (!user) {
         throw new Error("Usuário não autenticado");
       }
-      const {
-        error
-      } = await supabase.from('knights').insert({
-        name,
-        image_url: imageUrl,
-        created_by: user.id
-      });
+
+      const { error } = await supabase
+        .from('knights')
+        .insert([
+          {
+            name: name.trim(),
+            image_url: imageUrl.trim(),
+            created_by: user.id
+          }
+        ]);
+
       if (error) throw error;
+
       toast({
-        title: "Cavaleiro criado!",
-        description: `${name} foi adicionado com sucesso`
+        title: "Sucesso!",
+        description: "Cavaleiro cadastrado com sucesso"
       });
+
       setName("");
       setImageUrl("");
       onKnightCreated();
-      if (onClose) onClose();
+      onClose?.();
+      
     } catch (error: any) {
+      console.error('Erro ao criar cavaleiro:', error);
       toast({
         title: "Erro",
-        description: error.message || "Não foi possível criar o cavaleiro",
+        description: "Não foi possível cadastrar o cavaleiro",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-  return <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="name">Nome do Cavaleiro</Label>
-        <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Seiya de Pégaso" required />
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="name">Nome</Label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="Seu nome no jogo"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="bg-card border-border"
+        />
       </div>
 
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="imageUrl">URL da Imagem</Label>
-        <Input id="imageUrl" type="url" value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://..." required />
+        <Input
+          id="imageUrl"
+          type="url"
+          placeholder="https://exemplo.com/imagem.jpg"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+          className="bg-card border-border"
+        />
       </div>
 
-      <div className="flex gap-2 flex-row-reverse ">
-        <Button type="submit" disabled={loading} className="flex-1">
-          {loading ? "Criando..." : "Criar Cavaleiro"}
+      <div className="flex gap-3 pt-4">
+        <Button
+          type="submit"
+          disabled={loading}
+          className="bg-gradient-cosmic text-white hover:opacity-90 flex-1"
+        >
+          {loading ? "Cadastrando..." : "Cadastrar"}
         </Button>
-        {onClose && <Button type="button" variant="outline" onClick={onClose}>
+        {onClose && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            className="bg-card border-border"
+          >
             Cancelar
-          </Button>}
+          </Button>
+        )}
       </div>
-    </form>;
+    </form>
+  );
 };
+
 export default CreateKnightForm;
