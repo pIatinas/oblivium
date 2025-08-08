@@ -177,20 +177,20 @@ const Knights = () => {
           <div className="grid grid-cols-2 gap-6 mb-8">
             <Card className="bg-card border-none shadow-lg">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-0 ">
                   <Trophy className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl text-accent">{victories.length}</CardTitle>
+                <CardTitle className="text-accent text-2xl lg:text-5xl ">{victories.length}</CardTitle>
                 <CardDescription className="-mt-2 text-xl">Vitórias</CardDescription>
               </CardHeader>
             </Card>
 
             <Card className="bg-card border-none shadow-lg">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-0">
                   <Sword className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl text-purple-400">{defeats.length}</CardTitle>
+                <CardTitle className="text-accent text-2xl lg:text-5xl ">{defeats.length}</CardTitle>
                 <CardDescription className="-mt-2 text-xl">Derrotas</CardDescription>
               </CardHeader>
             </Card>
