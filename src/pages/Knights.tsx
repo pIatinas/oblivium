@@ -180,8 +180,8 @@ const Knights = () => {
                 <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-0 ">
                   <Trophy className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-accent text-2xl lg:text-4xl mb-0 mt-1 ">{victories.length}</CardTitle>
-                <CardDescription className="-mt-2 text-xl">Vitórias</CardDescription>
+                <CardTitle className="text-accent text-2xl lg:text-4xl mb-0 mt-2">{victories.length}</CardTitle>
+                <CardDescription className="-mt-3 text-xl">Vitórias</CardDescription>
               </CardHeader>
             </Card>
 
@@ -190,8 +190,8 @@ const Knights = () => {
                 <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-0">
                   <Sword className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-2xl lg:text-4xl text-purple-600 mb-0 mt-1">{defeats.length}</CardTitle>
-                <CardDescription className="-mt-2 text-xl">Derrotas</CardDescription>
+                <CardTitle className="text-2xl lg:text-4xl text-purple-600 mb-0 mt-2">{defeats.length}</CardTitle>
+                <CardDescription className="-mt-3 text-xl">Derrotas</CardDescription>
               </CardHeader>
             </Card>
           </div>
