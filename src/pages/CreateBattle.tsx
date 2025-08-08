@@ -308,9 +308,7 @@ const CreateBattle = () => {
         {/* Meta de Ataque e Categoria */}
         <div className="mt-3 mb-6 flex items-center justify-end gap-6">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="categoria" className="text-foreground text-muted-foreground">
-              Categoria
-            </Label>
+            
             <Select value={battleType} onValueChange={setBattleType}>
               <SelectTrigger className="w-[200px] bg-card border-border">
                 <SelectValue />
@@ -327,7 +325,7 @@ const CreateBattle = () => {
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox id="meta-attack" checked={isMetaAttack} onCheckedChange={checked => setIsMetaAttack(checked as boolean)} />
-            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground">
+            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground whitespace-nowrap ">
               Meta de Ataque
             </Label>
           </div>
