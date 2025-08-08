@@ -166,7 +166,7 @@ const Index = () => {
           <Link to="/battles">
             <Card className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none shadow-lg">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-4">
                   <Sword className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-xl text-foreground">Batalhas</CardTitle>
@@ -178,7 +178,7 @@ const Index = () => {
           <Link to="/knights">
             <Card className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none shadow-lg">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-4">
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-xl text-foreground">Cavaleiros</CardTitle>
