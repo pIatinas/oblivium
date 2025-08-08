@@ -333,11 +333,11 @@ const CreateBattle = () => {
 
         {/* Buscar Cavaleiros e Botão de Cadastro */}
         <div className="mt-8 mb-6">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap-reverse ">
             <div className="flex-1 max-w-[300px]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input placeholder="Buscar" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border" />
+                <Input placeholder="Buscar" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-4 md:pl-10 bg-card border-border " />
               </div>
             </div>
             <div className="flex items-end">
@@ -371,7 +371,7 @@ const CreateBattle = () => {
                       </div>
                       
                       <div className="flex gap-1">
-                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam} className="text-xs text-white hover:opacity-80 px-2 py-1 bg-yellow-400 hover:text-white">
+                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam} className="text-xs text-white hover:opacity-80 px-2 lg:py-1 bg-yellow-400 hover:text-white">
                           Vencedor
                         </Button>
                         <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'loser')} disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam} className="text-xs bg-gradient-cosmic text-white hover:opacity-80 hover:text-white px-2 py-1">
