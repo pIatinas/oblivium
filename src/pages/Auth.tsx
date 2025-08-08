@@ -113,12 +113,12 @@ const Auth = () => {
     }
   };
   return <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-card/90 backdrop-blur-sm shadow-xl border-none">
+      <Card className="w-full max-w-md bg-card/70 backdrop-blur-sm border-none">
         <CardHeader className="text-center space-y-4">
-          <div className="text-8xl">⚔️</div>
+          <div className="text-6xl">⚔️</div>
           <div>
-            <CardTitle className="text-3xl font-bold text-foreground mb-2">Cadastro</CardTitle>
-            <CardDescription className="text-muted-foreground">Cria sua conta para acessar o sistema</CardDescription>
+            <CardTitle className="text-3xl font-bold text-foreground mb-2">Oblivium</CardTitle>
+            <CardDescription className="text-muted-foreground -mt-3">Guerra dos Tronos</CardDescription>
           </div>
         </CardHeader>
         <form onSubmit={handleSubmit}>
