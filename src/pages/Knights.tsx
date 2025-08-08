@@ -180,7 +180,7 @@ const Knights = () => {
                 <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-0 ">
                   <Trophy className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-accent text-2xl lg:text-4xl -mb-1 mt-2">{victories.length}</CardTitle>
+                <CardTitle className="text-accent text-2xl lg:text-4xl -mb-1 mt-4">{victories.length}</CardTitle>
                 <CardDescription className="-mt-4 text-xl">Vitórias</CardDescription>
               </CardHeader>
             </Card>
