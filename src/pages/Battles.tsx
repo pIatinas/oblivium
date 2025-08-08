@@ -10,7 +10,6 @@ import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
-
 interface Knight {
   id: string;
   name: string;
@@ -37,9 +36,7 @@ interface Profile {
   full_name: string | null;
   user_id: string;
 }
-
 const ITEMS_PER_PAGE = 12;
-
 const Battles = () => {
   const [battles, setBattles] = useState<Battle[]>([]);
   const [knights, setKnights] = useState<Knight[]>([]);
@@ -53,14 +50,12 @@ const Battles = () => {
   const {
     toast
   } = useToast();
-
   useEffect(() => {
     fetchBattles();
     fetchKnights();
     fetchStigmas();
     fetchProfiles();
   }, [searchTerm, typeFilter, currentPage]);
-
   const fetchBattles = async () => {
     try {
       let query = supabase.from('battles').select('*', {
@@ -92,7 +87,6 @@ const Battles = () => {
       setLoading(false);
     }
   };
-
   const fetchKnights = async () => {
     try {
       const {
@@ -105,7 +99,6 @@ const Battles = () => {
       console.error('Erro ao carregar cavaleiros:', error);
     }
   };
-
   const fetchStigmas = async () => {
     try {
       const {
@@ -118,7 +111,6 @@ const Battles = () => {
       console.error('Erro ao carregar estigmas:', error);
     }
   };
-
   const fetchProfiles = async () => {
     try {
       const {
@@ -131,19 +123,15 @@ const Battles = () => {
       console.error('Erro ao carregar perfis:', error);
     }
   };
-
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
   };
-
   const getStigmaById = (stigmaId: string) => {
     return stigmas.find(s => s.id === stigmaId);
   };
-
   const getProfileByUserId = (userId: string) => {
     return profiles.find(p => p.user_id === userId);
   };
-
   const filteredBattles = battles.filter(battle => {
     const matchesSearch = battle.winner_team.some(knightId => {
       const knight = getKnightById(knightId);
@@ -154,22 +142,16 @@ const Battles = () => {
     });
     return matchesSearch;
   });
-
   const totalPages = Math.ceil(totalBattles / ITEMS_PER_PAGE);
-
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-nebula">
+    return <div className="min-h-screen bg-gradient-nebula">
         <Header />
         <div className="max-w-6xl mx-auto p-6 text-center">
           <div className="text-accent text-xl">Carregando batalhas...</div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-6">
         <Breadcrumb />
@@ -186,24 +168,16 @@ const Battles = () => {
           <div className="flex gap-4 flex-1 max-w-md">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Buscar por cavaleiro..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="pl-10 bg-card border-border"
-              />
+              <Input placeholder="Buscar por cavaleiro..." value={searchTerm} onChange={e => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }} className="pl-10 bg-card border-border" />
             </div>
             
-            <Select
-              value={typeFilter}
-              onValueChange={(value) => {
-                setTypeFilter(value);
-                setCurrentPage(1);
-              }}
-            >
+            <Select value={typeFilter} onValueChange={value => {
+            setTypeFilter(value);
+            setCurrentPage(1);
+          }}>
               <SelectTrigger className="w-[180px] bg-card border-border">
                 <SelectValue />
               </SelectTrigger>
@@ -228,80 +202,43 @@ const Battles = () => {
         </div>
 
         {/* Lista de Batalhas */}
-        {filteredBattles.length > 0 ? (
-          <>
+        {filteredBattles.length > 0 ? <>
             <div className="grid gap-6 md:grid-cols-2">
-              {filteredBattles.map(battle => (
-                <BattleCard
-                  key={battle.id}
-                  battle={battle}
-                  knights={knights}
-                  stigmas={stigmas}
-                  profiles={profiles}
-                  onDelete={fetchBattles}
-                />
-              ))}
+              {filteredBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} onDelete={fetchBattles} />)}
             </div>
 
             {/* Paginação */}
-            {totalPages > 1 && (
-              <div className="mt-8 flex justify-center gap-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="bg-card border-border"
-                >
+            {totalPages > 1 && <div className="mt-8 flex justify-center gap-2">
+                <Button variant="outline" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1} className="bg-card border-border">
                   Anterior
                 </Button>
                 
                 <div className="flex items-center gap-2">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1)
-                    .filter(page => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1)
-                    .map((page, index, array) => (
-                      <div key={page} className="flex items-center gap-2">
-                        {index > 0 && array[index - 1] !== page - 1 && (
-                          <span className="text-muted-foreground">...</span>
-                        )}
-                        <Button
-                          variant={currentPage === page ? "default" : "outline"}
-                          onClick={() => setCurrentPage(page)}
-                          className={currentPage === page ? "bg-gradient-cosmic text-white" : "bg-card border-border"}
-                        >
+                  {Array.from({
+              length: totalPages
+            }, (_, i) => i + 1).filter(page => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1).map((page, index, array) => <div key={page} className="flex items-center gap-2">
+                        {index > 0 && array[index - 1] !== page - 1 && <span className="text-muted-foreground">...</span>}
+                        <Button variant={currentPage === page ? "default" : "outline"} onClick={() => setCurrentPage(page)} className={currentPage === page ? "bg-gradient-cosmic text-white" : "bg-card border-border"}>
                           {page}
                         </Button>
-                      </div>
-                    ))}
+                      </div>)}
                 </div>
                 
-                <Button
-                  variant="outline"
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="bg-card border-border"
-                >
+                <Button variant="outline" onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages} className="bg-card border-border">
                   Próxima
                 </Button>
-              </div>
-            )}
-          </>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground text-xl mb-4">
-              Nenhuma batalha encontrada
-            </p>
+              </div>}
+          </> : <div className="text-center py-12">
+            <p className="text-muted-foreground text-xl mb-4">Nenhuma batalha cadastrada ainda.</p>
             <Button asChild className="bg-gradient-cosmic text-white hover:opacity-90">
               <Link to="/create-battle">
                 <Plus className="w-4 h-4 mr-2" />
                 Criar Primeira Batalha
               </Link>
             </Button>
-          </div>
-        )}
+          </div>}
       </div>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Battles;
