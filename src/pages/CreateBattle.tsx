@@ -202,10 +202,8 @@ const CreateBattle = () => {
         <Breadcrumb />
         
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Cadastro de Batalha</h1>
-          <p className="text-muted-foreground text-center">
-            Selecione os cavaleiros para compor os times vencedor e perdedor
-          </p>
+          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Cadastro de Batalhas</h1>
+          <p className="text-muted-foreground text-center">Selecione três cavaleiros para cada um dos times</p>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -217,7 +215,7 @@ const CreateBattle = () => {
             <CardHeader>
               <CardTitle className="text-accent text-center">
                 <div className="flex flex-col items-center">
-                  <div className="text-2xl mb-2">🏆</div>
+                  <div className="text-3xl mb-2">🏆</div>
                   <div>Vencedor</div>
                 </div>
               </CardTitle>
@@ -264,7 +262,7 @@ const CreateBattle = () => {
             <CardHeader>
               <CardTitle className="text-purple-400 text-center">
                 <div className="flex flex-col items-center">
-                  <div className="text-2xl mb-2">💀</div>
+                  <div className="text-3xl mb-2">💀</div>
                   <div>Perdedor</div>
                 </div>
               </CardTitle>
