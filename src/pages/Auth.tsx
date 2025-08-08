@@ -117,10 +117,8 @@ const Auth = () => {
         <CardHeader className="text-center space-y-4">
           <div className="text-8xl">⚔️</div>
           <div>
-            <CardTitle className="text-3xl font-bold text-foreground mb-2">Oblivium</CardTitle>
-            <CardDescription className="text-muted-foreground">
-              Gerenciador de Batalhas
-            </CardDescription>
+            <CardTitle className="text-3xl font-bold text-foreground mb-2">Cadastro</CardTitle>
+            <CardDescription className="text-muted-foreground">Cria sua conta para acessar o sistema</CardDescription>
           </div>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -151,7 +149,7 @@ const Auth = () => {
               {loading ? "Carregando..." : isSignUp ? "Cadastrar" : "Entrar"}
             </Button>
             
-            <Button type="button" variant="ghost" onClick={() => setIsSignUp(!isSignUp)} className="w-full hover:bg-transparent font-medium text-yellow-100">
+            <Button type="button" variant="ghost" onClick={() => setIsSignUp(!isSignUp)} className="w-full hover:bg-transparent font-medium text-yellow-100 hover:text-white ">
               {isSignUp ? "Já tem uma conta? Faça login" : "Não tem conta? Cadastre-se"}
             </Button>
           </CardFooter>
