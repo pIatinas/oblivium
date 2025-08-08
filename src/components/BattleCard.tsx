@@ -5,26 +5,22 @@ import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
-
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
-
 interface Stigma {
   id: string;
   nome: string;
   imagem: string;
 }
-
 interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
   role: string;
 }
-
 interface Battle {
   id: string;
   winner_team: string[];
@@ -36,7 +32,6 @@ interface Battle {
   meta: boolean | null;
   tipo: string;
 }
-
 interface BattleCardProps {
   battle: Battle;
   knights: Knight[];
@@ -44,57 +39,56 @@ interface BattleCardProps {
   profiles: Profile[];
   onDelete?: () => void;
 }
-
-const BattleCard = ({ battle, knights, stigmas, profiles, onDelete }: BattleCardProps) => {
+const BattleCard = ({
+  battle,
+  knights,
+  stigmas,
+  profiles,
+  onDelete
+}: BattleCardProps) => {
   const [isMaster, setIsMaster] = useState(false);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     checkMasterStatus();
   }, []);
-
   const checkMasterStatus = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('user_id', user.id)
-          .single();
+        const {
+          data: profile
+        } = await supabase.from('profiles').select('role').eq('user_id', user.id).single();
         setIsMaster(profile?.role === 'master');
       }
     } catch (error) {
       console.error('Erro ao verificar status de master:', error);
     }
   };
-
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
   };
-
   const getStigmaById = (stigmaId: string) => {
     return stigmas.find(s => s.id === stigmaId);
   };
-
   const getProfileByUserId = (userId: string) => {
     return profiles.find(p => p.user_id === userId);
   };
-
   const deleteBattle = async () => {
     try {
-      const { error } = await supabase
-        .from('battles')
-        .delete()
-        .eq('id', battle.id);
-      
+      const {
+        error
+      } = await supabase.from('battles').delete().eq('id', battle.id);
       if (error) throw error;
-      
       toast({
         title: "Batalha excluída",
         description: "A batalha foi excluída com sucesso"
       });
-      
       if (onDelete) onDelete();
     } catch (error: any) {
       toast({
@@ -104,25 +98,15 @@ const BattleCard = ({ battle, knights, stigmas, profiles, onDelete }: BattleCard
       });
     }
   };
-
-  return (
-    <Card className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer group">
-      {battle.meta && (
-        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
+  return <Card className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer group">
+      {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
           <span className="text-black text-lg">⭐</span>
-        </div>
-      )}
+        </div>}
       
-      {isMaster && (
-        <div className="absolute top-2 left-2 z-20">
+      {isMaster && <div className="absolute top-2 left-2 z-20">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-red-500 hover:text-red-600 hover:bg-red-500/10 w-6 h-6 p-0"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-500/10 w-6 h-6 p-0" onClick={e => e.stopPropagation()}>
                 <X className="w-4 h-4" />
               </Button>
             </AlertDialogTrigger>
@@ -135,55 +119,35 @@ const BattleCard = ({ battle, knights, stigmas, profiles, onDelete }: BattleCard
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={deleteBattle}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
+                <AlertDialogAction onClick={deleteBattle} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                   Excluir
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
-        </div>
-      )}
+        </div>}
 
-      <CardContent className="p-6" onClick={() => window.location.href = `/battles/${battle.id}`}>
+      <CardContent onClick={() => window.location.href = `/battles/${battle.id}`} className="p-3 max-w-full ">
         <div className="flex items-center justify-between gap-4">
           {/* Time Vencedor */}
           <div className="flex-1 space-y-3">
             <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2">
               Vencedor
-              {battle.winner_team_stigma && (
-                <img 
-                  src={getStigmaById(battle.winner_team_stigma)?.imagem} 
-                  alt="Estigma do time vencedor" 
-                  className="w-10 h-10" 
-                />
-              )}
+              {battle.winner_team_stigma && <img src={getStigmaById(battle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-6 h-6" />}
             </h3>
             <div className="flex gap-2 justify-center">
               {battle.winner_team.slice(0, 3).map((knightId, index) => {
-                const knight = getKnightById(knightId);
-                return knight ? (
-                  <div 
-                    key={index}
-                    className="flex flex-col items-center gap-1 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.location.href = `/knights?knight=${knight.id}`;
-                    }}
-                  >
-                    <img 
-                      src={knight.image_url} 
-                      alt={knight.name}
-                      className="w-14 h-14 rounded-full border border-accent/20 hover:border-accent/40" 
-                    />
+              const knight = getKnightById(knightId);
+              return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                e.stopPropagation();
+                window.location.href = `/knights?knight=${knight.id}`;
+              }}>
+                    <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-accent/20 hover:border-accent/40" />
                     <span className="text-xs text-foreground hover:text-accent transition-colors">
                       {knight.name}
                     </span>
-                  </div>
-                ) : null;
-              })}
+                  </div> : null;
+            })}
             </div>
           </div>
 
@@ -196,37 +160,21 @@ const BattleCard = ({ battle, knights, stigmas, profiles, onDelete }: BattleCard
           <div className="flex-1 space-y-3">
             <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2">
               Perdedor
-              {battle.loser_team_stigma && (
-                <img 
-                  src={getStigmaById(battle.loser_team_stigma)?.imagem} 
-                  alt="Estigma do time perdedor" 
-                  className="w-10 h-10" 
-                />
-              )}
+              {battle.loser_team_stigma && <img src={getStigmaById(battle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-6 h-6" />}
             </h3>
             <div className="flex gap-2 justify-center">
               {battle.loser_team.slice(0, 3).map((knightId, index) => {
-                const knight = getKnightById(knightId);
-                return knight ? (
-                  <div 
-                    key={index}
-                    className="flex flex-col items-center gap-1 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.location.href = `/knights?knight=${knight.id}`;
-                    }}
-                  >
-                    <img 
-                      src={knight.image_url} 
-                      alt={knight.name}
-                      className="w-14 h-14 rounded-full border border-purple-400/20 hover:border-purple-400/40" 
-                    />
+              const knight = getKnightById(knightId);
+              return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                e.stopPropagation();
+                window.location.href = `/knights?knight=${knight.id}`;
+              }}>
+                    <img src={knight.image_url} alt={knight.name} className="w-8 h-8 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
                     <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                       {knight.name}
                     </span>
-                  </div>
-                ) : null;
-              })}
+                  </div> : null;
+            })}
             </div>
           </div>
         </div>
@@ -236,8 +184,6 @@ const BattleCard = ({ battle, knights, stigmas, profiles, onDelete }: BattleCard
           por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default BattleCard;
