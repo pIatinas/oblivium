@@ -237,7 +237,7 @@ const Index = () => {
           
           <div className="grid gap-2 mgap-6 grid-cols-2 lg:grid-cols-5 xl:grid-cols-6">
             {topKnights.map(knight => <Link key={knight.id} to={`/knights?knight=${knight.id}`}>
-                <Card className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none shadow-lg">
+                <Card className="bg-card hover:bg-card/80 hover:scale-105 transition-all duration-300 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
                     <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full mx-auto mb-3 border border-accent/20" />
                     <p className="text-sm font-medium text-foreground">{knight.name}</p>
