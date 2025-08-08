@@ -153,7 +153,7 @@ const Battles = () => {
   }
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-3 md:p-6 ">
         <Breadcrumb />
         
         <div className="mb-8">
@@ -164,8 +164,8 @@ const Battles = () => {
         </div>
 
         {/* Filtros e Busca */}
-        <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
-          <div className="flex gap-4 flex-1 max-w-md">
+        <div className="mb-6 flex flex-col-reverse sm:flex-row gap-4 items-center justify-between flex-wrap-reverse w-full ">
+          <div className="flex gap-4 flex-1 w-full  ">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input placeholder="Buscar por cavaleiro..." value={searchTerm} onChange={e => {
