@@ -181,7 +181,7 @@ const Knights = () => {
                   <Trophy className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-accent text-2xl lg:text-4xl mb-0 mt-2">{victories.length}</CardTitle>
-                <CardDescription className="-mt-3 text-xl">Vitórias</CardDescription>
+                <CardDescription className="-mt-4 text-xl">Vitórias</CardDescription>
               </CardHeader>
             </Card>
 
@@ -191,7 +191,7 @@ const Knights = () => {
                   <Sword className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-2xl lg:text-4xl text-purple-600 mb-0 mt-2">{defeats.length}</CardTitle>
-                <CardDescription className="-mt-3 text-xl">Derrotas</CardDescription>
+                <CardDescription className="-mt-4 text-xl">Derrotas</CardDescription>
               </CardHeader>
             </Card>
           </div>
