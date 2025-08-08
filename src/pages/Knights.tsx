@@ -160,7 +160,7 @@ const Knights = () => {
     const totalAppearances = getKnightAppearances(selectedKnight.id);
     return <div className="min-h-screen bg-gradient-nebula">
         <Header />
-        <div className="max-w-6xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-3 md:p-6">
           <div className="mb-6">
             <Button onClick={() => setSelectedKnight(null)} className="bg-transparent text-amber-200 text-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
