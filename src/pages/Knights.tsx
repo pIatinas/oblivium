@@ -264,11 +264,11 @@ const Knights = () => {
         {filteredKnights.length > 0 ? <div className="grid gap-6 grid-cols-2 md:grid-cols-3  lg:grid-cols-5 xl:grid-cols-6">
             {filteredKnights.map(knight => {
           const appearances = getKnightAppearances(knight.id);
-          return <Card key={knight.id} onClick={() => setSelectedKnight(knight)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none shadow-lg hover:scale-105 transition-all ">
+          return <Card key={knight.id} onClick={() => setSelectedKnight(knight)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none hover:scale-105">
                   <CardContent className="px-3 py-2 text-center bg-transparent ">
-                    <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-4 border border-accent/20" />
+                    <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-1 border border-accent/20" />
                     <h3 className="text-lg font-semibold text-foreground mb-2">{knight.name}</h3>
-                    <p className="text-sm text-muted-foreground -mt-3">{appearances} times</p>
+                    <p className="text-sm text-muted-foreground -mt-4 ">{appearances} times</p>
                   </CardContent>
                 </Card>;
         })}
