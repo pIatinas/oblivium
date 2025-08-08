@@ -127,7 +127,7 @@ const BattleCard = ({
           </AlertDialog>
         </div>}
 
-      <CardContent onClick={() => window.location.href = `/battles/${battle.id}`} className="p-3 max-w-full ">
+      <CardContent onClick={() => window.location.href = `/battles/${battle.id}`} className="p-3 lg:p-6 max-w-full ">
         <div className="flex items-center justify-between gap-4">
           {/* Time Vencedor */}
           <div className="flex-1 space-y-3">
