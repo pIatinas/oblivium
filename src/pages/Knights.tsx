@@ -169,28 +169,28 @@ const Knights = () => {
           <div className="text-center mb-8">
             <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent" />
             <h1 className="text-4xl font-bold text-foreground mb-2">{selectedKnight.name}</h1>
-            <p className="text-muted-foreground">{totalAppearances} times</p>
+            <p className="text-muted-foreground -mt-4 text-xl">{totalAppearances} times</p>
           </div>
 
           {/* Estatísticas */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             <Card className="bg-card border-none shadow-lg">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gradient-gold  rounded-full flex items-center justify-center mb-4">
                   <Trophy className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-2xl text-accent">{victories.length}</CardTitle>
-                <CardDescription>Vitórias</CardDescription>
+                <CardDescription className="-mt-1 text-xl">Vitórias</CardDescription>
               </CardHeader>
             </Card>
 
             <Card className="bg-card border-none shadow-lg">
               <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-red-500 rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                   <Sword className="w-8 h-8 text-white" />
                 </div>
                 <CardTitle className="text-2xl text-purple-400">{defeats.length}</CardTitle>
-                <CardDescription>Derrotas</CardDescription>
+                <CardDescription className="-mt-1 text-xl">Derrotas</CardDescription>
               </CardHeader>
             </Card>
           </div>
