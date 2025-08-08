@@ -13,19 +13,16 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
-
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
-
 interface Stigma {
   id: string;
   nome: string;
   imagem: string;
 }
-
 const CreateBattle = () => {
   const [knights, setKnights] = useState<Knight[]>([]);
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
@@ -41,12 +38,10 @@ const CreateBattle = () => {
     toast
   } = useToast();
   const navigate = useNavigate();
-
   useEffect(() => {
     fetchKnights();
     fetchStigmas();
   }, []);
-
   const fetchKnights = async () => {
     try {
       const {
@@ -65,7 +60,6 @@ const CreateBattle = () => {
       setLoading(false);
     }
   };
-
   const fetchStigmas = async () => {
     try {
       const {
@@ -82,7 +76,6 @@ const CreateBattle = () => {
       });
     }
   };
-
   const addToTeam = (knight: Knight, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       if (winnerTeam.length >= 3) {
@@ -122,7 +115,6 @@ const CreateBattle = () => {
       setLoserTeam([...loserTeam, knight]);
     }
   };
-
   const removeFromTeam = (knightId: string, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       setWinnerTeam(winnerTeam.filter(k => k.id !== knightId));
@@ -130,11 +122,9 @@ const CreateBattle = () => {
       setLoserTeam(loserTeam.filter(k => k.id !== knightId));
     }
   };
-
   const isKnightInBothTeams = (knightId: string) => {
     return winnerTeam.some(k => k.id === knightId) && loserTeam.some(k => k.id === knightId);
   };
-
   const isKnightInTeam = (knightId: string, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       return winnerTeam.some(k => k.id === knightId);
@@ -142,9 +132,7 @@ const CreateBattle = () => {
       return loserTeam.some(k => k.id === knightId);
     }
   };
-
   const filteredKnights = knights.filter(knight => knight.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (winnerTeam.length !== 3 || loserTeam.length !== 3) {
@@ -197,11 +185,9 @@ const CreateBattle = () => {
       });
     }
   };
-
   const getStigmaById = (stigmaId: string) => {
     return stigmas.find(s => s.id === stigmaId);
   };
-
   if (loading) {
     return <div className="min-h-screen bg-gradient-nebula">
         <Header />
@@ -210,7 +196,6 @@ const CreateBattle = () => {
         </div>
       </div>;
   }
-
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-3 lg:p-6">
@@ -320,16 +305,10 @@ const CreateBattle = () => {
           </Card>
         </div>
 
-        {/* Meta de Ataque, Categoria e Botão Cadastrar */}
+        {/* Meta de Ataque e Categoria */}
         <div className="mt-3 mb-6 flex items-center justify-end gap-6 flex-wrap">
           <div className="flex items-center space-x-2">
-            <Checkbox id="meta-attack" checked={isMetaAttack} onCheckedChange={checked => setIsMetaAttack(checked as boolean)} />
-            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground whitespace-nowrap ">
-              Meta de Ataque
-            </Label>
-          </div>
-          
-          <div className="flex items-center space-x-2">
+            
             <Select value={battleType} onValueChange={setBattleType}>
               <SelectTrigger className="w-[200px] bg-card border-border">
                 <SelectValue />
@@ -344,27 +323,34 @@ const CreateBattle = () => {
               </SelectContent>
             </Select>
           </div>
-
-          <div className="flex items-end">
-            <Button onClick={handleSubmit} className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg" disabled={winnerTeam.length !== 3 || loserTeam.length !== 3 || !winnerStigma || !loserStigma}>
-              Cadastrar
-            </Button>
+          <div className="flex items-center space-x-2">
+            <Checkbox id="meta-attack" checked={isMetaAttack} onCheckedChange={checked => setIsMetaAttack(checked as boolean)} />
+            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground whitespace-nowrap ">
+              Meta de Ataque
+            </Label>
           </div>
         </div>
 
-        {/* Título dos Cavaleiros Disponíveis e Busca */}
-        <div className="mt-8 mb-4">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h2 className="text-2xl font-bold text-foreground">
-              <span className="font-normal">Cavaleiros</span> Disponíveis
-            </h2>
+        {/* Buscar Cavaleiros e Botão de Cadastro */}
+        <div className="mt-8 mb-6">
+          <div className="flex items-center justify-between gap-3 flex-wrap-reverse ">
             <div className="flex-1 max-w-[300px]">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input placeholder="Buscar" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-4 md:pl-10 bg-card border-border " />
               </div>
             </div>
+            <div className="flex items-end">
+              <Button onClick={handleSubmit} className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg" disabled={winnerTeam.length !== 3 || loserTeam.length !== 3 || !winnerStigma || !loserStigma}>
+                Cadastrar
+              </Button>
+            </div>
           </div>
+        </div>
+
+        {/* Título dos Cavaleiros Disponíveis */}
+        <div className="mt-8 mb-4">
+          <h2 className="text-2xl font-bold text-foreground text-center">Cavaleiros Disponíveis</h2>
         </div>
 
         {/* Lista de Cavaleiros Disponíveis */}
@@ -406,5 +392,4 @@ const CreateBattle = () => {
       <Footer />
     </div>;
 };
-
 export default CreateBattle;

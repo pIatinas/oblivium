@@ -1,31 +1,26 @@
-
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "react-router-dom";
-
+import { useState, useEffect } from "react";
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
-
 interface Stigma {
   id: string;
   nome: string;
   imagem: string;
 }
-
 interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
   role: string;
 }
-
 interface Battle {
   id: string;
   winner_team: string[];
@@ -37,71 +32,65 @@ interface Battle {
   meta: boolean | null;
   tipo: string;
 }
-
 interface BattleCardProps {
   battle: Battle;
   knights: Knight[];
   stigmas: Stigma[];
   profiles: Profile[];
   onDelete?: () => void;
-  highlightKnightId?: string;
 }
-
-const BattleCard = ({ battle, knights, stigmas, profiles, onDelete, highlightKnightId }: BattleCardProps) => {
-  const { toast } = useToast();
-
-  const getKnightById = (knightId: string) => {
-    return knights.find(knight => knight.id === knightId);
-  };
-
-  const getStigmaById = (stigmaId: string) => {
-    return stigmas.find(stigma => stigma.id === stigmaId);
-  };
-
-  const getProfileByUserId = (userId: string) => {
-    return profiles.find(profile => profile.user_id === userId);
-  };
-
-  const getCurrentUserRole = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-    
-    const profile = profiles.find(p => p.user_id === user.id);
-    return profile?.role;
-  };
-
-  const handleDelete = async () => {
-    const userRole = await getCurrentUserRole();
-    
-    if (userRole !== 'master') {
-      toast({
-        title: "Acesso negado",
-        description: "Apenas masters podem excluir batalhas",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (!window.confirm("Tem certeza que deseja excluir esta batalha?")) {
-      return;
-    }
-
+const BattleCard = ({
+  battle,
+  knights,
+  stigmas,
+  profiles,
+  onDelete
+}: BattleCardProps) => {
+  const [isMaster, setIsMaster] = useState(false);
+  const {
+    toast
+  } = useToast();
+  useEffect(() => {
+    checkMasterStatus();
+  }, []);
+  const checkMasterStatus = async () => {
     try {
-      const { error } = await supabase
-        .from('battles')
-        .delete()
-        .eq('id', battle.id);
-
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
+      if (user) {
+        const {
+          data: profile
+        } = await supabase.from('profiles').select('role').eq('user_id', user.id).single();
+        setIsMaster(profile?.role === 'master');
+      }
+    } catch (error) {
+      console.error('Erro ao verificar status de master:', error);
+    }
+  };
+  const getKnightById = (knightId: string) => {
+    return knights.find(k => k.id === knightId);
+  };
+  const getStigmaById = (stigmaId: string) => {
+    return stigmas.find(s => s.id === stigmaId);
+  };
+  const getProfileByUserId = (userId: string) => {
+    return profiles.find(p => p.user_id === userId);
+  };
+  const deleteBattle = async () => {
+    try {
+      const {
+        error
+      } = await supabase.from('battles').delete().eq('id', battle.id);
       if (error) throw error;
-
       toast({
-        title: "Sucesso",
-        description: "Batalha excluída com sucesso"
+        title: "Batalha excluída",
+        description: "A batalha foi excluída com sucesso"
       });
-
-      onDelete?.();
+      if (onDelete) onDelete();
     } catch (error: any) {
-      console.error('Erro ao excluir batalha:', error);
       toast({
         title: "Erro",
         description: "Não foi possível excluir a batalha",
@@ -109,132 +98,92 @@ const BattleCard = ({ battle, knights, stigmas, profiles, onDelete, highlightKni
       });
     }
   };
-
-  const winnerStigma = battle.winner_team_stigma ? getStigmaById(battle.winner_team_stigma) : null;
-  const loserStigma = battle.loser_team_stigma ? getStigmaById(battle.loser_team_stigma) : null;
-  const creator = getProfileByUserId(battle.created_by);
-
-  return (
-    <Card className="bg-card border-none shadow-lg relative">
-      {battle.meta && (
-        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
-          <span className="text-black text-4xl">⭐</span>
-        </div>
-      )}
+  return <Card className="bg-card hover:bg-card/70 hover:scale-105  transition-all duration-300 relative border-none shadow-none cursor-pointer group">
+      {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
+          <span className="text-black text-lg">⭐</span>
+        </div>}
       
-      <CardContent className="p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-accent/10 text-accent border-accent/20">
-              {battle.tipo}
-            </Badge>
-            {battle.meta && (
-              <Badge variant="secondary" className="bg-yellow-400/10 text-yellow-400 border-yellow-400/20">
-                Meta
-              </Badge>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDelete}
-              className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
+      {isMaster && <div className="absolute top-2 left-2 z-20">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-500/10 w-6 h-6 p-0" onClick={e => e.stopPropagation()}>
+                <X className="w-4 h-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tem certeza que deseja excluir essa batalha?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction onClick={deleteBattle} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>}
 
-        <div className="grid grid-cols-2 gap-6">
+      <CardContent onClick={() => window.location.href = `/battles/${battle.id}`} className="p-3 lg:p-6 max-w-full ">
+        <div className="flex items-center justify-between gap-1 lg:gap-4 ">
           {/* Time Vencedor */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="text-lg">🏆</div>
-              <span className="text-accent font-semibold">Vencedor</span>
-              {winnerStigma && (
-                <img src={winnerStigma.imagem} alt={winnerStigma.nome} className="w-5 h-5" />
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              {battle.winner_team.map(knightId => {
-                const knight = getKnightById(knightId);
-                if (!knight) return null;
-                const isHighlighted = highlightKnightId === knightId;
-                
-                return (
-                  <div key={knightId} className={`flex items-center gap-2 p-2 rounded-lg ${isHighlighted ? 'bg-white/10 border border-white/30' : 'bg-accent/5 border border-accent/10'}`}>
-                    <img 
-                      src={knight.image_url} 
-                      alt={knight.name} 
-                      className="w-8 h-8 rounded-full border border-accent/20" 
-                    />
-                    <span className={`text-sm font-medium ${isHighlighted ? 'text-white' : 'text-foreground'}`}>
+          <div className="flex-1 space-y-3">
+            <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2">
+              Vencedor
+              {battle.winner_team_stigma && <img src={getStigmaById(battle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-6 h-6 lg:w-12 lg:h-12 " />}
+            </h3>
+            <div className="flex gap-2 justify-center">
+              {battle.winner_team.slice(0, 3).map((knightId, index) => {
+              const knight = getKnightById(knightId);
+              return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                e.stopPropagation();
+                window.location.href = `/knights?knight=${knight.id}`;
+              }}>
+                    <img src={knight.image_url} alt={knight.name} className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-accent/20 hover:border-accent/40" />
+                    <span className="text-xs text-foreground hover:text-accent transition-colors">
                       {knight.name}
                     </span>
-                  </div>
-                );
-              })}
+                  </div> : null;
+            })}
             </div>
+          </div>
+
+          {/* X Separador */}
+          <div className="text-2xl font-bold text-muted-foreground">
+            ✕
           </div>
 
           {/* Time Perdedor */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="text-lg">💀</div>
-              <span className="text-purple-400 font-semibold">Perdedor</span>
-              {loserStigma && (
-                <img src={loserStigma.imagem} alt={loserStigma.nome} className="w-5 h-5" />
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              {battle.loser_team.map(knightId => {
-                const knight = getKnightById(knightId);
-                if (!knight) return null;
-                const isHighlighted = highlightKnightId === knightId;
-                
-                return (
-                  <div key={knightId} className={`flex items-center gap-2 p-2 rounded-lg ${isHighlighted ? 'bg-white/10 border border-white/30' : 'bg-purple-400/5 border border-purple-400/10'}`}>
-                    <img 
-                      src={knight.image_url} 
-                      alt={knight.name} 
-                      className="w-8 h-8 rounded-full border border-purple-400/20" 
-                    />
-                    <span className={`text-sm font-medium ${isHighlighted ? 'text-white' : 'text-foreground'}`}>
+          <div className="flex-1 space-y-3">
+            <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2">
+              Perdedor
+              {battle.loser_team_stigma && <img src={getStigmaById(battle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-6 h-6 lg:w-12 lg:h-12" />}
+            </h3>
+            <div className="flex gap-2 justify-center">
+              {battle.loser_team.slice(0, 3).map((knightId, index) => {
+              const knight = getKnightById(knightId);
+              return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                e.stopPropagation();
+                window.location.href = `/knights?knight=${knight.id}`;
+              }}>
+                    <img src={knight.image_url} alt={knight.name} className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
+                    <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                       {knight.name}
                     </span>
-                  </div>
-                );
-              })}
+                  </div> : null;
+            })}
             </div>
           </div>
         </div>
-
-        <div className="mt-4 pt-4 border-t border-border">
-          <div className="flex justify-between items-center text-xs text-muted-foreground">
-            <span>
-              Por: {creator?.full_name || 'Usuário'}
-            </span>
-            <Link 
-              to={`/battles/${battle.id}`}
-              className="text-accent hover:text-accent/80 font-medium"
-            >
-              Ver detalhes
-            </Link>
-            <span>
-              {new Date(battle.created_at).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-              })}
-            </span>
-          </div>
+        
+        {/* Informação do autor */}
+        <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+          por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default BattleCard;
