@@ -13,16 +13,19 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
+
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
+
 interface Stigma {
   id: string;
   nome: string;
   imagem: string;
 }
+
 const CreateBattle = () => {
   const [knights, setKnights] = useState<Knight[]>([]);
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
@@ -34,20 +37,17 @@ const CreateBattle = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMetaAttack, setIsMetaAttack] = useState(false);
   const [battleType, setBattleType] = useState('Padrão');
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
+
   useEffect(() => {
     fetchKnights();
     fetchStigmas();
   }, []);
+
   const fetchKnights = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('knights').select('*').order('name');
+      const { data, error } = await supabase.from('knights').select('*').order('name');
       if (error) throw error;
       setKnights(data || []);
     } catch (error: any) {
@@ -60,12 +60,10 @@ const CreateBattle = () => {
       setLoading(false);
     }
   };
+
   const fetchStigmas = async () => {
     try {
-      const {
-        data,
-        error
-      } = await supabase.from('stigmas').select('*').order('nome');
+      const { data, error } = await supabase.from('stigmas').select('*').order('nome');
       if (error) throw error;
       setStigmas(data || []);
     } catch (error: any) {
@@ -76,6 +74,7 @@ const CreateBattle = () => {
       });
     }
   };
+
   const addToTeam = (knight: Knight, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       if (winnerTeam.length >= 3) {
@@ -115,6 +114,7 @@ const CreateBattle = () => {
       setLoserTeam([...loserTeam, knight]);
     }
   };
+
   const removeFromTeam = (knightId: string, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       setWinnerTeam(winnerTeam.filter(k => k.id !== knightId));
@@ -122,9 +122,11 @@ const CreateBattle = () => {
       setLoserTeam(loserTeam.filter(k => k.id !== knightId));
     }
   };
+
   const isKnightInBothTeams = (knightId: string) => {
     return winnerTeam.some(k => k.id === knightId) && loserTeam.some(k => k.id === knightId);
   };
+
   const isKnightInTeam = (knightId: string, team: 'winner' | 'loser') => {
     if (team === 'winner') {
       return winnerTeam.some(k => k.id === knightId);
@@ -132,7 +134,9 @@ const CreateBattle = () => {
       return loserTeam.some(k => k.id === knightId);
     }
   };
+
   const filteredKnights = knights.filter(knight => knight.name.toLowerCase().includes(searchTerm.toLowerCase())).sort((a, b) => a.name.localeCompare(b.name));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (winnerTeam.length !== 3 || loserTeam.length !== 3) {
@@ -152,9 +156,7 @@ const CreateBattle = () => {
       return;
     }
     try {
-      const {
-        error
-      } = await supabase.from('battles').insert([{
+      const { error } = await supabase.from('battles').insert([{
         winner_team: winnerTeam.map(k => k.id),
         loser_team: loserTeam.map(k => k.id),
         winner_team_stigma: winnerStigma,
@@ -185,9 +187,11 @@ const CreateBattle = () => {
       });
     }
   };
+
   const getStigmaById = (stigmaId: string) => {
     return stigmas.find(s => s.id === stigmaId);
   };
+
   if (loading) {
     return <div className="min-h-screen bg-gradient-nebula">
         <Header />
@@ -196,6 +200,7 @@ const CreateBattle = () => {
         </div>
       </div>;
   }
+
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-3 lg:p-6">
@@ -222,7 +227,6 @@ const CreateBattle = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                
                 <Select value={winnerStigma} onValueChange={setWinnerStigma}>
                   <SelectTrigger className="bg-card border-border">
                     <SelectValue placeholder="Qual o estigma desse time?" className="text-muted-foreground" />
@@ -269,7 +273,6 @@ const CreateBattle = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                
                 <Select value={loserStigma} onValueChange={setLoserStigma}>
                   <SelectTrigger className="bg-card border-border">
                     <SelectValue placeholder="Qual o estigma desse time?" className="text-muted-foreground" />
@@ -305,10 +308,20 @@ const CreateBattle = () => {
           </Card>
         </div>
 
-        {/* Meta de Ataque e Categoria */}
-        <div className="mt-3 mb-6 flex items-center justify-end gap-6 flex-wrap">
+        {/* Meta de Ataque, Categoria e Cadastrar na mesma linha */}
+        <div className="mt-6 mb-6 flex items-center justify-end gap-6 flex-wrap">
           <div className="flex items-center space-x-2">
-            
+            <Checkbox 
+              id="meta-attack" 
+              checked={isMetaAttack} 
+              onCheckedChange={checked => setIsMetaAttack(checked as boolean)} 
+            />
+            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground whitespace-nowrap">
+              Meta de Ataque
+            </Label>
+          </div>
+          
+          <div className="flex items-center space-x-2">
             <Select value={battleType} onValueChange={setBattleType}>
               <SelectTrigger className="w-[200px] bg-card border-border">
                 <SelectValue />
@@ -323,64 +336,81 @@ const CreateBattle = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="meta-attack" checked={isMetaAttack} onCheckedChange={checked => setIsMetaAttack(checked as boolean)} />
-            <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground whitespace-nowrap ">
-              Meta de Ataque
-            </Label>
+          
+          <div className="flex items-end">
+            <Button 
+              onClick={handleSubmit} 
+              className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg" 
+              disabled={winnerTeam.length !== 3 || loserTeam.length !== 3 || !winnerStigma || !loserStigma}
+            >
+              Cadastrar
+            </Button>
           </div>
         </div>
 
-        {/* Buscar Cavaleiros e Botão de Cadastro */}
-        <div className="mt-8 mb-6">
-          <div className="flex items-center justify-between gap-3 flex-wrap-reverse ">
-            <div className="flex-1 max-w-[300px]">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input placeholder="Buscar" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-4 md:pl-10 bg-card border-border " />
-              </div>
-            </div>
-            <div className="flex items-end">
-              <Button onClick={handleSubmit} className="bg-gradient-cosmic text-white hover:opacity-90 px-8 py-3 text-lg" disabled={winnerTeam.length !== 3 || loserTeam.length !== 3 || !winnerStigma || !loserStigma}>
-                Cadastrar
-              </Button>
+        {/* Título dos Cavaleiros Disponíveis e Busca na mesma linha */}
+        <div className="mt-8 mb-6 flex items-center justify-between gap-4 flex-wrap">
+          <h2 className="text-2xl font-bold text-foreground">
+            <span>Cavaleiros</span> Disponíveis
+          </h2>
+          <div className="flex-1 max-w-[300px]">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input 
+                placeholder="Buscar" 
+                value={searchTerm} 
+                onChange={e => setSearchTerm(e.target.value)} 
+                className="pl-4 md:pl-10 bg-card border-border" 
+              />
             </div>
           </div>
-        </div>
-
-        {/* Título dos Cavaleiros Disponíveis */}
-        <div className="mt-8 mb-4">
-          <h2 className="text-2xl font-bold text-foreground text-center">Cavaleiros Disponíveis</h2>
         </div>
 
         {/* Lista de Cavaleiros Disponíveis */}
-        <Card className="lg:bg-card border-none p-0 ">
+        <Card className="lg:bg-card border-none p-0">
           <CardContent className="p-0 lg:p-6">
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {filteredKnights.map(knight => {
-              const isInBothTeams = isKnightInBothTeams(knight.id);
-              const isInWinnerTeam = isKnightInTeam(knight.id, 'winner');
-              const isInLoserTeam = isKnightInTeam(knight.id, 'loser');
-              return <div key={knight.id} className={`p-3 rounded-lg border transition-all duration-300 ${isInBothTeams ? 'bg-muted opacity-50' : 'bg-background'} border-border hover:border-accent/50 cursor-pointer`}>
+                const isInBothTeams = isKnightInBothTeams(knight.id);
+                const isInWinnerTeam = isKnightInTeam(knight.id, 'winner');
+                const isInLoserTeam = isKnightInTeam(knight.id, 'loser');
+                
+                return <div key={knight.id} className={`p-3 rounded-lg border transition-all duration-300 ${isInBothTeams ? 'bg-muted opacity-50' : 'bg-background'} border-border hover:border-accent/50 cursor-pointer`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
-                        <img src={knight.image_url} alt={knight.name} className="w-10 h-10 rounded-full border border-border" />
+                        <img 
+                          src={knight.image_url} 
+                          alt={knight.name} 
+                          className="w-10 h-10 rounded-full border border-border" 
+                        />
                         <span className={`font-medium ${isInBothTeams ? 'text-muted-foreground' : 'text-foreground'}`}>
                           {knight.name}
                         </span>
                       </div>
                       
                       <div className="flex gap-1">
-                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'winner')} disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam} className="text-xs text-white hover:opacity-80 px-2 lg:py-1 bg-yellow-400 hover:text-white">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => addToTeam(knight, 'winner')} 
+                          disabled={winnerTeam.length >= 3 || isInBothTeams || isInWinnerTeam} 
+                          className="text-xs text-white hover:opacity-80 px-2 lg:py-1 bg-yellow-400 hover:text-white"
+                        >
                           Vencedor
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => addToTeam(knight, 'loser')} disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam} className="text-xs bg-gradient-cosmic text-white hover:opacity-80 hover:text-white px-2 py-1">
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => addToTeam(knight, 'loser')} 
+                          disabled={loserTeam.length >= 3 || isInBothTeams || isInLoserTeam} 
+                          className="text-xs bg-gradient-cosmic text-white hover:opacity-80 hover:text-white px-2 py-1"
+                        >
                           Perdedor
                         </Button>
                       </div>
                     </div>
                   </div>;
-            })}
+              })}
             </div>
             
             {filteredKnights.length === 0 && <p className="text-center text-muted-foreground py-8">
@@ -392,4 +422,5 @@ const CreateBattle = () => {
       <Footer />
     </div>;
 };
+
 export default CreateBattle;
