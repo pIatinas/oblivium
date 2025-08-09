@@ -28,26 +28,21 @@ const CreateKnightForm = ({ onKnightCreated }: CreateKnightFormProps) => {
       return;
     }
 
-    if (!imageUrl.trim()) {
-      toast({
-        title: "Erro", 
-        description: "A URL da imagem é obrigatória",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
+      const user = await supabase.auth.getUser();
+      if (!user.data.user) {
+        throw new Error("Usuário não autenticado");
+      }
+
       const { error } = await supabase
         .from('knights')
-        .insert([
-          {
-            name: name.trim(),
-            image_url: imageUrl.trim(),
-          }
-        ]);
+        .insert({
+          name: name.trim(),
+          image_url: imageUrl.trim() || null,
+          created_by: user.data.user.id
+        });
 
       if (error) throw error;
 

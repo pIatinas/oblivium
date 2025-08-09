@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,14 +47,12 @@ const CreateKnightModal = ({ isOpen, onClose, onKnightCreated }: CreateKnightMod
 
       const { error } = await supabase
         .from('knights')
-        .insert([
-          {
-            name: name.trim(),
-            image_url: imageUrl.trim() || null,
-            slug: slug,
-            created_by: user.data.user.id
-          }
-        ]);
+        .insert({
+          name: name.trim(),
+          image_url: imageUrl.trim() || null,
+          slug: slug,
+          created_by: user.data.user.id
+        });
 
       if (error) throw error;
 
@@ -90,7 +89,7 @@ const CreateKnightModal = ({ isOpen, onClose, onKnightCreated }: CreateKnightMod
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nome do cavaleiro"
+              placeholder="Seu nome no jogo"
               className="bg-background border-border"
             />
           </div>

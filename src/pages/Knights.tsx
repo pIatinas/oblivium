@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -331,6 +332,7 @@ const Knights = () => {
                             stigmas={stigmas} 
                             profiles={profiles}
                             onDelete={() => fetchKnightBattles(selectedKnight.id)}
+                            selectedKnightId={selectedKnight.id}
                           />
                         </div>
                       ))}
@@ -363,8 +365,8 @@ const Knights = () => {
       </div>
       
       <CreateKnightModal 
-        open={showCreateModal}
-        onOpenChange={setShowCreateModal}
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
         onKnightCreated={() => {
           fetchKnights();
           setShowCreateModal(false);
