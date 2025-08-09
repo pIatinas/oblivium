@@ -145,7 +145,7 @@ const Index = () => {
       <div className="max-w-6xl mx-auto p-3 md:p-6 ">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="font-bold text-foreground mb-4 text-7xl">⚔️ </h1>
+          <h1 className="font-bold text-foreground mb-4 text-7xl mt-4">⚔️ </h1>
           <p className="text-yellow-400  mb-8 text-center font-bold text-3xl">Guerra dos Tronos</p>
         </div>
 
@@ -197,9 +197,9 @@ const Index = () => {
                 </CarouselItem>
               </CarouselContent>
               <div className="flex justify-center mt-4 space-x-2">
-                <div className="w-2 h-2 rounded-full bg-accent opacity-50"></div>
-                <div className="w-2 h-2 rounded-full bg-accent opacity-50"></div>
-                <div className="w-2 h-2 rounded-full bg-accent opacity-50"></div>
+                <div className="w-2 h-2 rounded-full bg-gradient-cosmic opacity-50"></div>
+                <div className="w-2 h-2 rounded-full bg-gradient-cosmic opacity-50"></div>
+                <div className="w-2 h-2 rounded-full bg-gradient-cosmic opacity-50"></div>
               </div>
             </Carousel>
           </div>
@@ -290,7 +290,7 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="grid gap-2 lg:gap-6 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid gap-2 lg:gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ">
             {topKnights.map(knight => <Link key={knight.id} to={`/knights?knight=${knight.id}`}>
                 <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
