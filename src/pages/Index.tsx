@@ -8,7 +8,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-
 interface Knight {
   id: string;
   name: string;
@@ -41,7 +40,6 @@ interface Stats {
   totalKnights: number;
   totalVictories: number;
 }
-
 const Index = () => {
   const [stats, setStats] = useState<Stats>({
     totalBattles: 0,
@@ -54,11 +52,9 @@ const Index = () => {
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     fetchData();
   }, []);
-
   const fetchData = async () => {
     try {
       await Promise.all([fetchStats(), fetchTopKnights(), fetchRecentBattles(), fetchKnights(), fetchStigmas(), fetchProfiles()]);
@@ -68,7 +64,6 @@ const Index = () => {
       setLoading(false);
     }
   };
-
   const fetchStats = async () => {
     const [battlesRes, knightsRes] = await Promise.all([supabase.from('battles').select('*', {
       count: 'exact',
@@ -85,7 +80,6 @@ const Index = () => {
       totalVictories: totalBattles
     });
   };
-
   const fetchTopKnights = async () => {
     const {
       data: battles
@@ -107,7 +101,6 @@ const Index = () => {
       setTopKnights(orderedKnights);
     }
   };
-
   const fetchRecentBattles = async () => {
     const {
       data
@@ -121,28 +114,24 @@ const Index = () => {
       })));
     }
   };
-
   const fetchKnights = async () => {
     const {
       data
     } = await supabase.from('knights').select('*');
     if (data) setKnights(data);
   };
-
   const fetchStigmas = async () => {
     const {
       data
     } = await supabase.from('stigmas').select('*');
     if (data) setStigmas(data);
   };
-
   const fetchProfiles = async () => {
     const {
       data
     } = await supabase.from('profiles').select('*');
     if (data) setProfiles(data);
   };
-
   if (loading) {
     return <div className="min-h-screen bg-gradient-nebula">
         <Header />
@@ -151,7 +140,6 @@ const Index = () => {
         </div>
       </div>;
   }
-
   return <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="max-w-6xl mx-auto p-3 md:p-6 ">
@@ -302,7 +290,7 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="grid gap-2 mgap-6 grid-cols-2 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="grid gap-2 lg:gap-6 grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {topKnights.map(knight => <Link key={knight.id} to={`/knights?knight=${knight.id}`}>
                 <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
@@ -337,5 +325,4 @@ const Index = () => {
       <Footer />
     </div>;
 };
-
 export default Index;
