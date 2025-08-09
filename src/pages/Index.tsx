@@ -290,7 +290,7 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="grid gap-2 lg:gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ">
+          <div className="grid gap-2 lg:gap-6 grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ">
             {topKnights.map(knight => <Link key={knight.id} to={`/knights?knight=${knight.id}`}>
                 <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
