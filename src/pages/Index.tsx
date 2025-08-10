@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sword, Trophy, Users, Zap, Plus } from "lucide-react";
+import { Sword, Trophy, Users, Zap, Plus, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 interface Knight {
   id: string;
   name: string;
@@ -22,7 +21,6 @@ interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
-  role: string;
 }
 interface Battle {
   id: string;
@@ -145,103 +143,49 @@ const Index = () => {
       <div className="max-w-6xl mx-auto p-3 md:p-6 ">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="font-bold text-foreground mb-4 text-7xl mt-4">⚔️ </h1>
+          <h1 className="font-bold text-foreground mb-4 text-7xl">⚔️ </h1>
           <p className="text-yellow-400  mb-8 text-center font-bold text-3xl">Guerra dos Tronos</p>
         </div>
 
-        {/* Action Cards - Mobile Slider */}
-        <div className="mb-12">
-          <div className="md:hidden">
-            <Carousel className="w-full max-w-sm mx-auto">
-              <CarouselContent>
-                <CarouselItem>
-                  <Link to="/create-battle">
-                    <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
-                      <CardHeader className="text-center">
-                        <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
-                          <Plus className="w-8 h-8 text-white" />
-                        </div>
-                        <CardTitle className="text-xl text-foreground">Cadastrar</CardTitle>
-                        <CardDescription>
-                          Registre uma nova batalha
-                        </CardDescription>
-                      </CardHeader>
-                    </Card>
-                  </Link>
-                </CarouselItem>
-                <CarouselItem>
-                  <Link to="/battles">
-                    <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
-                      <CardHeader className="text-center">
-                        <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
-                          <Sword className="w-8 h-8 text-white" />
-                        </div>
-                        <CardTitle className="text-xl text-foreground">Batalhas</CardTitle>
-                        <CardDescription>Veja as batalhas cadastradas</CardDescription>
-                      </CardHeader>
-                    </Card>
-                  </Link>
-                </CarouselItem>
-                <CarouselItem>
-                  <Link to="/knights">
-                    <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
-                      <CardHeader className="text-center">
-                        <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
-                          <Users className="w-8 h-8 text-white" />
-                        </div>
-                        <CardTitle className="text-xl text-foreground">Cavaleiros</CardTitle>
-                        <CardDescription>Explore todos os cavaleiros</CardDescription>
-                      </CardHeader>
-                    </Card>
-                  </Link>
-                </CarouselItem>
-              </CarouselContent>
-              <div className="flex justify-center mt-4 space-x-2">
-                <div className="w-2 h-2 rounded-full bg-gradient-cosmic opacity-50"></div>
-                <div className="w-2 h-2 rounded-full bg-gradient-cosmic opacity-50"></div>
-                <div className="w-2 h-2 rounded-full bg-gradient-cosmic opacity-50"></div>
-              </div>
-            </Carousel>
-          </div>
-          <div className="hidden md:grid md:grid-cols-3 gap-6">
-            <Link to="/create-battle">
-              <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
-                <CardHeader className="text-center">
-                  <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
-                    <Plus className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="text-xl text-foreground">Cadastrar</CardTitle>
-                  <CardDescription>
-                    Registre uma nova batalha
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
+        {/* Action Cards */}
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <Link to="/create-battle">
+            <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+              <CardHeader className="text-center">
+                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                  <Plus className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-xl text-foreground">Cadastrar</CardTitle>
+                <CardDescription>
+                  Registre uma nova batalha
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
 
-            <Link to="/battles">
-              <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
-                <CardHeader className="text-center">
-                  <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
-                    <Sword className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="text-xl text-foreground">Batalhas</CardTitle>
-                  <CardDescription>Veja as batalhas cadastradas</CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
+          <Link to="/battles">
+            <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+              <CardHeader className="text-center">
+                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                  <Sword className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-xl text-foreground">Batalhas</CardTitle>
+                <CardDescription>Veja as batalhas cadastradas</CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
 
-            <Link to="/knights">
-              <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
-                <CardHeader className="text-center">
-                  <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
-                    <Users className="w-8 h-8 text-white" />
-                  </div>
-                  <CardTitle className="text-xl text-foreground">Cavaleiros</CardTitle>
-                  <CardDescription>Explore todos os cavaleiros</CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          </div>
+          <Link to="/knights">
+            <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+              <CardHeader className="text-center">
+                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                  <Users className="w-8 h-8 text-white" />
+                </div>
+                <CardTitle className="text-xl text-foreground">Cavaleiros</CardTitle>
+                <CardDescription>Explore todos os cavaleiros</CardDescription>
+              </CardHeader>
+            </Card>
+          </Link>
         </div>
 
         {/* Estatísticas */}
@@ -283,14 +227,15 @@ const Index = () => {
             <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
               Principais <span className="font-bold">Cavaleiros</span>
             </h2>
-            <Button asChild variant="ghost" className="bg-transparent text-foreground">
+            <Button asChild variant="outline" className="bg-card border-border">
               <Link to="/knights">
+                <Eye className="w-4 h-4 mr-2" />
                 Ver Todos
               </Link>
             </Button>
           </div>
           
-          <div className="grid gap-2 lg:gap-6 grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 ">
+          <div className="grid gap-2 mgap-6 grid-cols-2 lg:grid-cols-5 xl:grid-cols-6">
             {topKnights.map(knight => <Link key={knight.id} to={`/knights?knight=${knight.id}`}>
                 <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
@@ -308,8 +253,9 @@ const Index = () => {
             <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
               Últimas <span className="font-bold">Batalhas</span>
             </h2>
-            <Button asChild variant="ghost" className="bg-transparent text-foreground">
+            <Button asChild variant="outline" className="bg-card border-border">
               <Link to="/battles">
+                <Eye className="w-4 h-4 mr-2" />
                 Ver Todas
               </Link>
             </Button>
