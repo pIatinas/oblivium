@@ -35,6 +35,7 @@ interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
+  role: string;
 }
 const ITEMS_PER_PAGE = 12;
 const Battles = () => {

@@ -14,6 +14,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const {
     toast
   } = useToast();
@@ -65,10 +66,7 @@ const Auth = () => {
           }
         });
         if (error) throw error;
-        toast({
-          title: "Cadastro realizado!",
-          description: "Verifique seu email e aguarde a ativação da sua conta por um administrador."
-        });
+        setShowSuccessMessage(true);
       } else {
         const {
           data,
@@ -113,6 +111,37 @@ const Auth = () => {
       setLoading(false);
     }
   };
+  if (showSuccessMessage) {
+    return (
+      <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
+        <Card className="w-full max-w-md backdrop-blur-sm border-none lg:bg-transparent bg-transparent">
+          <CardHeader className="text-center space-y-4">
+            <div className="text-6xl">⚔️</div>
+            <div>
+              <CardTitle className="text-3xl font-bold text-foreground mb-2">Oblivium</CardTitle>
+              <CardDescription className="text-muted-foreground -mt-3">Guerra dos Tronos</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="text-center space-y-6">
+            <div className="text-4xl mb-4">✅</div>
+            <div>
+              <h2 className="text-xl font-bold text-foreground mb-4">Conta Criada com Sucesso!</h2>
+              <p className="text-muted-foreground mb-6">
+                Sua conta foi criada com sucesso, em breve um administrador irá aprovar o seu cadastro.
+              </p>
+            </div>
+            <Button 
+              onClick={() => setShowSuccessMessage(false)}
+              className="w-full bg-gradient-cosmic text-white hover:opacity-90"
+            >
+              Ir para o Login
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
       <Card className="w-full max-w-md backdrop-blur-sm border-none lg:bg-transparent bg-transparent">
         <CardHeader className="text-center space-y-4">
@@ -126,7 +155,7 @@ const Auth = () => {
           <CardContent className="space-y-4">
             {isSignUp && <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-foreground">Nome</Label>
-                <Input id="fullName" type="text" placeholder="Seu nome completo" value={fullName} onChange={e => setFullName(e.target.value)} required className="bg-background/50 border-border" />
+                <Input id="fullName" type="text" placeholder="Seu nome no jogo" value={fullName} onChange={e => setFullName(e.target.value)} required className="bg-background/50 border-border" />
               </div>}
             
             <div className="space-y-2">
