@@ -156,10 +156,8 @@ const Index = () => {
                 <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                   <Plus className="w-8 h-8 text-white" />
                 </div>
-                <CardTitle className="text-xl text-foreground">Cadastrar</CardTitle>
-                <CardDescription>
-                  Registre uma nova batalha
-                </CardDescription>
+                <CardTitle className="text-xl text-foreground">Cadastro</CardTitle>
+                <CardDescription>Cadastre uma nova batalha</CardDescription>
               </CardHeader>
             </Card>
           </Link>
