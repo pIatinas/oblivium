@@ -112,8 +112,7 @@ const Auth = () => {
     }
   };
   if (showSuccessMessage) {
-    return (
-      <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
+    return <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
         <Card className="w-full max-w-md backdrop-blur-sm border-none lg:bg-transparent bg-transparent">
           <CardHeader className="text-center space-y-4">
             <div className="text-6xl">⚔️</div>
@@ -123,25 +122,20 @@ const Auth = () => {
             </div>
           </CardHeader>
           <CardContent className="text-center space-y-6">
-            <div className="text-4xl mb-4">✅</div>
+            
             <div>
-              <h2 className="text-xl font-bold text-foreground mb-4">Conta Criada com Sucesso!</h2>
+              
               <p className="text-muted-foreground mb-6">
                 Sua conta foi criada com sucesso, em breve um administrador irá aprovar o seu cadastro.
               </p>
             </div>
-            <Button 
-              onClick={() => setShowSuccessMessage(false)}
-              className="w-full bg-gradient-cosmic text-white hover:opacity-90"
-            >
+            <Button onClick={() => setShowSuccessMessage(false)} className="w-full bg-gradient-cosmic text-white hover:opacity-90">
               Ir para o Login
             </Button>
           </CardContent>
         </Card>
-      </div>
-    );
+      </div>;
   }
-
   return <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
       <Card className="w-full max-w-md backdrop-blur-sm border-none lg:bg-transparent bg-transparent">
         <CardHeader className="text-center space-y-4">
