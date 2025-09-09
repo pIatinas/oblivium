@@ -472,7 +472,7 @@ const BattleDetail = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleReaction('like')}
-                className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground hover:text-green-500'}`}
+                className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}
               >
                 <ThumbsUp className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getLikeCount()}</span>
@@ -481,7 +481,7 @@ const BattleDetail = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleReaction('dislike')}
-                className={`p-1 h-auto ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+                className={`p-1 h-auto ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}
               >
                 <ThumbsDown className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getDislikeCount()}</span>
@@ -681,7 +681,7 @@ const BattleDetail = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
-                          className="text-accent hover:text-accent/80 p-0 h-auto"
+                          className="text-accent p-0 h-auto"
                         >
                           <Reply className="w-4 h-4 mr-1" />
                           Responder
