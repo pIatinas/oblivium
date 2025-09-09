@@ -2,9 +2,12 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Star } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ArrowLeft, Star, ThumbsUp, ThumbsDown, MessageCircle, Send, Reply } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -42,6 +45,24 @@ interface Profile {
   user_id: string;
 }
 
+interface BattleComment {
+  id: string;
+  battle_id: string;
+  user_id: string;
+  content: string;
+  parent_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface BattleReaction {
+  id: string;
+  battle_id: string;
+  user_id: string;
+  reaction_type: 'like' | 'dislike';
+  created_at: string;
+}
+
 const BattleDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [battle, setBattle] = useState<Battle | null>(null);
@@ -49,8 +70,15 @@ const BattleDetail = () => {
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [relatedBattles, setRelatedBattles] = useState<Battle[]>([]);
+  const [comments, setComments] = useState<BattleComment[]>([]);
+  const [reactions, setReactions] = useState<BattleReaction[]>([]);
+  const [userReaction, setUserReaction] = useState<'like' | 'dislike' | null>(null);
+  const [newComment, setNewComment] = useState("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyContent, setReplyContent] = useState("");
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -58,6 +86,8 @@ const BattleDetail = () => {
       fetchKnights();
       fetchStigmas();
       fetchProfiles();
+      fetchComments();
+      fetchReactions();
     }
   }, [id]);
 
@@ -165,12 +195,147 @@ const BattleDetail = () => {
           ...b,
           meta: b.meta || false,
         }))
-        .slice(0, 6);
+        .slice(0, 4);
 
       setRelatedBattles(filtered);
     } catch (error: any) {
       console.error('Erro ao carregar batalhas relacionadas:', error);
     }
+  };
+
+  const fetchComments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('battle_comments')
+        .select('*')
+        .eq('battle_id', id)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+      setComments(data || []);
+    } catch (error: any) {
+      console.error('Erro ao carregar comentários:', error);
+    }
+  };
+
+  const fetchReactions = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('battle_reactions')
+        .select('*')
+        .eq('battle_id', id);
+
+      if (error) throw error;
+      setReactions((data || []) as BattleReaction[]);
+      
+      // Check user's reaction
+      if (user) {
+        const userReact = data?.find(r => r.user_id === user.id);
+        setUserReaction((userReact?.reaction_type as 'like' | 'dislike') || null);
+      }
+    } catch (error: any) {
+      console.error('Erro ao carregar reações:', error);
+    }
+  };
+
+  const handleReaction = async (type: 'like' | 'dislike') => {
+    if (!user || !id) return;
+
+    try {
+      if (userReaction === type) {
+        // Remove reaction
+        await supabase
+          .from('battle_reactions')
+          .delete()
+          .eq('battle_id', id)
+          .eq('user_id', user.id);
+        setUserReaction(null);
+      } else {
+        // Add or update reaction
+        await supabase
+          .from('battle_reactions')
+          .upsert({
+            battle_id: id,
+            user_id: user.id,
+            reaction_type: type
+          });
+        setUserReaction(type);
+      }
+      fetchReactions();
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível registrar sua reação",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleComment = async () => {
+    if (!user || !newComment.trim()) return;
+
+    try {
+      await supabase
+        .from('battle_comments')
+        .insert({
+          battle_id: id,
+          user_id: user.id,
+          content: newComment.trim()
+        });
+
+      setNewComment("");
+      fetchComments();
+      toast({
+        title: "Sucesso",
+        description: "Comentário adicionado com sucesso"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível adicionar o comentário",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleReply = async (parentId: string) => {
+    if (!user || !replyContent.trim()) return;
+
+    try {
+      await supabase
+        .from('battle_comments')
+        .insert({
+          battle_id: id,
+          user_id: user.id,
+          content: replyContent.trim(),
+          parent_id: parentId
+        });
+
+      setReplyContent("");
+      setReplyingTo(null);
+      fetchComments();
+      toast({
+        title: "Sucesso",
+        description: "Resposta adicionada com sucesso"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível adicionar a resposta",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const getLikeCount = () => reactions.filter(r => r.reaction_type === 'like').length;
+  const getDislikeCount = () => reactions.filter(r => r.reaction_type === 'dislike').length;
+
+  const getCommentReplies = (commentId: string) => {
+    return comments.filter(c => c.parent_id === commentId);
+  };
+
+  const getMainComments = () => {
+    return comments.filter(c => !c.parent_id);
   };
 
   if (loading) {
@@ -301,6 +466,28 @@ const BattleDetail = () => {
               </div>
             </div>
             
+            {/* Like/Dislike buttons */}
+            <div className="absolute bottom-[20px] right-[10px] flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleReaction('like')}
+                className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground hover:text-green-500'}`}
+              >
+                <ThumbsUp className="w-4 h-4" />
+                <span className="ml-1 text-xs">{getLikeCount()}</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleReaction('dislike')}
+                className={`p-1 h-auto ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground hover:text-red-500'}`}
+              >
+                <ThumbsDown className="w-4 h-4" />
+                <span className="ml-1 text-xs">{getDislikeCount()}</span>
+              </Button>
+            </div>
+
             {/* Informação do autor */}
             <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
               por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
@@ -423,6 +610,141 @@ const BattleDetail = () => {
               Nenhuma batalha relacionada encontrada
             </p>
           )}
+        </div>
+
+        {/* Comentários */}
+        <div className="mt-8">
+          <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+            <MessageCircle className="w-6 h-6" />
+            Comentários
+          </h3>
+
+          {/* Formulário de novo comentário */}
+          {user ? (
+            <Card className="bg-card border-border mb-6">
+              <CardContent className="p-4">
+                <div className="flex gap-3">
+                  <Textarea
+                    placeholder="Escreva seu comentário..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    className="flex-1 min-h-[80px] bg-background border-border"
+                  />
+                  <Button
+                    onClick={handleComment}
+                    disabled={!newComment.trim()}
+                    className="self-end bg-gradient-cosmic text-white hover:opacity-90"
+                  >
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="bg-card border-border mb-6">
+              <CardContent className="p-4 text-center">
+                <p className="text-muted-foreground">
+                  <Link to="/auth" className="text-accent hover:underline">
+                    Faça login
+                  </Link>{" "}
+                  para comentar
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Lista de comentários */}
+          <div className="space-y-4">
+            {getMainComments().map((comment) => (
+              <Card key={comment.id} className="bg-card border-border">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="font-semibold text-foreground">
+                          {getProfileByUserId(comment.user_id)?.full_name || 'Usuário'}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(comment.created_at).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-foreground mb-3">{comment.content}</p>
+                      
+                      {user && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
+                          className="text-accent hover:text-accent/80 p-0 h-auto"
+                        >
+                          <Reply className="w-4 h-4 mr-1" />
+                          Responder
+                        </Button>
+                      )}
+
+                      {/* Formulário de resposta */}
+                      {replyingTo === comment.id && (
+                        <div className="mt-3 flex gap-2">
+                          <Input
+                            placeholder="Escreva sua resposta..."
+                            value={replyContent}
+                            onChange={(e) => setReplyContent(e.target.value)}
+                            className="flex-1 bg-background border-border"
+                          />
+                          <Button
+                            onClick={() => handleReply(comment.id)}
+                            disabled={!replyContent.trim()}
+                            size="sm"
+                            className="bg-gradient-cosmic text-white hover:opacity-90"
+                          >
+                            <Send className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Respostas */}
+                      {getCommentReplies(comment.id).map((reply) => (
+                        <div key={reply.id} className="mt-4 ml-6 pl-4 border-l-2 border-border">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="font-semibold text-foreground">
+                              {getProfileByUserId(reply.user_id)?.full_name || 'Usuário'}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(reply.created_at).toLocaleDateString('pt-BR', {
+                                day: '2-digit',
+                                month: '2-digit',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          </div>
+                          <p className="text-foreground">{reply.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {getMainComments().length === 0 && (
+              <Card className="bg-card border-border">
+                <CardContent className="p-8 text-center">
+                  <MessageCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">
+                    Seja o primeiro a comentar esta batalha!
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         </div>
       </div>
       <Footer />
