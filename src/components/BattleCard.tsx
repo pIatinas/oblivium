@@ -130,9 +130,9 @@ const BattleCard = ({
         </div>}
 
       <CardContent onClick={() => {
-        const battleUrl = createBattleUrl(battle.winner_team, battle.loser_team, knights);
-        window.location.href = `/battles/${battleUrl}`;
-      }} className="p-3 lg:p-6 max-w-full ">
+      const battleUrl = createBattleUrl(battle.winner_team, battle.loser_team, knights);
+      window.location.href = `/battles/${battleUrl}`;
+    }} className="p-3 lg:p-6 max-w-full ">
         <div className="flex items-center justify-between gap-1 lg:gap-4 ">
           {/* Time Vencedor */}
           <div className="flex-1 space-y-3">
@@ -185,7 +185,7 @@ const BattleCard = ({
         </div>
         
         {/* Informação do autor */}
-        <div className="absolute bottom-2 left-2 text-xs text-muted-foreground">
+        <div className="absolute -bottom-1 left-4 text-xs text-muted-foreground bg-gradient-cosmic">
           Por: {getProfileByUserId(battle.created_by)?.full_name || 'Desconhecido'}
         </div>
         
