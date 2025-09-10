@@ -189,9 +189,7 @@ const BattleCard = ({
           Por: {getProfileByUserId(battle.created_by)?.full_name || 'Desconhecido'}
         </div>
         
-        <div className="absolute bottom-2 right-2">
-          <BattleLikeButtons battleId={battle.id} />
-        </div>
+        <BattleLikeButtons battleId={battle.id} />
       </CardContent>
     </Card>;
 };

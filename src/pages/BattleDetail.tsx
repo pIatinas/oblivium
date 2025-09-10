@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { createBattleUrl, parseKnightUrl } from "@/lib/utils";
+import { createBattleUrl, createKnightUrl } from "@/lib/utils";
 import ShareButtons from "@/components/ShareButtons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,7 +66,7 @@ interface BattleReaction {
 }
 
 const BattleDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, battleUrl } = useParams<{ id?: string; battleUrl?: string }>();
   const [battle, setBattle] = useState<Battle | null>(null);
   const [knights, setKnights] = useState<Knight[]>([]);
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
@@ -83,15 +83,18 @@ const BattleDetail = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (id) {
-      fetchBattleDetail();
-      fetchKnights();
-      fetchStigmas();
-      fetchProfiles();
-      fetchComments();
-      fetchReactions();
-    }
-  }, [id]);
+    const init = async () => {
+      setLoading(true);
+      await Promise.all([fetchKnights(), fetchStigmas(), fetchProfiles()]);
+      if (id) {
+        await fetchBattleDetail(id);
+      } else if (battleUrl) {
+        await fetchBattleByUrl(battleUrl);
+      }
+      await Promise.all([fetchComments(), fetchReactions()]);
+    };
+    if (id || battleUrl) init();
+  }, [id, battleUrl]);
 
   useEffect(() => {
     if (battle && knights.length > 0) {
@@ -99,12 +102,12 @@ const BattleDetail = () => {
     }
   }, [battle, knights]);
 
-  const fetchBattleDetail = async () => {
+  const fetchBattleDetail = async (battleId: string) => {
     try {
       const { data, error } = await supabase
         .from('battles')
         .select('*')
-        .eq('id', id)
+        .eq('id', battleId)
         .single();
 
       if (error) throw error;
@@ -118,8 +121,29 @@ const BattleDetail = () => {
         description: "Não foi possível carregar os detalhes da batalha",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const fetchBattleByUrl = async (urlParam: string): Promise<Battle | null> => {
+    try {
+      // Ensure knights are loaded to build URLs
+      const { data: battlesData, error } = await supabase
+        .from('battles')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      const enriched = (battlesData || []).map((b: any) => ({ ...b, meta: b.meta || false }));
+      const found = enriched.find((b: any) => createBattleUrl(b.winner_team, b.loser_team, knights) === urlParam) || null;
+      if (found) {
+        setBattle(found);
+      } else {
+        setBattle(null);
+      }
+      return found;
+    } catch (error) {
+      console.error('Erro ao carregar batalha pela URL amigável:', error);
+      setBattle(null);
+      return null;
     }
   };
 
@@ -205,12 +229,12 @@ const BattleDetail = () => {
     }
   };
 
-  const fetchComments = async () => {
+  const fetchComments = async (battleId: string) => {
     try {
       const { data, error } = await supabase
         .from('battle_comments')
         .select('*')
-        .eq('battle_id', id)
+        .eq('battle_id', battleId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -220,12 +244,12 @@ const BattleDetail = () => {
     }
   };
 
-  const fetchReactions = async () => {
+  const fetchReactions = async (battleId: string) => {
     try {
       const { data, error } = await supabase
         .from('battle_reactions')
         .select('*')
-        .eq('battle_id', id);
+        .eq('battle_id', battleId);
 
       if (error) throw error;
       setReactions((data || []) as BattleReaction[]);
@@ -241,7 +265,7 @@ const BattleDetail = () => {
   };
 
   const handleReaction = async (type: 'like' | 'dislike') => {
-    if (!user || !id) return;
+    if (!user || !battle?.id) return;
 
     try {
       if (userReaction === type) {
@@ -249,7 +273,7 @@ const BattleDetail = () => {
         await supabase
           .from('battle_reactions')
           .delete()
-          .eq('battle_id', id)
+          .eq('battle_id', battle.id)
           .eq('user_id', user.id);
         setUserReaction(null);
       } else {
@@ -257,13 +281,13 @@ const BattleDetail = () => {
         await supabase
           .from('battle_reactions')
           .upsert({
-            battle_id: id,
+            battle_id: battle.id,
             user_id: user.id,
             reaction_type: type
           });
         setUserReaction(type);
       }
-      fetchReactions();
+      fetchReactions(battle.id);
     } catch (error: any) {
       toast({
         title: "Erro",
@@ -372,7 +396,7 @@ const BattleDetail = () => {
     <div className="min-h-screen bg-gradient-nebula">
       <Header />
       <div className="mx-auto max-w-6xl mx-auto p-6">
-        <Breadcrumb battleId={id} />
+        <Breadcrumb battleId={(id || battleUrl) as string} />
         
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Detalhes da Batalha</h1>
@@ -407,7 +431,7 @@ const BattleDetail = () => {
                         className="flex flex-col items-center gap-1 cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.location.href = `/knights?knight=${knight.id}`;
+                          window.location.href = `/knight/${createKnightUrl(knight.id, knight.name)}`;
                         }}
                       >
                         <img
@@ -450,7 +474,7 @@ const BattleDetail = () => {
                         className="flex flex-col items-center gap-1 cursor-pointer"
                         onClick={(e) => {
                           e.stopPropagation();
-                          window.location.href = `/knights?knight=${knight.id}`;
+                          window.location.href = `/knight/${createKnightUrl(knight.id, knight.name)}`;
                         }}
                       >
                         <img
@@ -474,7 +498,7 @@ const BattleDetail = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleReaction('like')}
-                className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}
+                className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}
               >
                 <ThumbsUp className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getLikeCount()}</span>
@@ -483,7 +507,7 @@ const BattleDetail = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => handleReaction('dislike')}
-                className={`p-1 h-auto ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}
+                className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}
               >
                 <ThumbsDown className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getDislikeCount()}</span>

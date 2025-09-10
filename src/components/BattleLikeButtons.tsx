@@ -72,13 +72,13 @@ const BattleLikeButtons = ({
   };
   const likeCount = reactions.filter(r => r.reaction_type === 'like').length;
   const dislikeCount = reactions.filter(r => r.reaction_type === 'dislike').length;
-  return <div className="flex gap-2 absolute -bottom-4 right-3 text-xs text-muted-foreground bg-card rounded px-1">
-      <Button size="sm" variant="ghost" onClick={() => handleReaction('like')} disabled={loading} className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
+  return <div className="flex gap-2 absolute -bottom-4 left-3 text-xs text-muted-foreground bg-card rounded px-1">
+      <Button size="sm" variant="ghost" onClick={() => handleReaction('like')} disabled={loading} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
         <ThumbsUp className="w-4 h-4" />
         <span className="ml-1 text-xs">{likeCount}</span>
       </Button>
       
-      <Button size="sm" variant="ghost" onClick={() => handleReaction('dislike')} disabled={loading} className={`p-1 h-auto ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}>
+      <Button size="sm" variant="ghost" onClick={() => handleReaction('dislike')} disabled={loading} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}>
         <ThumbsDown className="w-4 h-4" />
         <span className="ml-1 text-xs">{dislikeCount}</span>
       </Button>

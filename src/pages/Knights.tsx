@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, Plus, ArrowLeft, Trophy, Sword } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useSearchParams, useParams, Link } from "react-router-dom";
+import { useSearchParams, useParams, Link, useNavigate } from "react-router-dom";
 import { createKnightUrl, parseKnightUrl } from "@/lib/utils";
 import ShareButtons from "@/components/ShareButtons";
 import SEOHead from "@/components/SEOHead";
@@ -59,6 +59,8 @@ const Knights = () => {
   } = useToast();
   const [searchParams] = useSearchParams();
   const { knightUrl } = useParams();
+  const navigate = useNavigate();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     const knightParam = searchParams.get("knight");
     if (knightParam) {
@@ -75,7 +77,12 @@ const Knights = () => {
   }, [knights, searchParams, knightUrl]);
   useEffect(() => {
     fetchData();
-  }, [sortBy, searchTerm]);
+   }, [sortBy, searchTerm]);
+
+  useEffect(() => {
+    // Ensure the search input keeps focus even after re-renders
+    searchInputRef.current?.focus();
+  }, [searchTerm]);
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -176,8 +183,9 @@ const Knights = () => {
         />
         <Header />
         <div className="max-w-6xl mx-auto p-3 md:p-6">
-          <div className="mb-6">
-            <Button onClick={() => setSelectedKnight(null)} className="bg-transparent text-amber-200 text-center">
+          <Breadcrumb knightName={selectedKnight.name} />
+          <div className="mb-6 flex justify-end">
+            <Button onClick={() => { setSelectedKnight(null); navigate('/knights'); }} className="bg-transparent text-amber-200 text-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </Button>
@@ -187,7 +195,7 @@ const Knights = () => {
             <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent" />
             <h1 className="text-4xl font-bold text-foreground mb-2">{selectedKnight.name}</h1>
             <p className="text-muted-foreground -mt-4 text-xl">{totalAppearances} times</p>
-            <ShareButtons />
+            <ShareButtons url={`${window.location.origin}/knight/${createKnightUrl(selectedKnight.id, selectedKnight.name)}`} />
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
@@ -248,11 +256,12 @@ const Knights = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input 
+                ref={searchInputRef}
                 placeholder="Buscar por nome..." 
                 value={searchTerm} 
                 onChange={e => setSearchTerm(e.target.value)} 
                 className="pl-10 bg-card border-border"
-                onBlur={(e) => e.target.focus()}
+                autoFocus
               />
             </div>
             
@@ -291,7 +300,7 @@ const Knights = () => {
             {filteredKnights.map(knight => {
           const appearances = getKnightAppearances(knight.id);
           const knightUrl = createKnightUrl(knight.id, knight.name);
-          return <Card key={knight.id} onClick={() => setSelectedKnight(knight)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none hover:scale-105">
+          return <Card key={knight.id} onClick={() => { setSelectedKnight(knight); navigate(`/knight/${createKnightUrl(knight.id, knight.name)}`); }} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none hover:scale-105">
                   <CardContent className="px-3 py-2 text-center bg-transparent ">
                     <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-1 border border-accent/20" />
                     <h3 className="text-lg font-semibold text-foreground mb-2">{knight.name}</h3>

@@ -1,4 +1,5 @@
-import { Share, Copy } from "lucide-react";
+import whatsappIcon from "@/assets/icons/whatsapp.svg";
+import { Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { copyToClipboard } from "@/lib/utils";
@@ -8,9 +9,7 @@ interface ShareButtonsProps {
 const ShareButtons = ({
   url
 }: ShareButtonsProps) => {
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
   const currentUrl = url || window.location.href;
   const handleWhatsAppShare = () => {
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(currentUrl)}`;
@@ -32,14 +31,12 @@ const ShareButtons = ({
     }
   };
   return <div className="flex gap-2 mt-2 justify-center ">
-      <Button size="sm" variant="outline" onClick={handleWhatsAppShare} className="bg-green-600 text-white border-green-600 hover:bg-green-700">
-        <Share className="w-4 h-4 mr-1" />
-        WhatsApp
+      <Button size="sm" variant="outline" onClick={handleWhatsAppShare} className="bg-card border-border">
+        <img src={whatsappIcon} alt="Compartilhar no WhatsApp" className="w-4 h-4" />
       </Button>
       
       <Button size="sm" variant="outline" onClick={handleCopyUrl} className="bg-card border-border">
-        <Copy className="w-4 h-4 mr-1" />
-        Copiar URL
+        <Copy className="w-4 h-4" />
       </Button>
     </div>;
 };
