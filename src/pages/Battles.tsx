@@ -10,6 +10,7 @@ import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
+import SEOHead from "@/components/SEOHead";
 interface Knight {
   id: string;
   name: string;
@@ -153,6 +154,10 @@ const Battles = () => {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-nebula">
+      <SEOHead 
+        title="Oblivium • Histórico de Batalhas"
+        description={`Existem ${totalBattles} batalhas cadastradas no total, utilizando ${knights.length} cavaleiros.`}
+      />
       <Header />
       <div className="max-w-6xl mx-auto p-3 md:p-6 ">
         <Breadcrumb />

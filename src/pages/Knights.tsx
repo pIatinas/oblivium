@@ -7,7 +7,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, Plus, ArrowLeft, Trophy, Sword } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, useParams, Link } from "react-router-dom";
+import { createKnightUrl, parseKnightUrl } from "@/lib/utils";
+import ShareButtons from "@/components/ShareButtons";
+import SEOHead from "@/components/SEOHead";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -55,13 +58,21 @@ const Knights = () => {
     toast
   } = useToast();
   const [searchParams] = useSearchParams();
+  const { knightUrl } = useParams();
   useEffect(() => {
     const knightParam = searchParams.get("knight");
     if (knightParam) {
       const initialSelectedKnight = knights.find(knight => knight.id === knightParam);
       setSelectedKnight(initialSelectedKnight || null);
+    } else if (knightUrl) {
+      // Handle new URL format /knight/123-name
+      const parsed = parseKnightUrl(knightUrl);
+      if (parsed) {
+        const knight = knights.find(k => k.id.startsWith(parsed.idPrefix));
+        setSelectedKnight(knight || null);
+      }
     }
-  }, [knights, searchParams]);
+  }, [knights, searchParams, knightUrl]);
   useEffect(() => {
     fetchData();
   }, [sortBy, searchTerm]);
@@ -159,6 +170,10 @@ const Knights = () => {
     const defeats = battles.filter(battle => battle.loser_team.includes(selectedKnight.id));
     const totalAppearances = getKnightAppearances(selectedKnight.id);
     return <div className="min-h-screen bg-gradient-nebula">
+        <SEOHead 
+          title={`Oblivium • Histórico de ${selectedKnight.name}`}
+          description={`${selectedKnight.name} aparece em ${totalAppearances} times, contando com ${victories.length} vitórias e ${defeats.length} derrotas.`}
+        />
         <Header />
         <div className="max-w-6xl mx-auto p-3 md:p-6">
           <div className="mb-6">
@@ -172,6 +187,7 @@ const Knights = () => {
             <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent" />
             <h1 className="text-4xl font-bold text-foreground mb-2">{selectedKnight.name}</h1>
             <p className="text-muted-foreground -mt-4 text-xl">{totalAppearances} times</p>
+            <ShareButtons />
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
@@ -212,6 +228,10 @@ const Knights = () => {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-nebula">
+      <SEOHead 
+        title="Oblivium • Cavaleiros Disponíveis"
+        description={`Existem ${knights.length} cavaleiros disponíveis, utilizados em ${battles.length} batalhas diferentes.`}
+      />
       <Header />
       <div className="max-w-6xl mx-auto p-6">
         <Breadcrumb />
@@ -227,7 +247,13 @@ const Knights = () => {
           <div className="flex gap-4 flex-1 w-full ">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input placeholder="Buscar por nome..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border" />
+              <Input 
+                placeholder="Buscar por nome..." 
+                value={searchTerm} 
+                onChange={e => setSearchTerm(e.target.value)} 
+                className="pl-10 bg-card border-border"
+                onBlur={(e) => e.target.focus()}
+              />
             </div>
             
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -264,6 +290,7 @@ const Knights = () => {
         {filteredKnights.length > 0 ? <div className="grid gap-1 lg:gap-6 grid-cols-3 md:grid-cols-4  lg:grid-cols-5 xl:grid-cols-6">
             {filteredKnights.map(knight => {
           const appearances = getKnightAppearances(knight.id);
+          const knightUrl = createKnightUrl(knight.id, knight.name);
           return <Card key={knight.id} onClick={() => setSelectedKnight(knight)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none hover:scale-105">
                   <CardContent className="px-3 py-2 text-center bg-transparent ">
                     <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-1 border border-accent/20" />

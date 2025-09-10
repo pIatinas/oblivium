@@ -5,6 +5,8 @@ import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
+import BattleLikeButtons from "./BattleLikeButtons";
+import { createBattleUrl } from "@/lib/utils";
 interface Knight {
   id: string;
   name: string;
@@ -127,7 +129,10 @@ const BattleCard = ({
           </AlertDialog>
         </div>}
 
-      <CardContent onClick={() => window.location.href = `/battles/${battle.id}`} className="p-3 lg:p-6 max-w-full ">
+      <CardContent onClick={() => {
+        const battleUrl = createBattleUrl(battle.winner_team, battle.loser_team, knights);
+        window.location.href = `/battles/${battleUrl}`;
+      }} className="p-3 lg:p-6 max-w-full ">
         <div className="flex items-center justify-between gap-1 lg:gap-4 ">
           {/* Time Vencedor */}
           <div className="flex-1 space-y-3">
@@ -180,8 +185,12 @@ const BattleCard = ({
         </div>
         
         {/* Informação do autor */}
-        <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
-          por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
+        <div className="absolute bottom-2 left-2 text-xs text-muted-foreground">
+          Por: {getProfileByUserId(battle.created_by)?.full_name || 'Desconhecido'}
+        </div>
+        
+        <div className="absolute bottom-2 right-2">
+          <BattleLikeButtons battleId={battle.id} />
         </div>
       </CardContent>
     </Card>;
