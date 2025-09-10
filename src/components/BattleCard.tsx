@@ -185,7 +185,7 @@ const BattleCard = ({
         </div>
         
         {/* Informação do autor */}
-        <div className="absolute -bottom-1 left-4 text-xs text-muted-foreground bg-card text-white ">
+        <div className="absolute -bottom-2 left-4 text-xs text-muted-foreground bg-card text-muted-foreground px-2 py-1">
           Por: {getProfileByUserId(battle.created_by)?.full_name || 'Desconhecido'}
         </div>
         
