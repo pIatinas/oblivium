@@ -8,6 +8,11 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
 import { createKnightUrl } from "@/lib/utils";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 interface Knight {
   id: string;
   name: string;
@@ -150,7 +155,7 @@ const Index = () => {
         </div>
 
         {/* Action Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="hidden md:grid md:grid-cols-3 gap-6 mb-12">
           <Link to="/create-battle">
             <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
               <CardHeader className="text-center">
@@ -186,6 +191,53 @@ const Index = () => {
               </CardHeader>
             </Card>
           </Link>
+        </div>
+
+        {/* Mobile Action Cards Carousel */}
+        <div className="md:hidden mb-12">
+          <Carousel className="w-full">
+            <CarouselContent>
+              <CarouselItem>
+                <Link to="/create-battle">
+                  <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+                    <CardHeader className="text-center">
+                      <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                        <Plus className="w-8 h-8 text-white" />
+                      </div>
+                      <CardTitle className="text-xl text-foreground">Cadastro</CardTitle>
+                      <CardDescription>Cadastre uma nova batalha</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              </CarouselItem>
+              <CarouselItem>
+                <Link to="/battles">
+                  <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+                    <CardHeader className="text-center">
+                      <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                        <Sword className="w-8 h-8 text-white" />
+                      </div>
+                      <CardTitle className="text-xl text-foreground">Batalhas</CardTitle>
+                      <CardDescription>Veja as batalhas cadastradas</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              </CarouselItem>
+              <CarouselItem>
+                <Link to="/knights">
+                  <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+                    <CardHeader className="text-center">
+                      <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
+                        <Users className="w-8 h-8 text-white" />
+                      </div>
+                      <CardTitle className="text-xl text-foreground">Cavaleiros</CardTitle>
+                      <CardDescription>Explore todos os cavaleiros</CardDescription>
+                    </CardHeader>
+                  </Card>
+                </Link>
+              </CarouselItem>
+            </CarouselContent>
+          </Carousel>
         </div>
 
         {/* Estatísticas */}
@@ -235,7 +287,8 @@ const Index = () => {
             </Button>
           </div>
           
-          <div className="grid gap-2 lg:gap-6 md:grid-cols-4 xl:grid-cols-6 ">
+          {/* Desktop Grid */}
+          <div className="hidden md:grid gap-2 lg:gap-6 md:grid-cols-4 xl:grid-cols-6">
             {topKnights.map(knight => {
               const knightUrl = createKnightUrl(knight.id, knight.name);
               return <Link key={knight.id} to={`/knight/${knightUrl}`}>
@@ -247,6 +300,27 @@ const Index = () => {
                 </Card>
               </Link>
             })}
+          </div>
+
+          {/* Mobile Carousel */}
+          <div className="md:hidden">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {topKnights.map(knight => {
+                  const knightUrl = createKnightUrl(knight.id, knight.name);
+                  return <CarouselItem key={knight.id}>
+                    <Link to={`/knight/${knightUrl}`}>
+                      <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
+                        <CardContent className="p-4 text-center">
+                          <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full mx-auto mb-3 border border-accent/20" />
+                          <p className="text-sm font-medium text-foreground">{knight.name}</p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </CarouselItem>
+                })}
+              </CarouselContent>
+            </Carousel>
           </div>
         </div>
 
@@ -264,10 +338,26 @@ const Index = () => {
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          {/* Desktop Grid */}
+          <div className="hidden md:grid md:grid-cols-2 gap-6">
             {recentBattles.map(battle => <div key={battle.id} className="hover:scale-[1.02] transition-transform">
                 <BattleCard battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} onDelete={fetchRecentBattles} />
               </div>)}
+          </div>
+
+          {/* Mobile Carousel */}
+          <div className="md:hidden">
+            <Carousel className="w-full">
+              <CarouselContent>
+                {recentBattles.map(battle => (
+                  <CarouselItem key={battle.id}>
+                    <div className="hover:scale-[1.02] transition-transform">
+                      <BattleCard battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} onDelete={fetchRecentBattles} />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
           </div>
         </div>
       </div>
