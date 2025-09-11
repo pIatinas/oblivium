@@ -91,10 +91,16 @@ const BattleDetail = () => {
       } else if (battleUrl) {
         await fetchBattleByUrl(battleUrl);
       }
-      await Promise.all([fetchComments(battle?.id || ''), fetchReactions(battle?.id || '')]);
     };
     if (id || battleUrl) init();
   }, [id, battleUrl]);
+
+  useEffect(() => {
+    if (battle?.id) {
+      fetchComments(battle.id);
+      fetchReactions(battle.id);
+    }
+  }, [battle?.id]);
 
   useEffect(() => {
     if (battle && knights.length > 0) {
