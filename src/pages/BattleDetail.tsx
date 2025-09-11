@@ -89,10 +89,20 @@ const BattleDetail = () => {
       if (id) {
         await fetchBattleDetail(id);
       } else if (battleUrl) {
-        await fetchBattleByUrl(battleUrl);
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        if (isUuid.test(battleUrl)) {
+          await fetchBattleDetail(battleUrl);
+        } else {
+          await fetchBattleByUrl(battleUrl);
+        }
       }
+      setLoading(false);
     };
-    if (id || battleUrl) init();
+    if (id || battleUrl) {
+      init();
+    } else {
+      setLoading(false);
+    }
   }, [id, battleUrl]);
 
   useEffect(() => {
