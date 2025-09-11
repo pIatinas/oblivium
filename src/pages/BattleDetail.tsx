@@ -142,19 +142,22 @@ const BattleDetail = () => {
 
   const fetchBattleByUrl = async (urlParam: string): Promise<Battle | null> => {
     try {
-      // Ensure knights are loaded to build URLs
+      // Garante que temos os cavaleiros carregados para montar a URL amigável
+      let knightsSource = knights;
+      if (!knightsSource || knightsSource.length === 0) {
+        const { data: knightsData } = await supabase.from('knights').select('*');
+        knightsSource = knightsData || [];
+        if (knightsSource.length) setKnights(knightsSource);
+      }
+
       const { data: battlesData, error } = await supabase
         .from('battles')
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
       const enriched = (battlesData || []).map((b: any) => ({ ...b, meta: b.meta || false }));
-      const found = enriched.find((b: any) => createBattleUrl(b.winner_team, b.loser_team, knights) === urlParam) || null;
-      if (found) {
-        setBattle(found);
-      } else {
-        setBattle(null);
-      }
+      const found = enriched.find((b: any) => createBattleUrl(b.winner_team, b.loser_team, knightsSource) === urlParam) || null;
+      setBattle(found || null);
       return found;
     } catch (error) {
       console.error('Erro ao carregar batalha pela URL amigável:', error);
@@ -314,19 +317,19 @@ const BattleDetail = () => {
   };
 
   const handleComment = async () => {
-    if (!user || !newComment.trim()) return;
+    if (!user || !newComment.trim() || !battle?.id) return;
 
     try {
       await supabase
         .from('battle_comments')
         .insert({
-          battle_id: id,
+          battle_id: battle.id,
           user_id: user.id,
           content: newComment.trim()
         });
 
       setNewComment("");
-      fetchComments(battle?.id || '');
+      fetchComments(battle.id);
       toast({
         title: "Sucesso",
         description: "Comentário adicionado com sucesso"
@@ -341,13 +344,13 @@ const BattleDetail = () => {
   };
 
   const handleReply = async (parentId: string) => {
-    if (!user || !replyContent.trim()) return;
+    if (!user || !replyContent.trim() || !battle?.id) return;
 
     try {
       await supabase
         .from('battle_comments')
         .insert({
-          battle_id: id,
+          battle_id: battle.id,
           user_id: user.id,
           content: replyContent.trim(),
           parent_id: parentId
@@ -355,7 +358,7 @@ const BattleDetail = () => {
 
       setReplyContent("");
       setReplyingTo(null);
-      fetchComments(battle?.id || '');
+      fetchComments(battle.id);
       toast({
         title: "Sucesso",
         description: "Resposta adicionada com sucesso"
