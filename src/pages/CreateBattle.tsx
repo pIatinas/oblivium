@@ -198,10 +198,7 @@ const CreateBattle = () => {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-nebula">
-      <SEOHead 
-        title="Oblivium • Cadastro de Batalhas"
-        description="Faça o cadastro de uma nova batalha e colabore com a Guild."
-      />
+      <SEOHead title="Oblivium • Cadastro de Batalhas" description="Faça o cadastro de uma nova batalha e colabore com a Guild." />
       <Header />
       <div className="max-w-6xl mx-auto p-3 lg:p-6">
         <Breadcrumb />
@@ -311,7 +308,7 @@ const CreateBattle = () => {
         </div>
 
         {/* Meta de Ataque e Categoria */}
-        <div className="mt-3 mb-6 flex items-center justify-end gap-6 flex-wrap">
+        <div className="mt-3 mb-6 flex items-center justify-end gap-6 ">
           <div className="flex items-center space-x-2">
             
             <Select value={battleType} onValueChange={setBattleType}>
