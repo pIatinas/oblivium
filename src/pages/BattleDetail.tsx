@@ -91,7 +91,7 @@ const BattleDetail = () => {
       } else if (battleUrl) {
         await fetchBattleByUrl(battleUrl);
       }
-      await Promise.all([fetchComments(), fetchReactions()]);
+      await Promise.all([fetchComments(battle?.id || ''), fetchReactions(battle?.id || '')]);
     };
     if (id || battleUrl) init();
   }, [id, battleUrl]);
@@ -310,7 +310,7 @@ const BattleDetail = () => {
         });
 
       setNewComment("");
-      fetchComments();
+      fetchComments(battle?.id || '');
       toast({
         title: "Sucesso",
         description: "Comentário adicionado com sucesso"
@@ -339,7 +339,7 @@ const BattleDetail = () => {
 
       setReplyContent("");
       setReplyingTo(null);
-      fetchComments();
+      fetchComments(battle?.id || '');
       toast({
         title: "Sucesso",
         description: "Resposta adicionada com sucesso"
