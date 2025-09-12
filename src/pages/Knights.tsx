@@ -58,7 +58,9 @@ const Knights = () => {
     toast
   } = useToast();
   const [searchParams] = useSearchParams();
-  const { knightUrl } = useParams();
+  const {
+    knightUrl
+  } = useParams();
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -77,8 +79,7 @@ const Knights = () => {
   }, [knights, searchParams, knightUrl]);
   useEffect(() => {
     fetchData();
-   }, [sortBy, searchTerm]);
-
+  }, [sortBy, searchTerm]);
   useEffect(() => {
     // Ensure the search input keeps focus even after re-renders
     searchInputRef.current?.focus();
@@ -177,15 +178,15 @@ const Knights = () => {
     const defeats = battles.filter(battle => battle.loser_team.includes(selectedKnight.id));
     const totalAppearances = getKnightAppearances(selectedKnight.id);
     return <div className="min-h-screen bg-gradient-nebula">
-        <SEOHead 
-          title={`Oblivium • Histórico de ${selectedKnight.name}`}
-          description={`${selectedKnight.name} aparece em ${totalAppearances} times, contando com ${victories.length} vitórias e ${defeats.length} derrotas.`}
-        />
+        <SEOHead title={`Oblivium • Histórico de ${selectedKnight.name}`} description={`${selectedKnight.name} aparece em ${totalAppearances} times, contando com ${victories.length} vitórias e ${defeats.length} derrotas.`} />
         <Header />
         <div className="max-w-6xl mx-auto p-3 md:p-6">
           <Breadcrumb knightName={selectedKnight.name} />
           <div className="mb-6 flex justify-end">
-            <Button onClick={() => { setSelectedKnight(null); navigate('/knights'); }} className="bg-transparent text-amber-200 text-center">
+            <Button onClick={() => {
+            setSelectedKnight(null);
+            navigate('/knights');
+          }} className="bg-transparent text-amber-200 text-center">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
             </Button>
@@ -193,7 +194,7 @@ const Knights = () => {
 
           <div className="text-center mb-8">
             <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent" />
-            <h1 className="text-4xl font-bold text-foreground mb-2">{selectedKnight.name}</h1>
+            <h1 className="text-4xl text-foreground mb-2 font-semibold">{selectedKnight.name}</h1>
             <p className="text-muted-foreground -mt-4 text-xl">{totalAppearances} times</p>
             <ShareButtons url={`${window.location.origin}/knight/${createKnightUrl(selectedKnight.id, selectedKnight.name)}`} />
           </div>
@@ -221,12 +222,12 @@ const Knights = () => {
           </div>
 
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-foreground mb-6">Histórico de Batalhas</h2>
+            <h2 className="text-2xl text-foreground mb-6 font-medium">Histórico de Batalhas</h2>
             
             {knightBattles.length > 0 ? <div className="grid md:grid-cols-2 gap-6">
                 {knightBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} />)}
               </div> : <div className="text-center py-8">
-                <p className="text-muted-foreground text-lg">
+                <p className="text-muted-foreground text-base">
                   Este cavaleiro ainda não participou de batalhas
                 </p>
               </div>}
@@ -236,10 +237,7 @@ const Knights = () => {
       </div>;
   }
   return <div className="min-h-screen bg-gradient-nebula">
-      <SEOHead 
-        title="Oblivium • Cavaleiros Disponíveis"
-        description={`Existem ${knights.length} cavaleiros disponíveis, utilizados em ${battles.length} batalhas diferentes.`}
-      />
+      <SEOHead title="Oblivium • Cavaleiros Disponíveis" description={`Existem ${knights.length} cavaleiros disponíveis, utilizados em ${battles.length} batalhas diferentes.`} />
       <Header />
       <div className="max-w-6xl mx-auto p-6">
         <Breadcrumb />
@@ -255,14 +253,7 @@ const Knights = () => {
           <div className="flex gap-4 flex-1 w-full ">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input 
-                ref={searchInputRef}
-                placeholder="Buscar por nome..." 
-                value={searchTerm} 
-                onChange={e => setSearchTerm(e.target.value)} 
-                className="pl-10 bg-card border-border"
-                autoFocus
-              />
+              <Input ref={searchInputRef} placeholder="Buscar por nome..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border" autoFocus />
             </div>
             
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -300,7 +291,10 @@ const Knights = () => {
             {filteredKnights.map(knight => {
           const appearances = getKnightAppearances(knight.id);
           const knightUrl = createKnightUrl(knight.id, knight.name);
-          return <Card key={knight.id} onClick={() => { setSelectedKnight(knight); navigate(`/knight/${createKnightUrl(knight.id, knight.name)}`); }} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none hover:scale-105">
+          return <Card key={knight.id} onClick={() => {
+            setSelectedKnight(knight);
+            navigate(`/knight/${createKnightUrl(knight.id, knight.name)}`);
+          }} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none hover:scale-105">
                   <CardContent className="px-3 py-2 text-center bg-transparent ">
                     <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-1 border border-accent/20" />
                     <h3 className="text-lg font-semibold text-foreground mb-2">{knight.name}</h3>
