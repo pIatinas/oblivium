@@ -8,11 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
 import { createKnightUrl } from "@/lib/utils";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 interface Knight {
   id: string;
   name: string;
@@ -275,7 +271,7 @@ const Index = () => {
 
         {/* Principais Cavaleiros */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 flex-wrap">
             <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
               Principais <span className="font-bold">Cavaleiros</span>
             </h2>
@@ -290,16 +286,16 @@ const Index = () => {
           {/* Desktop Grid */}
           <div className="hidden md:grid gap-2 lg:gap-6 md:grid-cols-4 xl:grid-cols-6">
             {topKnights.map(knight => {
-              const knightUrl = createKnightUrl(knight.id, knight.name);
-              return <Link key={knight.id} to={`/knight/${knightUrl}`}>
+            const knightUrl = createKnightUrl(knight.id, knight.name);
+            return <Link key={knight.id} to={`/knight/${knightUrl}`}>
                 <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
                     <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full mx-auto mb-3 border border-accent/20" />
                     <p className="text-sm font-medium text-foreground">{knight.name}</p>
                   </CardContent>
                 </Card>
-              </Link>
-            })}
+              </Link>;
+          })}
           </div>
 
           {/* Mobile Carousel */}
@@ -307,8 +303,8 @@ const Index = () => {
             <Carousel className="w-full">
               <CarouselContent>
                 {topKnights.map(knight => {
-                  const knightUrl = createKnightUrl(knight.id, knight.name);
-                  return <CarouselItem key={knight.id}>
+                const knightUrl = createKnightUrl(knight.id, knight.name);
+                return <CarouselItem key={knight.id}>
                     <Link to={`/knight/${knightUrl}`}>
                       <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
                         <CardContent className="p-4 text-center">
@@ -317,8 +313,8 @@ const Index = () => {
                         </CardContent>
                       </Card>
                     </Link>
-                  </CarouselItem>
-                })}
+                  </CarouselItem>;
+              })}
               </CarouselContent>
             </Carousel>
           </div>
@@ -326,7 +322,7 @@ const Index = () => {
 
         {/* Batalhas Recentes */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-6 flex-wrap">
             <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
               Últimas <span className="font-bold">Batalhas</span>
             </h2>
@@ -349,13 +345,11 @@ const Index = () => {
           <div className="md:hidden">
             <Carousel className="w-full">
               <CarouselContent>
-                {recentBattles.map(battle => (
-                  <CarouselItem key={battle.id}>
+                {recentBattles.map(battle => <CarouselItem key={battle.id}>
                     <div className="hover:scale-[1.02] transition-transform">
                       <BattleCard battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} onDelete={fetchRecentBattles} />
                     </div>
-                  </CarouselItem>
-                ))}
+                  </CarouselItem>)}
               </CarouselContent>
             </Carousel>
           </div>
