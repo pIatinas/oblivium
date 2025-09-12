@@ -374,7 +374,7 @@ const BattleDetail = () => {
         <Breadcrumb battleId={(id || battleUrl) as string} />
         
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Detalhes da Batalha</h1>
+          <h1 className="text-foreground mb-4 text-center text-2xl lg:text-4xl font-semibold">Detalhes da Batalha</h1>
         </div>
 
         <Card className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none">
@@ -434,7 +434,7 @@ const BattleDetail = () => {
             </div>
             
             {/* Like/Dislike buttons */}
-            <div className="absolute bottom-[20px] right-[10px] flex items-center gap-2">
+            <div className="absolute right-auto -bottom-[8px] left-[10px] flex items-center gap-2 bg-card ">
               <Button variant="ghost" size="sm" onClick={() => handleReaction('like')} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
                 <ThumbsUp className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getLikeCount()}</span>
@@ -454,7 +454,7 @@ const BattleDetail = () => {
 
         {/* Batalhas Relacionadas */}
         <div className="mt-8">
-          <h3 className="text-2xl font-bold text-foreground mb-6">
+          <h3 className="text-2xl text-foreground mb-6 font-medium">
             Batalhas Relacionadas
           </h3>
           {relatedBattles.length > 0 ? <div className="grid gap-4 md:grid-cols-2">
