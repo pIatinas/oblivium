@@ -146,8 +146,8 @@ const Index = () => {
       <div className="max-w-6xl mx-auto p-3 md:p-6 ">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="font-bold text-foreground mb-4 text-7xl">⚔️ </h1>
-          <p className="text-yellow-400  mb-8 text-center font-bold text-3xl">Guerra dos Tronos</p>
+          <h1 className="font-bold text-foreground mb-4 text-7xl mt-5 lg:mt-0 ">⚔️ </h1>
+          <p className="text-yellow-400 mb-8 text-center text-3xl font-medium">Guerra dos Tronos</p>
         </div>
 
         {/* Action Cards */}
