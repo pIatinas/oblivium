@@ -434,7 +434,7 @@ const BattleDetail = () => {
             </div>
             
             {/* Like/Dislike buttons */}
-            <div className="absolute right-auto -bottom-[8px] left-[10px] flex items-center gap-2 bg-card ">
+            <div className="absolute right-auto -bottom-[8px] left-[10px] flex items-center gap-2 bg-card rounded px-2 ">
               <Button variant="ghost" size="sm" onClick={() => handleReaction('like')} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
                 <ThumbsUp className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getLikeCount()}</span>
