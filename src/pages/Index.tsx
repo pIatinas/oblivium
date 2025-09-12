@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BattleCard from "@/components/BattleCard";
 import { createKnightUrl } from "@/lib/utils";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselDots } from "@/components/ui/carousel";
 interface Knight {
   id: string;
   name: string;
@@ -53,9 +53,62 @@ const Index = () => {
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionCarouselApi, setActionCarouselApi] = useState<any>();
+  const [statsCarouselApi, setStatsCarouselApi] = useState<any>();
+  const [knightsCarouselApi, setKnightsCarouselApi] = useState<any>();
+  const [battlesCarouselApi, setBattlesCarouselApi] = useState<any>();
+  const [actionSlideIndex, setActionSlideIndex] = useState(0);
+  const [statsSlideIndex, setStatsSlideIndex] = useState(0);
+  const [knightsSlideIndex, setKnightsSlideIndex] = useState(0);
+  const [battlesSlideIndex, setBattlesSlideIndex] = useState(0);
+  
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!actionCarouselApi) return;
+    
+    const onSelect = () => {
+      setActionSlideIndex(actionCarouselApi.selectedScrollSnap());
+    };
+    
+    actionCarouselApi.on("select", onSelect);
+    return () => actionCarouselApi.off("select", onSelect);
+  }, [actionCarouselApi]);
+
+  useEffect(() => {
+    if (!statsCarouselApi) return;
+    
+    const onSelect = () => {
+      setStatsSlideIndex(statsCarouselApi.selectedScrollSnap());
+    };
+    
+    statsCarouselApi.on("select", onSelect);
+    return () => statsCarouselApi.off("select", onSelect);
+  }, [statsCarouselApi]);
+
+  useEffect(() => {
+    if (!knightsCarouselApi) return;
+    
+    const onSelect = () => {
+      setKnightsSlideIndex(knightsCarouselApi.selectedScrollSnap());
+    };
+    
+    knightsCarouselApi.on("select", onSelect);
+    return () => knightsCarouselApi.off("select", onSelect);
+  }, [knightsCarouselApi]);
+
+  useEffect(() => {
+    if (!battlesCarouselApi) return;
+    
+    const onSelect = () => {
+      setBattlesSlideIndex(battlesCarouselApi.selectedScrollSnap());
+    };
+    
+    battlesCarouselApi.on("select", onSelect);
+    return () => battlesCarouselApi.off("select", onSelect);
+  }, [battlesCarouselApi]);
   const fetchData = async () => {
     try {
       await Promise.all([fetchStats(), fetchTopKnights(), fetchRecentBattles(), fetchKnights(), fetchStigmas(), fetchProfiles()]);
@@ -342,7 +395,7 @@ const Index = () => {
 
           {/* Mobile Carousel */}
           <div className="md:hidden">
-            <Carousel className="w-full mb-6">
+            <Carousel className="w-full" setApi={setKnightsCarouselApi}>
               <CarouselContent className="-ml-2">
                 {topKnights.map(knight => {
                 const knightUrl = createKnightUrl(knight.id, knight.name);
@@ -359,6 +412,7 @@ const Index = () => {
               })}
               </CarouselContent>
             </Carousel>
+            <CarouselDots count={Math.ceil(topKnights.length / 2)} current={knightsSlideIndex} />
           </div>
         </div>
 
@@ -385,7 +439,7 @@ const Index = () => {
 
           {/* Mobile Carousel */}
           <div className="md:hidden">
-            <Carousel className="w-full mb-6">
+            <Carousel className="w-full" setApi={setBattlesCarouselApi}>
               <CarouselContent>
                 {recentBattles.map(battle => <CarouselItem key={battle.id}>
                     <div className="transition-transform">
@@ -394,6 +448,7 @@ const Index = () => {
                   </CarouselItem>)}
               </CarouselContent>
             </Carousel>
+            <CarouselDots count={recentBattles.length} current={battlesSlideIndex} />
           </div>
         </div>
       </div>

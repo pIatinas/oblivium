@@ -10,6 +10,7 @@ import { ArrowLeft, Star, ThumbsUp, ThumbsDown, MessageCircle, Send, Reply } fro
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import AdminDeleteButton from "@/components/AdminDeleteButton";
 import Header from "@/components/Header";
 import Breadcrumb from "@/components/Breadcrumb";
 import Footer from "@/components/Footer";
@@ -78,12 +79,23 @@ const BattleDetail = () => {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const {
-    toast
-  } = useToast();
-  const {
-    user
-  } = useAuth();
+  const { toast } = useToast();
+  const { user } = useAuth();
+
+  const deleteBattle = async () => {
+    if (!battle) return;
+    const { error } = await supabase.from('battles').delete().eq('id', battle.id);
+    if (error) throw error;
+    window.location.href = '/battles';
+  };
+
+  const deleteComment = async (commentId: string) => {
+    const { error } = await supabase.from('battle_comments').delete().eq('id', commentId);
+    if (error) throw error;
+    if (battle?.id) {
+      fetchComments(battle.id);
+    }
+  };
   useEffect(() => {
     const init = async () => {
       setLoading(true);
@@ -381,6 +393,13 @@ const BattleDetail = () => {
           {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
               <span className="text-black text-xl">⭐</span>
             </div>}
+          
+          <div className="absolute top-2 left-2 z-20">
+            <AdminDeleteButton
+              onDelete={deleteBattle}
+              itemType="batalha"
+            />
+          </div>
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-4 flex-wrap flex-col lg:flex-row ">
               {/* Time Vencedor */}
@@ -534,8 +553,16 @@ const BattleDetail = () => {
 
           {/* Lista de comentários */}
           <div className="space-y-4 mb-6">
-            {getMainComments().map(comment => <Card key={comment.id} className="bg-card border-border">
+            {getMainComments().map(comment => <Card key={comment.id} className="bg-card border-border relative">
                 <CardContent className="p-4">
+                  <div className="absolute top-2 right-2">
+                    <AdminDeleteButton
+                      onDelete={() => deleteComment(comment.id)}
+                      itemType="comentário"
+                      className="w-5 h-5 p-0"
+                    />
+                  </div>
+                  
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
@@ -568,7 +595,15 @@ const BattleDetail = () => {
                         </div>}
 
                       {/* Respostas */}
-                      {getCommentReplies(comment.id).map(reply => <div key={reply.id} className="mt-4 ml-6 pl-4 border-l-2 border-border">
+                      {getCommentReplies(comment.id).map(reply => <div key={reply.id} className="mt-4 ml-6 pl-4 border-l-2 border-border relative">
+                          <div className="absolute top-0 right-0">
+                            <AdminDeleteButton
+                              onDelete={() => deleteComment(reply.id)}
+                              itemType="comentário"
+                              className="w-4 h-4 p-0"
+                            />
+                          </div>
+                          
                           <div className="flex items-center gap-2 mb-2">
                             <span className="font-semibold text-foreground">
                               {getProfileByUserId(reply.user_id)?.full_name || 'Usuário'}

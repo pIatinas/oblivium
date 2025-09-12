@@ -250,6 +250,30 @@ const CarouselNext = React.forwardRef<
 })
 CarouselNext.displayName = "CarouselNext"
 
+const CarouselDots = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & { count: number; current: number }
+>(({ className, count, current, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn("flex justify-center gap-2 mt-4", className)}
+      {...props}
+    >
+      {Array.from({ length: count }).map((_, index) => (
+        <div
+          key={index}
+          className={cn(
+            "w-2 h-2 rounded-full transition-colors",
+            index === current ? "bg-accent" : "bg-muted"
+          )}
+        />
+      ))}
+    </div>
+  )
+})
+CarouselDots.displayName = "CarouselDots"
+
 export {
   type CarouselApi,
   Carousel,
@@ -257,4 +281,5 @@ export {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
+  CarouselDots,
 }

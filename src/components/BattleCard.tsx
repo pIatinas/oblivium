@@ -1,11 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import BattleLikeButtons from "./BattleLikeButtons";
+import AdminDeleteButton from "./AdminDeleteButton";
 import { createBattleUrl } from "@/lib/utils";
 interface Knight {
   id: string;
@@ -48,29 +46,12 @@ const BattleCard = ({
   profiles,
   onDelete
 }: BattleCardProps) => {
-  const [isMaster, setIsMaster] = useState(false);
-  const {
-    toast
-  } = useToast();
-  useEffect(() => {
-    checkMasterStatus();
-  }, []);
-  const checkMasterStatus = async () => {
-    try {
-      const {
-        data: {
-          user
-        }
-      } = await supabase.auth.getUser();
-      if (user) {
-        const {
-          data: profile
-        } = await supabase.from('profiles').select('role').eq('user_id', user.id).single();
-        setIsMaster(profile?.role === 'master');
-      }
-    } catch (error) {
-      console.error('Erro ao verificar status de master:', error);
-    }
+  const { toast } = useToast();
+  
+  const deleteBattle = async () => {
+    const { error } = await supabase.from('battles').delete().eq('id', battle.id);
+    if (error) throw error;
+    if (onDelete) onDelete();
   };
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
@@ -81,53 +62,18 @@ const BattleCard = ({
   const getProfileByUserId = (userId: string) => {
     return profiles.find(p => p.user_id === userId);
   };
-  const deleteBattle = async () => {
-    try {
-      const {
-        error
-      } = await supabase.from('battles').delete().eq('id', battle.id);
-      if (error) throw error;
-      toast({
-        title: "Batalha excluída",
-        description: "A batalha foi excluída com sucesso"
-      });
-      if (onDelete) onDelete();
-    } catch (error: any) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível excluir a batalha",
-        variant: "destructive"
-      });
-    }
-  };
   return <Card className="bg-card hover:bg-card/70 hover:scale-105  transition-all duration-300 relative border-none shadow-none cursor-pointer group">
       {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
           <span className="text-black text-lg">⭐</span>
         </div>}
       
-      {isMaster && <div className="absolute top-2 left-2 z-20">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-500/10 w-6 h-6 p-0" onClick={e => e.stopPropagation()}>
-                <X className="w-4 h-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Tem certeza que deseja excluir essa batalha?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={deleteBattle} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                  Excluir
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>}
+      <div className="absolute top-2 left-2 z-20">
+        <AdminDeleteButton
+          onDelete={deleteBattle}
+          itemType="batalha"
+          className="w-6 h-6 p-0"
+        />
+      </div>
 
       <CardContent onClick={() => {
       const battleUrl = createBattleUrl(battle.winner_team, battle.loser_team, knights);
