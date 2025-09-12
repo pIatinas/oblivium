@@ -32,7 +32,7 @@ const ShareButtons = ({
   };
   return <div className="flex gap-2 mt-2 justify-center ">
       <Button size="sm" variant="outline" onClick={handleWhatsAppShare} className="bg-card border-border">
-        <img src={whatsappIcon} alt="Compartilhar no WhatsApp" className="w-4 h-4" />
+        <img src={whatsappIcon} alt="Compartilhar no WhatsApp" className="w-4 h-4 text-green-500" style={{filter: 'invert(54%) sepia(98%) saturate(525%) hue-rotate(91deg) brightness(95%) contrast(88%)'}} />
       </Button>
       
       <Button size="sm" variant="outline" onClick={handleCopyUrl} className="bg-card border-border">

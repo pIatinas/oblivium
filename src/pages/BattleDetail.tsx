@@ -453,11 +453,12 @@ const BattleDetail = () => {
         </Card>
 
         {/* Batalhas Relacionadas */}
-        <div className="mt-8">
-          <h3 className="text-2xl text-foreground mb-6 font-medium">
-            Batalhas Relacionadas
-          </h3>
-          {relatedBattles.length > 0 ? <div className="grid gap-4 md:grid-cols-2">
+        {relatedBattles.length > 0 && (
+          <div className="mt-8">
+            <h3 className="text-2xl text-foreground mb-6 font-medium">
+              Batalhas Relacionadas
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
               {relatedBattles.map(relatedBattle => <Card key={relatedBattle.id} className="bg-card hover:bg-card/80 transition-all duration-300 relative border-none shadow-none cursor-pointer" onClick={() => window.location.href = `/battles/${relatedBattle.id}`}>
                   {relatedBattle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
                       <span className="text-black text-lg">⭐</span>
@@ -520,10 +521,9 @@ const BattleDetail = () => {
                     </div>
                   </CardContent>
                 </Card>)}
-            </div> : <p className="text-center text-muted-foreground py-8">
-              Nenhuma batalha relacionada encontrada
-            </p>}
-        </div>
+            </div>
+          </div>
+        )}
 
         {/* Comentários */}
         <div className="mt-8">
@@ -532,29 +532,8 @@ const BattleDetail = () => {
             Comentários
           </h3>
 
-          {/* Formulário de novo comentário */}
-          {user ? <Card className="bg-card border-border mb-6">
-              <CardContent className="p-4">
-                <div className="flex gap-3">
-                  <Textarea placeholder="Escreva seu comentário..." value={newComment} onChange={e => setNewComment(e.target.value)} className="flex-1 min-h-[80px] bg-background border-border" />
-                  <Button onClick={handleComment} disabled={!newComment.trim()} className="self-end bg-gradient-cosmic text-white hover:opacity-90">
-                    <Send className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card> : <Card className="bg-card border-border mb-6">
-              <CardContent className="p-4 text-center">
-                <p className="text-muted-foreground">
-                  <Link to="/auth" className="text-accent hover:underline">
-                    Faça login
-                  </Link>{" "}
-                  para comentar
-                </p>
-              </CardContent>
-            </Card>}
-
           {/* Lista de comentários */}
-          <div className="space-y-4">
+          <div className="space-y-4 mb-6">
             {getMainComments().map(comment => <Card key={comment.id} className="bg-card border-border">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
@@ -582,7 +561,7 @@ const BattleDetail = () => {
 
                       {/* Formulário de resposta */}
                       {replyingTo === comment.id && <div className="mt-3 flex gap-2">
-                          <Input placeholder="Escreva sua resposta..." value={replyContent} onChange={e => setReplyContent(e.target.value)} className="flex-1 bg-background border-border" />
+                          <Input value={replyContent} onChange={e => setReplyContent(e.target.value)} className="flex-1 bg-background border-0" />
                           <Button onClick={() => handleReply(comment.id)} disabled={!replyContent.trim()} size="sm" className="bg-gradient-cosmic text-white hover:opacity-90">
                             <Send className="w-4 h-4" />
                           </Button>
@@ -620,6 +599,27 @@ const BattleDetail = () => {
                 </CardContent>
               </Card>}
           </div>
+
+          {/* Formulário de novo comentário */}
+          {user ? <Card className="bg-card border-border">
+              <CardContent className="p-4">
+                <div className="flex gap-3">
+                  <Textarea value={newComment} onChange={e => setNewComment(e.target.value)} className="flex-1 min-h-[80px] bg-background border-0" />
+                  <Button onClick={handleComment} disabled={!newComment.trim()} className="self-end bg-gradient-cosmic text-white hover:opacity-90">
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card> : <Card className="bg-card border-border">
+              <CardContent className="p-4 text-center">
+                <p className="text-muted-foreground">
+                  <Link to="/auth" className="text-accent hover:underline">
+                    Faça login
+                  </Link>{" "}
+                  para comentar
+                </p>
+              </CardContent>
+            </Card>}
         </div>
       </div>
       <Footer />

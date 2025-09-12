@@ -174,7 +174,7 @@ const Battles = () => {
           <div className="flex gap-4 flex-1 w-full  ">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input placeholder="Buscar por cavaleiro..." value={searchTerm} onChange={e => {
+              <Input value={searchTerm} onChange={e => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }} className="pl-3 lg:pl-10 bg-card border-border  " />

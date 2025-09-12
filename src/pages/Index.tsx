@@ -191,11 +191,11 @@ const Index = () => {
 
         {/* Mobile Action Cards Carousel */}
         <div className="md:hidden mb-12">
-          <Carousel className="w-full">
+          <Carousel className="w-full mb-6">
             <CarouselContent>
               <CarouselItem>
                 <Link to="/create-battle">
-                  <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+                  <Card className="bg-card transition-colors cursor-pointer border-none">
                     <CardHeader className="text-center">
                       <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                         <Plus className="w-8 h-8 text-white" />
@@ -208,7 +208,7 @@ const Index = () => {
               </CarouselItem>
               <CarouselItem>
                 <Link to="/battles">
-                  <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+                  <Card className="bg-card transition-colors cursor-pointer border-none">
                     <CardHeader className="text-center">
                       <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                         <Sword className="w-8 h-8 text-white" />
@@ -221,7 +221,7 @@ const Index = () => {
               </CarouselItem>
               <CarouselItem>
                 <Link to="/knights">
-                  <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+                  <Card className="bg-card transition-colors cursor-pointer border-none">
                     <CardHeader className="text-center">
                       <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                         <Users className="w-8 h-8 text-white" />
@@ -237,7 +237,8 @@ const Index = () => {
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-3 gap-2 md:gap-6 mb-12">
+        {/* Desktop Stats Grid */}
+        <div className="hidden md:grid grid-cols-3 gap-6 mb-12">
           <Card className="bg-card border-none ">
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="flex justify-center mb-4">
@@ -267,6 +268,47 @@ const Index = () => {
               <p className="text-muted-foreground">Vitórias</p>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Mobile Stats Carousel */}
+        <div className="md:hidden mb-12">
+          <Carousel className="w-full mb-6">
+            <CarouselContent>
+              <CarouselItem>
+                <Card className="bg-card border-none">
+                  <CardContent className="p-4 text-center">
+                    <div className="flex justify-center mb-4">
+                      <Sword className="w-9 h-9 text-accent" />
+                    </div>
+                    <div className="text-4xl font-bold text-foreground mb-2">{stats.totalBattles}</div>
+                    <p className="text-muted-foreground">Batalhas</p>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem>
+                <Card className="bg-card border-none">
+                  <CardContent className="p-4 text-center">
+                    <div className="flex justify-center mb-4">
+                      <Users className="w-9 h-9 text-accent" />
+                    </div>
+                    <div className="text-4xl font-bold text-foreground mb-2">{stats.totalKnights}</div>
+                    <p className="text-muted-foreground">Cavaleiros</p>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem>
+                <Card className="bg-card border-none">
+                  <CardContent className="p-4 text-center">
+                    <div className="flex justify-center mb-4">
+                      <Trophy className="w-9 h-9 text-accent" />
+                    </div>
+                    <div className="text-4xl font-bold text-foreground mb-2">{stats.totalVictories}</div>
+                    <p className="text-muted-foreground">Vitórias</p>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+            </CarouselContent>
+          </Carousel>
         </div>
 
         {/* Principais Cavaleiros */}
@@ -300,13 +342,13 @@ const Index = () => {
 
           {/* Mobile Carousel */}
           <div className="md:hidden">
-            <Carousel className="w-full">
-              <CarouselContent>
+            <Carousel className="w-full mb-6">
+              <CarouselContent className="-ml-2">
                 {topKnights.map(knight => {
                 const knightUrl = createKnightUrl(knight.id, knight.name);
-                return <CarouselItem key={knight.id}>
+                return <CarouselItem key={knight.id} className="pl-2 basis-1/2">
                     <Link to={`/knight/${knightUrl}`}>
-                      <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
+                      <Card className="bg-card transition-all duration-200 cursor-pointer border-none shadow-lg">
                         <CardContent className="p-4 text-center">
                           <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full mx-auto mb-3 border border-accent/20" />
                           <p className="text-sm font-medium text-foreground">{knight.name}</p>
@@ -343,10 +385,10 @@ const Index = () => {
 
           {/* Mobile Carousel */}
           <div className="md:hidden">
-            <Carousel className="w-full">
+            <Carousel className="w-full mb-6">
               <CarouselContent>
                 {recentBattles.map(battle => <CarouselItem key={battle.id}>
-                    <div className="hover:scale-[1.02] transition-transform">
+                    <div className="transition-transform">
                       <BattleCard battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} onDelete={fetchRecentBattles} />
                     </div>
                   </CarouselItem>)}
