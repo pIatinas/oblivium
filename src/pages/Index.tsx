@@ -61,51 +61,38 @@ const Index = () => {
   const [statsSlideIndex, setStatsSlideIndex] = useState(0);
   const [knightsSlideIndex, setKnightsSlideIndex] = useState(0);
   const [battlesSlideIndex, setBattlesSlideIndex] = useState(0);
-  
   useEffect(() => {
     fetchData();
   }, []);
-
   useEffect(() => {
     if (!actionCarouselApi) return;
-    
     const onSelect = () => {
       setActionSlideIndex(actionCarouselApi.selectedScrollSnap());
     };
-    
     actionCarouselApi.on("select", onSelect);
     return () => actionCarouselApi.off("select", onSelect);
   }, [actionCarouselApi]);
-
   useEffect(() => {
     if (!statsCarouselApi) return;
-    
     const onSelect = () => {
       setStatsSlideIndex(statsCarouselApi.selectedScrollSnap());
     };
-    
     statsCarouselApi.on("select", onSelect);
     return () => statsCarouselApi.off("select", onSelect);
   }, [statsCarouselApi]);
-
   useEffect(() => {
     if (!knightsCarouselApi) return;
-    
     const onSelect = () => {
       setKnightsSlideIndex(knightsCarouselApi.selectedScrollSnap());
     };
-    
     knightsCarouselApi.on("select", onSelect);
     return () => knightsCarouselApi.off("select", onSelect);
   }, [knightsCarouselApi]);
-
   useEffect(() => {
     if (!battlesCarouselApi) return;
-    
     const onSelect = () => {
       setBattlesSlideIndex(battlesCarouselApi.selectedScrollSnap());
     };
-    
     battlesCarouselApi.on("select", onSelect);
     return () => battlesCarouselApi.off("select", onSelect);
   }, [battlesCarouselApi]);
@@ -204,7 +191,7 @@ const Index = () => {
         </div>
 
         {/* Action Cards */}
-        <div className="hidden md:grid md:grid-cols-3 gap-6 mb-12">
+        <div className="hidden md:grid md:grid-cols-3 gap-6 mb-6">
           <Link to="/create-battle">
             <Card className="bg-card hover:bg-card/70 duration-200 cursor-pointer border-none">
               <CardHeader className="text-center">
