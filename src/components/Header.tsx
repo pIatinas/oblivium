@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import UserDropdown from "@/components/UserDropdown";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
@@ -42,9 +43,7 @@ const Header = () => {
                   {item.name}
                 </Button>
               </Link>)}
-            <Button variant="ghost" onClick={signOut} className="text-foreground hover:text-black hover:bg-accent">
-              <LogOut className="h-4 w-4" />
-            </Button>
+            <UserDropdown />
           </nav>
 
           {/* Mobile menu button */}

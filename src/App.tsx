@@ -10,6 +10,7 @@ import Battles from "./pages/Battles";
 import BattleDetail from "./pages/BattleDetail";
 import CreateBattle from "./pages/CreateBattle";
 import Knights from "./pages/Knights";
+import Members from "./pages/Members";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -20,7 +21,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-nebula flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-accent text-xl">Carregando...</div>
       </div>
     );
@@ -45,6 +46,8 @@ const App = () => (
             <Route path="/create-battle" element={<ProtectedRoute><CreateBattle /></ProtectedRoute>} />
             <Route path="/knights" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
             <Route path="/knight/:knightUrl" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
+            <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
+            <Route path="/members/:userId" element={<ProtectedRoute><Members /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
