@@ -206,7 +206,7 @@ const Index = () => {
         {/* Action Cards */}
         <div className="hidden md:grid md:grid-cols-3 gap-6 mb-12">
           <Link to="/create-battle">
-            <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+            <Card className="bg-card hover:bg-card/70 duration-200 cursor-pointer border-none">
               <CardHeader className="text-center">
                 <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                   <Plus className="w-8 h-8 text-white" />
@@ -218,7 +218,7 @@ const Index = () => {
           </Link>
 
           <Link to="/battles">
-            <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+            <Card className="bg-card hover:bg-card/70 duration-200 cursor-pointer border-none">
               <CardHeader className="text-center">
                 <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                   <Sword className="w-8 h-8 text-white" />
@@ -230,7 +230,7 @@ const Index = () => {
           </Link>
 
           <Link to="/knights">
-            <Card className="bg-card hover:bg-card/70 hover:scale-105 duration-200 cursor-pointer border-none">
+            <Card className="bg-card hover:bg-card/70 duration-200 cursor-pointer border-none">
               <CardHeader className="text-center">
                 <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-4">
                   <Users className="w-8 h-8 text-white" />

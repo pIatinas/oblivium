@@ -263,7 +263,15 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_knights_knight_id"
+            columns: ["knight_id"]
+            isOneToOne: false
+            referencedRelation: "knights"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {

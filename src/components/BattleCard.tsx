@@ -62,7 +62,7 @@ const BattleCard = ({
   const getProfileByUserId = (userId: string) => {
     return profiles.find(p => p.user_id === userId);
   };
-  return <Card className="bg-card hover:bg-card/70 hover:scale-105  transition-all duration-300 relative border-none shadow-none cursor-pointer group">
+  return <Card className="bg-card hover:bg-card/70 transition-all duration-300 relative border-none cursor-pointer group">
       {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
           <span className="text-black text-lg">⭐</span>
         </div>}

@@ -93,14 +93,25 @@ const Members = () => {
   };
 
   const fetchUserKnights = async () => {
-    const { data } = await supabase
+    const { data: userKnightsData } = await supabase
       .from('user_knights')
-      .select(`
-        *,
-        knights (*)
-      `)
+      .select('*')
       .eq('user_id', targetUserId);
-    setUserKnights(data || []);
+
+    if (userKnightsData) {
+      const knightIds = userKnightsData.map(uk => uk.knight_id);
+      const { data: knightsData } = await supabase
+        .from('knights')
+        .select('*')
+        .in('id', knightIds);
+
+      const userKnightsWithKnights = userKnightsData.map(uk => ({
+        ...uk,
+        knights: knightsData?.find(k => k.id === uk.knight_id) || null
+      })).filter(uk => uk.knights);
+
+      setUserKnights(userKnightsWithKnights);
+    }
   };
 
   const fetchUserBattles = async () => {
@@ -113,15 +124,26 @@ const Members = () => {
   };
 
   const fetchUserComments = async () => {
-    const { data } = await supabase
+    const { data: commentsData } = await supabase
       .from('battle_comments')
-      .select(`
-        *,
-        battles (id, tipo)
-      `)
+      .select('*')
       .eq('user_id', targetUserId)
       .order('created_at', { ascending: false });
-    setUserComments(data || []);
+
+    if (commentsData) {
+      const battleIds = commentsData.map(c => c.battle_id);
+      const { data: battlesData } = await supabase
+        .from('battles')
+        .select('id, tipo')
+        .in('id', battleIds);
+
+      const commentsWithBattles = commentsData.map(comment => ({
+        ...comment,
+        battles: battlesData?.find(b => b.id === comment.battle_id) || null
+      })).filter(c => c.battles);
+
+      setUserComments(commentsWithBattles);
+    }
   };
 
   const handleKnightSelection = (knightId: string) => {
@@ -273,7 +295,7 @@ const Members = () => {
               {userKnights.map((userKnight) => (
                 <div 
                   key={userKnight.id}
-                  className={`cursor-pointer transition-opacity ${canManage ? 'hover:scale-105' : ''} ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`}
+                  className={`cursor-pointer transition-opacity ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`}
                   onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}
                 >
                   <Avatar className="w-16 h-16">
