@@ -366,7 +366,7 @@ const Index = () => {
           </div>
           
           {/* Desktop Grid */}
-          <div className="hidden md:grid gap-2 lg:gap-6 md:grid-cols-4 xl:grid-cols-6">
+          <div className="hidden md:grid gap-2 lg:gap-6 md:grid-cols-4 xl:grid-cols-8">
             {topKnights.map(knight => {
             const knightUrl = createKnightUrl(knight.id, knight.name);
             return <Link key={knight.id} to={`/knight/${knightUrl}`}>
