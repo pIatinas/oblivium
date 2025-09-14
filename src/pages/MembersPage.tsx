@@ -132,7 +132,7 @@ const MembersPage = () => {
             };
             return <Card key={member.id} onClick={() => handleMemberClick(member)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none">
                     <CardContent className="p-6 text-center">
-                      <Avatar className="w-24 h-24 mx-auto mb-4">
+                      <Avatar className="w-24 h-24 mx-auto mb-4 bg-gradient-cosmic ">
                         <AvatarImage src={member.avatar_url || '/placeholder.svg'} alt={member.full_name || 'Usuário'} />
                         <AvatarFallback className="text-xl">
                           {member.full_name ? member.full_name[0].toUpperCase() : 'U'}
