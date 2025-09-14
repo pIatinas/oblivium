@@ -238,7 +238,7 @@ const Knights = () => {
         <Footer />
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen">
       <SEOHead title="Oblivium • Cavaleiros Disponíveis" description={`Existem ${knights.length} cavaleiros disponíveis, utilizados em ${battles.length} batalhas diferentes.`} />
       <Header />
       <div className="max-w-6xl mx-auto p-6">
