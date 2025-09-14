@@ -79,18 +79,24 @@ const BattleDetail = () => {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyContent, setReplyContent] = useState("");
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
-  const { user } = useAuth();
-
+  const {
+    toast
+  } = useToast();
+  const {
+    user
+  } = useAuth();
   const deleteBattle = async () => {
     if (!battle) return;
-    const { error } = await supabase.from('battles').delete().eq('id', battle.id);
+    const {
+      error
+    } = await supabase.from('battles').delete().eq('id', battle.id);
     if (error) throw error;
     window.location.href = '/battles';
   };
-
   const deleteComment = async (commentId: string) => {
-    const { error } = await supabase.from('battle_comments').delete().eq('id', commentId);
+    const {
+      error
+    } = await supabase.from('battle_comments').delete().eq('id', commentId);
     if (error) throw error;
     if (battle?.id) {
       fetchComments(battle.id);
@@ -380,7 +386,7 @@ const BattleDetail = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-6xl mx-auto p-6">
         <Breadcrumb battleId={(id || battleUrl) as string} />
@@ -395,10 +401,7 @@ const BattleDetail = () => {
             </div>}
           
           <div className="absolute top-2 left-2 z-20">
-            <AdminDeleteButton
-              onDelete={deleteBattle}
-              itemType="batalha"
-            />
+            <AdminDeleteButton onDelete={deleteBattle} itemType="batalha" />
           </div>
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-4 flex-wrap flex-col lg:flex-row ">
@@ -472,8 +475,7 @@ const BattleDetail = () => {
         </Card>
 
         {/* Batalhas Relacionadas */}
-        {relatedBattles.length > 0 && (
-          <div className="mt-8">
+        {relatedBattles.length > 0 && <div className="mt-8">
             <h3 className="text-2xl text-foreground mb-6 font-medium">
               Batalhas Relacionadas
             </h3>
@@ -541,8 +543,7 @@ const BattleDetail = () => {
                   </CardContent>
                 </Card>)}
             </div>
-          </div>
-        )}
+          </div>}
 
         {/* Comentários */}
         <div className="mt-8">
@@ -556,11 +557,7 @@ const BattleDetail = () => {
             {getMainComments().map(comment => <Card key={comment.id} className="bg-card border-border relative">
                 <CardContent className="p-4">
                   <div className="absolute top-2 right-2">
-                    <AdminDeleteButton
-                      onDelete={() => deleteComment(comment.id)}
-                      itemType="comentário"
-                      className="w-5 h-5 p-0"
-                    />
+                    <AdminDeleteButton onDelete={() => deleteComment(comment.id)} itemType="comentário" className="w-5 h-5 p-0" />
                   </div>
                   
                   <div className="flex items-start gap-3">
@@ -597,11 +594,7 @@ const BattleDetail = () => {
                       {/* Respostas */}
                       {getCommentReplies(comment.id).map(reply => <div key={reply.id} className="mt-4 ml-6 pl-4 border-l-2 border-border relative">
                           <div className="absolute top-0 right-0">
-                            <AdminDeleteButton
-                              onDelete={() => deleteComment(reply.id)}
-                              itemType="comentário"
-                              className="w-4 h-4 p-0"
-                            />
+                            <AdminDeleteButton onDelete={() => deleteComment(reply.id)} itemType="comentário" className="w-4 h-4 p-0" />
                           </div>
                           
                           <div className="flex items-center gap-2 mb-2">
