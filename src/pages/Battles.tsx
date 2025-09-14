@@ -153,11 +153,8 @@ const Battles = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-nebula">
-      <SEOHead 
-        title="Oblivium • Histórico de Batalhas"
-        description={`Existem ${totalBattles} batalhas cadastradas no total, utilizando ${knights.length} cavaleiros.`}
-      />
+  return <div className="min-h-screen">
+      <SEOHead title="Oblivium • Histórico de Batalhas" description={`Existem ${totalBattles} batalhas cadastradas no total, utilizando ${knights.length} cavaleiros.`} />
       <Header />
       <div className="max-w-6xl mx-auto p-3 md:p-6 ">
         <Breadcrumb />
