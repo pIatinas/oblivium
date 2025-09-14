@@ -179,7 +179,7 @@ const Knights = () => {
     const victories = battles.filter(battle => battle.winner_team.includes(selectedKnight.id));
     const defeats = battles.filter(battle => battle.loser_team.includes(selectedKnight.id));
     const totalAppearances = getKnightAppearances(selectedKnight.id);
-    return <div className="min-h-screen bg-gradient-nebula">
+    return <div className="min-h-screen ">
         <SEOHead title={`Oblivium • Histórico de ${selectedKnight.name}`} description={`${selectedKnight.name} aparece em ${totalAppearances} times, contando com ${victories.length} vitórias e ${defeats.length} derrotas.`} />
         <Header />
         <div className="max-w-6xl mx-auto p-3 md:p-6">
