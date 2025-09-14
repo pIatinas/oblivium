@@ -197,7 +197,7 @@ const CreateBattle = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-gradient-nebula">
+  return <div className="min-h-screen">
       <SEOHead title="Oblivium • Cadastro de Batalhas" description="Faça o cadastro de uma nova batalha e colabore com a Guild." />
       <Header />
       <div className="max-w-6xl mx-auto p-3 lg:p-6">
