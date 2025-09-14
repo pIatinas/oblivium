@@ -278,7 +278,7 @@ const Index = () => {
 
         {/* Estatísticas */}
         {/* Desktop Stats Grid */}
-        <div className="hidden md:grid grid-cols-3 gap-6 mb-12">
+        <div className="hidden md:grid grid-cols-4 gap-6 mb-12">
           <Card className="bg-card border-none ">
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="flex justify-center mb-4">
@@ -306,6 +306,16 @@ const Index = () => {
               </div>
               <div className="text-4xl font-bold text-foreground mb-2">{stats.totalVictories}</div>
               <p className="text-muted-foreground">Vitórias</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-none ">
+            <CardContent className="p-4 lg:p-6 text-center">
+              <div className="flex justify-center mb-4">
+                <Users className="w-9 h-9 lg:w-12 lg:h-12 text-accent" />
+              </div>
+              <div className="text-4xl font-bold text-foreground mb-2">{profiles.length}</div>
+              <p className="text-muted-foreground">Membros</p>
             </CardContent>
           </Card>
         </div>

@@ -14,14 +14,17 @@ const Header = () => {
     name: "Home",
     href: "/"
   }, {
-    name: "Cadastrar",
-    href: "/create-battle"
+    name: "Cavaleiros",
+    href: "/knights"
+  }, {
+    name: "Membros",
+    href: "/members"
   }, {
     name: "Batalhas",
     href: "/battles"
   }, {
-    name: "Cavaleiros",
-    href: "/knights"
+    name: "Cadastro",
+    href: "/create-battle"
   }];
   const isActive = (path: string) => {
     if (path === "/battles") {

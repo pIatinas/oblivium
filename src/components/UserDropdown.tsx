@@ -38,7 +38,7 @@ const UserDropdown = () => {
     navigate('/members');
   };
 
-  const displayName = userProfile?.full_name || user?.email || 'Usuário';
+  const displayName = userProfile?.full_name || 'Usuário';
 
   return (
     <DropdownMenu>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
+import BattleCard from '@/components/BattleCard';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,6 +20,7 @@ interface Knight {
   id: string;
   name: string;
   image_url: string | null;
+  slug: string | null;
 }
 
 interface UserKnight {
@@ -34,6 +36,10 @@ interface Battle {
   created_at: string;
   winner_team: string[];
   loser_team: string[];
+  winner_team_stigma: string | null;
+  loser_team_stigma: string | null;
+  created_by: string;
+  meta: boolean | null;
 }
 
 interface Comment {
@@ -48,10 +54,11 @@ interface Comment {
 }
 
 const Members = () => {
-  const { userId } = useParams();
+  const { slug } = useParams();
   const { user } = useAuth();
   const { isAdmin } = useAdmin();
-  const [knights, setKnights] = useState<Knight[]>([]);
+  const location = useLocation();
+  const [allKnights, setAllKnights] = useState<Knight[]>([]);
   const [userKnights, setUserKnights] = useState<UserKnight[]>([]);
   const [userBattles, setUserBattles] = useState<Battle[]>([]);
   const [userComments, setUserComments] = useState<Comment[]>([]);
@@ -62,13 +69,13 @@ const Members = () => {
   const [commentsPage, setCommentsPage] = useState(1);
   const itemsPerPage = 4;
 
-  const targetUserId = userId || user?.id;
+  const targetUserId = location.state?.userId || user?.id;
   const canManage = isAdmin || targetUserId === user?.id;
 
   useEffect(() => {
     if (targetUserId) {
       fetchUserProfile();
-      fetchKnights();
+      fetchAllKnights();
       fetchUserKnights();
       fetchUserBattles();
       fetchUserComments();
@@ -84,12 +91,12 @@ const Members = () => {
     setUserProfile(data);
   };
 
-  const fetchKnights = async () => {
+  const fetchAllKnights = async () => {
     const { data } = await supabase
       .from('knights')
       .select('*')
       .order('name');
-    setKnights(data || []);
+    setAllKnights(data || []);
   };
 
   const fetchUserKnights = async () => {
@@ -237,7 +244,7 @@ const Members = () => {
         <main className="max-w-6xl mx-auto px-6 py-8">
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-accent mb-2">
-              {userId ? `Perfil de ${userProfile?.full_name || 'Membro'}` : 'Meu Perfil'}
+              {location.state?.userId && location.state.userId !== user?.id ? `Perfil de ${userProfile?.full_name || 'Membro'}` : 'Meu Perfil'}
             </h1>
           </div>
 
@@ -246,65 +253,77 @@ const Members = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-foreground">Cavaleiros Disponíveis</h2>
               {canManage && (
-                <div className="flex gap-2">
-                  <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                    <DialogTrigger asChild>
-                      <Button onClick={openKnightModal} className="bg-foreground text-background hover:bg-foreground/90">
-                        Adicionar
+                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                  <DialogTrigger asChild>
+                    <Button onClick={openKnightModal} className="bg-foreground text-background hover:bg-foreground/90">
+                      Adicionar
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Selecionar Cavaleiros</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                      {allKnights.map((knight) => (
+                        <div key={knight.id} className="flex items-center space-x-3">
+                          <Avatar className="w-10 h-10">
+                            <AvatarImage src={knight.image_url || '/placeholder.svg'} alt={knight.name} />
+                            <AvatarFallback>{knight.name[0]}</AvatarFallback>
+                          </Avatar>
+                          <Checkbox
+                            id={knight.id}
+                            checked={selectedKnights.includes(knight.id)}
+                            onCheckedChange={() => handleKnightSelection(knight.id)}
+                          />
+                          <label htmlFor={knight.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
+                            {knight.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                        Cancelar
                       </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                      <DialogHeader>
-                        <DialogTitle>Selecionar Cavaleiros</DialogTitle>
-                      </DialogHeader>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 py-4">
-                        {knights.map((knight) => (
-                          <div key={knight.id} className="flex items-center space-x-2">
-                            <Checkbox
-                              id={knight.id}
-                              checked={selectedKnights.includes(knight.id)}
-                              onCheckedChange={() => handleKnightSelection(knight.id)}
-                            />
-                            <label htmlFor={knight.id} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">
-                              {knight.name}
-                            </label>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                          Cancelar
-                        </Button>
-                        <Button onClick={saveKnightSelection}>
-                          Salvar
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                  <Button 
-                    variant="outline" 
-                    onClick={resetAllKnights}
-                    className="border-foreground text-foreground hover:bg-foreground hover:text-background"
-                  >
-                    Resetar
-                  </Button>
-                </div>
+                      <Button onClick={saveKnightSelection}>
+                        Salvar
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               )}
             </div>
-            <div className="grid grid-cols-6 md:grid-cols-12 gap-4">
+            <div className="grid grid-cols-8 md:grid-cols-16 gap-2">
               {userKnights.map((userKnight) => (
                 <div 
                   key={userKnight.id}
-                  className={`cursor-pointer transition-opacity ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`}
+                  className={`relative cursor-pointer transition-opacity ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`}
                   onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}
+                  title={userKnight.knights.name}
                 >
-                  <Avatar className="w-16 h-16">
+                  <Avatar className="w-10 h-10">
                     <AvatarImage src={userKnight.knights.image_url || '/placeholder.svg'} alt={userKnight.knights.name} />
                     <AvatarFallback>{userKnight.knights.name[0]}</AvatarFallback>
                   </Avatar>
+                  {userKnight.is_used && (
+                    <div className="absolute -top-1 -right-1 bg-accent text-background rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                      ✓
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
+            {canManage && (
+              <div className="mt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={resetAllKnights}
+                  className="border-foreground text-foreground hover:bg-foreground hover:text-background"
+                >
+                  Resetar
+                </Button>
+              </div>
+            )}
           </section>
 
           {/* Minhas Batalhas */}
@@ -315,17 +334,14 @@ const Members = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               {paginatedBattles.map((battle) => (
-                <Card key={battle.id} className="border-border">
-                  <CardContent className="p-6">
-                    <div className="text-center">
-                      <h3 className="text-lg font-semibold text-accent mb-2">BATALHA</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(battle.created_at), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
-                      </p>
-                      <Badge className="mt-2">{battle.tipo}</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
+                <BattleCard 
+                  key={battle.id} 
+                  battle={battle} 
+                  knights={allKnights} 
+                  stigmas={[]} 
+                  profiles={[]} 
+                  onDelete={fetchUserBattles}
+                />
               ))}
             </div>
             {totalBattlePages > 1 && (

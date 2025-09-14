@@ -39,7 +39,10 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
-    /* Removed gradients and shadows per user request */
+    /* Gradients */
+    --gradient-cosmic: linear-gradient(135deg, hsl(270 100% 65%), hsl(270 100% 45%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 100% 60%), hsl(30 100% 50%));
+    --gradient-nebula: linear-gradient(135deg, hsl(270 100% 65%), hsl(270 100% 45%));
   }
 
   .dark {
@@ -81,6 +84,6 @@ All colors MUST be HSL.
 
   body {
     @apply text-foreground;
-    background: hsl(240 15% 4%);
+    background: #150e19;
   }
 }

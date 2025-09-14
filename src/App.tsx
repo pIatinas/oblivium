@@ -11,6 +11,7 @@ import BattleDetail from "./pages/BattleDetail";
 import CreateBattle from "./pages/CreateBattle";
 import Knights from "./pages/Knights";
 import Members from "./pages/Members";
+import MembersPage from "./pages/MembersPage";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -46,8 +47,8 @@ const App = () => (
             <Route path="/create-battle" element={<ProtectedRoute><CreateBattle /></ProtectedRoute>} />
             <Route path="/knights" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
             <Route path="/knight/:knightUrl" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
-            <Route path="/members" element={<ProtectedRoute><Members /></ProtectedRoute>} />
-            <Route path="/members/:userId" element={<ProtectedRoute><Members /></ProtectedRoute>} />
+            <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
+            <Route path="/members/:slug" element={<ProtectedRoute><Members /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
