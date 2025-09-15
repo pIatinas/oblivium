@@ -204,7 +204,7 @@ const Members = () => {
         <Header />
         <main className="max-w-6xl mx-auto px-6 py-8">
           <Breadcrumb memberName={userProfile?.full_name || 'Membro'} />
-          <div className="flex flex-row-reverse justify-end items-center mb-10 ">
+          <div className="flex flex-row-reverse justify-end items-center mb-6 ">
             <h1 className="text-3xl font-bold text-accent ml-4">
               {location.state?.userId && location.state.userId !== user?.id ? `${userProfile?.full_name || 'Membro'}` : 'Meu Perfil'}
             </h1>
