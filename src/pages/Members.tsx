@@ -206,7 +206,7 @@ const Members = () => {
           <Breadcrumb memberName={userProfile?.full_name || 'Membro'} />
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-accent mb-2">
-              {location.state?.userId && location.state.userId !== user?.id ? `Perfil de ${userProfile?.full_name || 'Membro'}` : 'Meu Perfil'}
+              {location.state?.userId && location.state.userId !== user?.id ? `${userProfile?.full_name || 'Membro'}` : 'Meu Perfil'}
             </h1>
             
             {/* Avatar placeholder with favorite knight selector */}
