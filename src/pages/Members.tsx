@@ -218,9 +218,9 @@ const Members = () => {
           </div>
 
           {/* Cavaleiros Disponíveis */}
-          <section className="mb-12 bg-card p-4 rounded-2xl ">
+          <section className="mb-6 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl text-foreground font-light">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
+              <h2 className="text-xl text-foreground font-semibold">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
                     <Button onClick={openKnightModal} className="bg-gradient-cosmic text-white ">
@@ -274,9 +274,9 @@ const Members = () => {
           </section>
 
           {/* Minhas Batalhas */}
-          <section className="mb-12 bg-card p-4 rounded-2xl ">
+          <section className="mb-6 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl text-foreground font-bold">Minhas <span className="text-accent">Batalhas</span></h2>
+              <h2 className="text-xl text-foreground font-semibold">Minhas <span className="text-accent">Batalhas</span></h2>
               <Badge variant="secondary">{userBattles.length} batalhas</Badge>
             </div>
             
@@ -301,7 +301,7 @@ const Members = () => {
           {/* Meus Comentários */}
           <section className="mb-12 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold">Meus <span className="text-accent">Comentários</span></h2>
+              <h2 className="text-xl font-semibold">Meus <span className="text-accent">Comentários</span></h2>
               <Badge variant="secondary">{userComments.length} comentários</Badge>
             </div>
             
