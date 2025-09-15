@@ -4,19 +4,16 @@ import { useToast } from "@/hooks/use-toast";
 import BattleLikeButtons from "./BattleLikeButtons";
 import AdminDeleteButton from "./AdminDeleteButton";
 import { createBattleUrl } from "@/lib/utils";
-
 interface Knight {
   id: string;
   name: string;
   image_url: string;
 }
-
 interface Stigma {
   id: string;
   nome: string;
   imagem: string;
 }
-
 interface Battle {
   id: string;
   winner_team: string[];
@@ -28,7 +25,6 @@ interface Battle {
   meta: boolean | null;
   tipo: string;
 }
-
 interface UserBattleCardProps {
   battle: Battle;
   knights: Knight[];
@@ -36,7 +32,6 @@ interface UserBattleCardProps {
   onDelete?: () => void;
   hideAuthor?: boolean;
 }
-
 const UserBattleCard = ({
   battle,
   knights,
@@ -44,81 +39,55 @@ const UserBattleCard = ({
   onDelete,
   hideAuthor = false
 }: UserBattleCardProps) => {
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const deleteBattle = async () => {
-    const { error } = await supabase.from('battles').delete().eq('id', battle.id);
+    const {
+      error
+    } = await supabase.from('battles').delete().eq('id', battle.id);
     if (error) throw error;
     if (onDelete) onDelete();
   };
-
   const getKnightById = (knightId: string) => {
     return knights.find(k => k.id === knightId);
   };
-
   const getStigmaById = (stigmaId: string) => {
     return stigmas.find(s => s.id === stigmaId);
   };
-
-  return (
-    <Card className="bg-card hover:bg-card/70 transition-all duration-300 relative border-none cursor-pointer group">
-      {battle.meta && (
-        <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
+  return <Card className="bg-card hover:bg-card/70 transition-all duration-300 relative border-none cursor-pointer group">
+      {battle.meta && <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center z-10 bg-transparent">
           <span className="text-black text-lg">⭐</span>
-        </div>
-      )}
+        </div>}
       
       <div className="absolute top-2 left-2 z-20">
-        <AdminDeleteButton
-          onDelete={deleteBattle}
-          itemType="batalha"
-          className="w-6 h-6 p-0"
-        />
+        <AdminDeleteButton onDelete={deleteBattle} itemType="batalha" className="w-6 h-6 p-0" />
       </div>
 
-      <CardContent 
-        onClick={() => {
-          const battleUrl = createBattleUrl(battle.winner_team, battle.loser_team, knights);
-          window.location.href = `/battles/${battleUrl}`;
-        }} 
-        className="p-3 lg:p-6 max-w-full"
-      >
+      <CardContent onClick={() => {
+      const battleUrl = createBattleUrl(battle.winner_team, battle.loser_team, knights);
+      window.location.href = `/battles/${battleUrl}`;
+    }} className="p-3 lg:p-6 max-w-full shadow-accent-foreground ">
         <div className="flex items-center justify-between gap-1 lg:gap-4">
           {/* Time Vencedor */}
           <div className="flex-1 space-y-3">
             <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2">
               Vencedor
-              {battle.winner_team_stigma && (
-                <img 
-                  src={getStigmaById(battle.winner_team_stigma)?.imagem} 
-                  alt="Estigma do time vencedor" 
-                  className="w-6 h-6 lg:w-12 lg:h-12" 
-                />
-              )}
+              {battle.winner_team_stigma && <img src={getStigmaById(battle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-6 h-6 lg:w-12 lg:h-12" />}
             </h3>
             <div className="flex gap-2 justify-center">
               {battle.winner_team.slice(0, 3).map((knightId, index) => {
-                const knight = getKnightById(knightId);
-                return knight ? (
-                  <div 
-                    key={index} 
-                    className="flex flex-col items-center gap-1 cursor-pointer" 
-                    onClick={e => {
-                      e.stopPropagation();
-                      window.location.href = `/knights?knight=${knight.id}`;
-                    }}
-                  >
-                    <img 
-                      src={knight.image_url} 
-                      alt={knight.name} 
-                      className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-accent/20 hover:border-accent/40" 
-                    />
+              const knight = getKnightById(knightId);
+              return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                e.stopPropagation();
+                window.location.href = `/knights?knight=${knight.id}`;
+              }}>
+                    <img src={knight.image_url} alt={knight.name} className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-accent/20 hover:border-accent/40" />
                     <span className="text-xs text-foreground hover:text-accent transition-colors">
                       {knight.name}
                     </span>
-                  </div>
-                ) : null;
-              })}
+                  </div> : null;
+            })}
             </div>
           </div>
 
@@ -131,45 +100,27 @@ const UserBattleCard = ({
           <div className="flex-1 space-y-3">
             <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2">
               Perdedor
-              {battle.loser_team_stigma && (
-                <img 
-                  src={getStigmaById(battle.loser_team_stigma)?.imagem} 
-                  alt="Estigma do time perdedor" 
-                  className="w-6 h-6 lg:w-12 lg:h-12"
-                />
-              )}
+              {battle.loser_team_stigma && <img src={getStigmaById(battle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-6 h-6 lg:w-12 lg:h-12" />}
             </h3>
             <div className="flex gap-2 justify-center">
               {battle.loser_team.slice(0, 3).map((knightId, index) => {
-                const knight = getKnightById(knightId);
-                return knight ? (
-                  <div 
-                    key={index} 
-                    className="flex flex-col items-center gap-1 cursor-pointer" 
-                    onClick={e => {
-                      e.stopPropagation();
-                      window.location.href = `/knights?knight=${knight.id}`;
-                    }}
-                  >
-                    <img 
-                      src={knight.image_url} 
-                      alt={knight.name} 
-                      className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-purple-400/20 hover:border-purple-400/40" 
-                    />
+              const knight = getKnightById(knightId);
+              return knight ? <div key={index} className="flex flex-col items-center gap-1 cursor-pointer" onClick={e => {
+                e.stopPropagation();
+                window.location.href = `/knights?knight=${knight.id}`;
+              }}>
+                    <img src={knight.image_url} alt={knight.name} className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-purple-400/20 hover:border-purple-400/40" />
                     <span className="text-xs text-purple-300 hover:text-purple-400 transition-colors">
                       {knight.name}
                     </span>
-                  </div>
-                ) : null;
-              })}
+                  </div> : null;
+            })}
             </div>
           </div>
         </div>
         
         <BattleLikeButtons battleId={battle.id} />
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default UserBattleCard;
