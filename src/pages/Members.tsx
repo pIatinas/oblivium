@@ -211,7 +211,7 @@ const Members = () => {
             
             {/* Avatar placeholder with favorite knight selector */}
             {canManage && <div className="mt-4">
-                <div className="w-12 h-12 rounded-full bg-card border-2 border-accent/30 cursor-pointer hover:border-accent/60 transition-colors flex items-center justify-center" onClick={() => setIsFavoriteModalOpen(true)}>
+                <div onClick={() => setIsFavoriteModalOpen(true)} className="w-24 h-24 rounded-full bg-card border-2 border-accent/30 cursor-pointer hover:border-accent/60 transition-colors flex items-center justify-center">
                   {userProfile?.favorite_knight_id ? <img src={allKnights.find(k => k.id === userProfile.favorite_knight_id)?.image_url || '/placeholder.svg'} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : <span className="text-muted-foreground text-xs">+</span>}
                 </div>
               </div>}
