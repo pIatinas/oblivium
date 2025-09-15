@@ -566,14 +566,10 @@ const BattleDetail = () => {
                     <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             <Avatar className="w-8 h-8">
-                              <AvatarImage src={
-                                (() => {
-                                  const profile = getProfileByUserId(comment.user_id);
-                                  return profile?.favorite_knight_id ? 
-                                    knights.find(k => k.id === profile.favorite_knight_id)?.image_url || '/placeholder.svg' : 
-                                    '/placeholder.svg';
-                                })()
-                              } alt="Avatar" />
+                              <AvatarImage src={(() => {
+                        const profile = getProfileByUserId(comment.user_id);
+                        return profile?.favorite_knight_id ? knights.find(k => k.id === profile.favorite_knight_id)?.image_url || '/placeholder.svg' : '/placeholder.svg';
+                      })()} alt="Avatar" />
                               <AvatarFallback className="text-xs">
                                 {getProfileByUserId(comment.user_id)?.full_name?.[0]?.toUpperCase() || 'U'}
                               </AvatarFallback>
@@ -584,16 +580,16 @@ const BattleDetail = () => {
                               </span>
                               <span className="text-xs text-muted-foreground">
                                 {new Date(comment.created_at).toLocaleDateString('pt-BR', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                               </span>
                             </div>
                           </div>
-                      <p className="text-foreground mb-3">{comment.content}</p>
+                      <p className="text-foreground mb-3 text-base font-light">{comment.content}</p>
                       
                       {user && <Button variant="ghost" size="sm" onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)} className="text-accent p-0 h-auto">
                           <Reply className="w-4 h-4 mr-1" />
@@ -616,14 +612,10 @@ const BattleDetail = () => {
                           
                           <div className="flex items-center gap-3 mb-2">
                             <Avatar className="w-6 h-6">
-                              <AvatarImage src={
-                                (() => {
-                                  const profile = getProfileByUserId(reply.user_id);
-                                  return profile?.favorite_knight_id ? 
-                                    knights.find(k => k.id === profile.favorite_knight_id)?.image_url || '/placeholder.svg' : 
-                                    '/placeholder.svg';
-                                })()
-                              } alt="Avatar" />
+                              <AvatarImage src={(() => {
+                          const profile = getProfileByUserId(reply.user_id);
+                          return profile?.favorite_knight_id ? knights.find(k => k.id === profile.favorite_knight_id)?.image_url || '/placeholder.svg' : '/placeholder.svg';
+                        })()} alt="Avatar" />
                               <AvatarFallback className="text-xs">
                                 {getProfileByUserId(reply.user_id)?.full_name?.[0]?.toUpperCase() || 'U'}
                               </AvatarFallback>
@@ -634,12 +626,12 @@ const BattleDetail = () => {
                               </span>
                               <span className="text-xs text-muted-foreground">
                                 {new Date(reply.created_at).toLocaleDateString('pt-BR', {
-                              day: '2-digit',
-                              month: '2-digit',
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
                               </span>
                             </div>
                           </div>
