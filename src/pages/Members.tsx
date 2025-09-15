@@ -312,7 +312,7 @@ const Members = () => {
               </div> : <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   {paginatedComments.map(comment => <Card key={comment.id} className="border-border">
-                      <CardContent className="p-6">
+                      <CardContent className="p-4">
                         <div className="mb-4">
                           <p className="text-sm font-medium text-accent mb-2">
                             {format(new Date(comment.created_at), "dd/MM/yy", {
@@ -320,7 +320,7 @@ const Members = () => {
                       })}
                           </p>
                           <p className="text-sm text-foreground mb-4">{comment.content}</p>
-                          <Button size="sm" variant="outline" onClick={() => window.location.href = `/battles/${comment.battle_id}`}>
+                          <Button size="sm" variant="outline" onClick={() => window.location.href = `/battles/${comment.battle_id}`} className="-mb-6">
                             Ver Batalha
                           </Button>
                         </div>
