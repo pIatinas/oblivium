@@ -306,7 +306,7 @@ const Members = () => {
             </div>
             
             {userComments.length === 0 ? <div className="text-center py-8">
-                <p className="text-muted-foreground text-base">
+                <p className="text-muted-foreground text-base mb-8">
                   Este usuário ainda não fez comentários
                 </p>
               </div> : <>
