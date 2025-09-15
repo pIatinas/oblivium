@@ -19,6 +19,11 @@ const UserDropdown = () => {
 
   useEffect(() => {
     if (user) {
+      // Try to get cached name first
+      const cachedName = sessionStorage.getItem(`user_name_${user.id}`);
+      if (cachedName) {
+        setDisplayName(cachedName);
+      }
       fetchUserProfile();
     } else {
       setUserProfile(null);
@@ -36,7 +41,11 @@ const UserDropdown = () => {
       .single();
     
     setUserProfile(data);
-    setDisplayName(data?.full_name || 'Usuário');
+    const userName = data?.full_name || 'Usuário';
+    setDisplayName(userName);
+    
+    // Cache the user name in session storage
+    sessionStorage.setItem(`user_name_${user.id}`, userName);
   };
 
   const handleProfileClick = () => {

@@ -77,8 +77,9 @@ const Knights = () => {
     }
   }, [knights, searchParams, knightUrl]);
   useEffect(() => {
+    // Only reload data when sort changes, not when search term changes
     fetchData();
-  }, [sortBy, searchTerm]);
+  }, [sortBy]);
   useEffect(() => {
     // Only trigger re-render when searchTerm changes, not when knights change
     const timeoutId = setTimeout(() => {
