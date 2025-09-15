@@ -231,9 +231,8 @@ const Knights = () => {
             {filteredKnights.map(knight => {
           const appearances = getKnightAppearances(knight.id);
           const knightUrl = createKnightUrl(knight.id, knight.name);
-          console.log('Knights - clicking knight:', knight.name, 'knightUrl:', knightUrl);
           return <Card key={knight.id} onClick={() => {
-            navigate(`/knight/${knightUrl}`);
+            navigate(`/knights/${knightUrl}`);
           }} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none">
                   <CardContent className="px-3 py-2 text-center bg-transparent ">
                     <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-1 border border-accent/20" />

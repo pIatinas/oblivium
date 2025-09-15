@@ -58,15 +58,12 @@ const KnightDetail = () => {
 
   useEffect(() => {
     if (knightUrl) {
-      console.log('KnightDetail - knightUrl:', knightUrl);
       const parsed = parseKnightUrl(knightUrl);
-      console.log('KnightDetail - parsed:', parsed);
       if (parsed) {
         fetchKnightData(parsed.idPrefix);
       } else {
         // If parsing fails, try direct match first 3 chars
         const idPrefix = knightUrl.substring(0, 3);
-        console.log('KnightDetail - using fallback idPrefix:', idPrefix);
         fetchKnightData(idPrefix);
       }
     }

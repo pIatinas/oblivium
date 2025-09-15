@@ -48,7 +48,7 @@ const App = () => (
             <Route path="/battles/:id" element={<ProtectedRoute><BattleDetail /></ProtectedRoute>} />
             <Route path="/create-battle" element={<ProtectedRoute><CreateBattle /></ProtectedRoute>} />
             <Route path="/knights" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
-            <Route path="/knight/:knightUrl" element={<ProtectedRoute><KnightDetail /></ProtectedRoute>} />
+            <Route path="/knights/:knightUrl" element={<ProtectedRoute><KnightDetail /></ProtectedRoute>} />
             <Route path="/members/:slug" element={<ProtectedRoute><Members /></ProtectedRoute>} />
             <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
