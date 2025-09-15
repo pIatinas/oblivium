@@ -86,7 +86,7 @@ const Members = () => {
   const fetchUserProfile = async () => {
     const {
       data
-    } = await supabase.from('profiles').select('*').eq('user_id', targetUserId).single();
+    } = await supabase.from('profiles').select('*, knights!favorite_knight_id(*)').eq('user_id', targetUserId).single();
     setUserProfile(data);
   };
   const fetchAllKnights = async () => {
@@ -211,7 +211,7 @@ const Members = () => {
             
             {/* Avatar placeholder with favorite knight selector */}
             {canManage && <div className="">
-                <div onClick={() => setIsFavoriteModalOpen(true)} className="w-24 h-24 rounded-full bg-card border-2 border-accent/30 cursor-pointer hover:border-accent/60 transition-colors flex items-center justify-center">
+                <div onClick={() => setIsFavoriteModalOpen(true)} className="w-12 h-12 rounded-full bg-card border-2 border-accent/30 cursor-pointer hover:border-accent/60 transition-colors flex items-center justify-center">
                   {userProfile?.favorite_knight_id ? <img src={allKnights.find(k => k.id === userProfile.favorite_knight_id)?.image_url || '/placeholder.svg'} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : <span className="text-muted-foreground text-xs">+</span>}
                 </div>
               </div>}

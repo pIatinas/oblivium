@@ -112,7 +112,7 @@ const Auth = () => {
     }
   };
   if (showSuccessMessage) {
-    return <div className="min-h-screen bg-gradient-nebula flex items-center justify-center p-4">
+    return <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-md backdrop-blur-sm border-none lg:bg-transparent bg-transparent">
           <CardHeader className="text-center space-y-4">
             <div className="text-6xl">⚔️</div>

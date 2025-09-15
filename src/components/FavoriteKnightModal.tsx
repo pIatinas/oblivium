@@ -69,7 +69,7 @@ const FavoriteKnightModal = ({
           <DialogTitle>Escolher Cavaleiro Favorito</DialogTitle>
         </DialogHeader>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 py-4">
+        <div className="grid grid-cols-3 gap-4 py-4">
           {knights.map(knight => <div key={knight.id} className={`p-4 rounded-lg border cursor-pointer transition-all ${selectedKnight === knight.id ? 'border-accent bg-accent/10' : 'border-border hover:border-accent/50'}`} onClick={() => setSelectedKnight(knight.id)}>
               <Avatar className="w-16 h-16 mx-auto mb-2">
                 <AvatarImage src={knight.image_url || '/placeholder.svg'} alt={knight.name} />

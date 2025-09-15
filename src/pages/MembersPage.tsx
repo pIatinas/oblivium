@@ -15,6 +15,13 @@ interface Profile {
   user_id: string;
   full_name: string | null;
   avatar_url: string | null;
+  favorite_knight_id: string | null;
+}
+
+interface Knight {
+  id: string;
+  name: string;
+  image_url: string;
 }
 interface MemberStats {
   knights: number;
@@ -23,6 +30,7 @@ interface MemberStats {
 }
 const MembersPage = () => {
   const [members, setMembers] = useState<Profile[]>([]);
+  const [knights, setKnights] = useState<Knight[]>([]);
   const [memberStats, setMemberStats] = useState<{
     [key: string]: MemberStats;
   }>({});
@@ -31,13 +39,24 @@ const MembersPage = () => {
   const navigate = useNavigate();
   useEffect(() => {
     fetchMembers();
+    fetchKnights();
   }, []);
+
+  const fetchKnights = async () => {
+    try {
+      const { data } = await supabase.from('knights').select('*');
+      setKnights(data || []);
+    } catch (error) {
+      console.error('Erro ao carregar cavaleiros:', error);
+    }
+  };
+
   const fetchMembers = async () => {
     try {
       setLoading(true);
       const {
         data: profiles
-      } = await supabase.from('profiles').select('*').order('full_name');
+      } = await supabase.from('profiles').select('*, knights!favorite_knight_id(*)').order('full_name');
       if (profiles) {
         setMembers(profiles);
 
@@ -135,7 +154,11 @@ const MembersPage = () => {
             return <Card key={member.id} onClick={() => handleMemberClick(member)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none">
                     <CardContent className="p-6 text-center">
                       <Avatar className="w-24 h-24 mx-auto mb-4 bg-gradient-cosmic ">
-                        <AvatarImage src={member.avatar_url || '/placeholder.svg'} alt={member.full_name || 'Usuário'} />
+                        <AvatarImage src={
+                          member.favorite_knight_id ? 
+                            knights.find(k => k.id === member.favorite_knight_id)?.image_url || '/placeholder.svg' : 
+                            '/placeholder.svg'
+                        } alt={member.full_name || 'Usuário'} />
                         <AvatarFallback className="text-xl">
                           {member.full_name ? member.full_name[0].toUpperCase() : 'U'}
                         </AvatarFallback>

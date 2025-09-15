@@ -15,10 +15,14 @@ const UserDropdown = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [displayName, setDisplayName] = useState('Carregando...');
 
   useEffect(() => {
     if (user) {
       fetchUserProfile();
+    } else {
+      setUserProfile(null);
+      setDisplayName('Carregando...');
     }
   }, [user]);
 
@@ -32,6 +36,7 @@ const UserDropdown = () => {
       .single();
     
     setUserProfile(data);
+    setDisplayName(data?.full_name || 'Usuário');
   };
 
   const handleProfileClick = () => {
@@ -44,7 +49,7 @@ const UserDropdown = () => {
     }
   };
 
-  const displayName = userProfile?.full_name || (user ? 'Usuário' : 'Carregando...');
+  
 
   return (
     <DropdownMenu>

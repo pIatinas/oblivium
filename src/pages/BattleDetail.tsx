@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Star, ThumbsUp, ThumbsDown, MessageCircle, Send, Reply } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
@@ -42,6 +43,7 @@ interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
+  favorite_knight_id: string | null;
 }
 interface BattleComment {
   id: string;
@@ -455,8 +457,13 @@ const BattleDetail = () => {
               </div>
             </div>
             
+            {/* Informação do autor */}
+            <div className="absolute bottom-[-10px] left-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+              por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
+            </div>
+
             {/* Like/Dislike buttons */}
-            <div className="absolute right-auto -bottom-[8px] left-[10px] flex items-center gap-2 bg-card rounded px-2 ">
+            <div className="absolute right-auto -bottom-[8px] right-[10px] flex items-center gap-2 bg-card rounded px-2 ">
               <Button variant="ghost" size="sm" onClick={() => handleReaction('like')} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
                 <ThumbsUp className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getLikeCount()}</span>
@@ -465,11 +472,6 @@ const BattleDetail = () => {
                 <ThumbsDown className="w-4 h-4" />
                 <span className="ml-1 text-xs">{getDislikeCount()}</span>
               </Button>
-            </div>
-
-            {/* Informação do autor */}
-            <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
-              por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
             </div>
           </CardContent>
         </Card>
@@ -562,20 +564,35 @@ const BattleDetail = () => {
                   
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-semibold text-foreground">
-                          {getProfileByUserId(comment.user_id)?.full_name || 'Usuário'}
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(comment.created_at).toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                        </span>
-                      </div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <Avatar className="w-8 h-8">
+                              <AvatarImage src={
+                                (() => {
+                                  const profile = getProfileByUserId(comment.user_id);
+                                  return profile?.favorite_knight_id ? 
+                                    knights.find(k => k.id === profile.favorite_knight_id)?.image_url || '/placeholder.svg' : 
+                                    '/placeholder.svg';
+                                })()
+                              } alt="Avatar" />
+                              <AvatarFallback className="text-xs">
+                                {getProfileByUserId(comment.user_id)?.full_name?.[0]?.toUpperCase() || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-foreground">
+                                {getProfileByUserId(comment.user_id)?.full_name || 'Usuário'}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(comment.created_at).toLocaleDateString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                              </span>
+                            </div>
+                          </div>
                       <p className="text-foreground mb-3">{comment.content}</p>
                       
                       {user && <Button variant="ghost" size="sm" onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)} className="text-accent p-0 h-auto">
@@ -597,19 +614,34 @@ const BattleDetail = () => {
                             <AdminDeleteButton onDelete={() => deleteComment(reply.id)} itemType="comentário" className="w-4 h-4 p-0" />
                           </div>
                           
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold text-foreground">
-                              {getProfileByUserId(reply.user_id)?.full_name || 'Usuário'}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {new Date(reply.created_at).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                            </span>
+                          <div className="flex items-center gap-3 mb-2">
+                            <Avatar className="w-6 h-6">
+                              <AvatarImage src={
+                                (() => {
+                                  const profile = getProfileByUserId(reply.user_id);
+                                  return profile?.favorite_knight_id ? 
+                                    knights.find(k => k.id === profile.favorite_knight_id)?.image_url || '/placeholder.svg' : 
+                                    '/placeholder.svg';
+                                })()
+                              } alt="Avatar" />
+                              <AvatarFallback className="text-xs">
+                                {getProfileByUserId(reply.user_id)?.full_name?.[0]?.toUpperCase() || 'U'}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-foreground">
+                                {getProfileByUserId(reply.user_id)?.full_name || 'Usuário'}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {new Date(reply.created_at).toLocaleDateString('pt-BR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                              </span>
+                            </div>
                           </div>
                           <p className="text-foreground">{reply.content}</p>
                         </div>)}

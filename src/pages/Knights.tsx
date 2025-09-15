@@ -81,11 +81,21 @@ const Knights = () => {
     fetchData();
   }, [sortBy, searchTerm]);
   useEffect(() => {
-    // Maintain focus only if the input was already focused
-    if (document.activeElement === searchInputRef.current) {
-      searchInputRef.current?.focus();
-    }
-  }, [knights, searchTerm]);
+    // Only trigger re-render when searchTerm changes, not when knights change
+    const timeoutId = setTimeout(() => {
+      if (document.activeElement === searchInputRef.current) {
+        const cursorPosition = searchInputRef.current?.selectionStart || 0;
+        requestAnimationFrame(() => {
+          if (searchInputRef.current) {
+            searchInputRef.current.focus();
+            searchInputRef.current.setSelectionRange(cursorPosition, cursorPosition);
+          }
+        });
+      }
+    }, 0);
+    
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
   const fetchData = async () => {
     try {
       setLoading(true);
