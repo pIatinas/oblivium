@@ -93,17 +93,24 @@ const KnightDetail = () => {
 
   const fetchKnight = async (idPrefix: string) => {
     try {
+      // First try to get all knights and filter by prefix
       const { data, error } = await supabase
         .from('knights')
-        .select('*')
-        .like('id', `${idPrefix}%`);
+        .select('*');
       
       if (error) throw error;
       
       if (data && data.length > 0) {
-        setKnight(data[0]); // Take the first match
+        // Find knight by matching the first 3 characters of the id
+        const foundKnight = data.find(k => k.id.substring(0, 3) === idPrefix);
+        if (foundKnight) {
+          setKnight(foundKnight);
+        } else {
+          console.log('Knight not found with prefix:', idPrefix);
+          navigate('/knights');
+        }
       } else {
-        console.log('Knight not found with prefix:', idPrefix);
+        console.log('No knights found');
         navigate('/knights');
       }
     } catch (error: any) {
