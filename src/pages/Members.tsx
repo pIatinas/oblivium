@@ -218,7 +218,7 @@ const Members = () => {
           </div>
 
           {/* Cavaleiros Disponíveis */}
-          <section className="mb-12">
+          <section className="mb-12 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl text-foreground font-light">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -299,7 +299,7 @@ const Members = () => {
           </section>
 
           {/* Meus Comentários */}
-          <section>
+          <section className="mb-12 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold">Meus <span className="text-accent">Comentários</span></h2>
               <Badge variant="secondary">{userComments.length} comentários</Badge>
