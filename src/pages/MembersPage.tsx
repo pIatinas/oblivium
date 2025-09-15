@@ -17,7 +17,6 @@ interface Profile {
   avatar_url: string | null;
   favorite_knight_id: string | null;
 }
-
 interface Knight {
   id: string;
   name: string;
@@ -41,16 +40,16 @@ const MembersPage = () => {
     fetchMembers();
     fetchKnights();
   }, []);
-
   const fetchKnights = async () => {
     try {
-      const { data } = await supabase.from('knights').select('*');
+      const {
+        data
+      } = await supabase.from('knights').select('*');
       setKnights(data || []);
     } catch (error) {
       console.error('Erro ao carregar cavaleiros:', error);
     }
   };
-
   const fetchMembers = async () => {
     try {
       setLoading(true);
@@ -154,12 +153,8 @@ const MembersPage = () => {
             };
             return <Card key={member.id} onClick={() => handleMemberClick(member)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none">
                     <CardContent className="p-6 text-center">
-                      <Avatar className="w-24 h-24 mx-auto mb-4 bg-gradient-cosmic ">
-                        <AvatarImage src={
-                          member.favorite_knight_id ? 
-                            knights.find(k => k.id === member.favorite_knight_id)?.image_url || '/placeholder.svg' : 
-                            '/placeholder.svg'
-                        } alt={member.full_name || 'Usuário'} />
+                      <Avatar className="w-24 mx-auto mb-4 ">
+                        <AvatarImage src={member.favorite_knight_id ? knights.find(k => k.id === member.favorite_knight_id)?.image_url || '/placeholder.svg' : '/placeholder.svg'} alt={member.full_name || 'Usuário'} />
                         <AvatarFallback className="text-xl">
                           {member.full_name ? member.full_name[0].toUpperCase() : 'U'}
                         </AvatarFallback>
