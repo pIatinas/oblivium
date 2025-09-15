@@ -48,8 +48,8 @@ const App = () => (
             <Route path="/create-battle" element={<ProtectedRoute><CreateBattle /></ProtectedRoute>} />
             <Route path="/knights" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
             <Route path="/knight/:knightUrl" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
-            <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
             <Route path="/members/:slug" element={<ProtectedRoute><Members /></ProtectedRoute>} />
+            <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

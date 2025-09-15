@@ -74,8 +74,36 @@ const Members = () => {
   const [commentsPage, setCommentsPage] = useState(1);
   const [isFavoriteModalOpen, setIsFavoriteModalOpen] = useState(false);
   const itemsPerPage = 4;
-  const targetUserId = location.state?.userId || user?.id;
+  
+  // Handle direct access via slug
+  const [targetUserId, setTargetUserId] = useState<string | null>(null);
   const canManage = isAdmin || targetUserId === user?.id;
+  
+  // Effect to handle slug-based routing
+  useEffect(() => {
+    const fetchUserBySlug = async () => {
+      if (slug) {
+        // Extract user slug from the URL parameter
+        const userSlug = slug.split('-').slice(1).join('-'); // Remove the prefix (like "d08")
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('user_id, full_name')
+          .ilike('full_name', `%${userSlug}%`)
+          .limit(1);
+        
+        if (profiles && profiles.length > 0) {
+          setTargetUserId(profiles[0].user_id);
+        }
+      } else if (location.state?.userId) {
+        setTargetUserId(location.state.userId);
+      } else if (user?.id) {
+        setTargetUserId(user.id);
+      }
+    };
+    
+    fetchUserBySlug();
+  }, [slug, location.state?.userId, user?.id]);
+  
   useEffect(() => {
     if (targetUserId) {
       fetchUserProfile();

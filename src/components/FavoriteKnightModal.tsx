@@ -51,20 +51,24 @@ const FavoriteKnightModal = ({
       // Check if profile exists, if not create it
       const { data: existingProfile } = await supabase
         .from('profiles')
-        .select('user_id')
+        .select('user_id, email')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
         
       if (!existingProfile) {
-        // Get user data to create profile
-        const { data: userData } = await supabase.auth.getUser();
+        // For admin creating a profile, we need to get the user's email from auth.users
+        const { data: userData, error: userError } = await supabase.auth.admin.getUserById(userId);
+        if (userError) throw userError;
+        
         const userEmail = userData.user?.email || '';
+        const userFullName = userData.user?.user_metadata?.full_name || userData.user?.email || '';
         
         const { error: insertError } = await supabase
           .from('profiles')
           .insert({
             user_id: userId,
             email: userEmail,
+            full_name: userFullName,
             favorite_knight_id: selectedKnight
           });
           
