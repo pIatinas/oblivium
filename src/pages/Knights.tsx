@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Search, Plus, ArrowLeft, Trophy, Sword } from "lucide-react";
+import { Search, Plus, ArrowLeft, Trophy, Sword, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useSearchParams, useParams, Link, useNavigate } from "react-router-dom";
@@ -179,8 +179,8 @@ const Knights = () => {
   if (loading) {
     return <div className="min-h-screen">
         <Header />
-        <div className="max-w-6xl mx-auto p-6 text-center">
-          <div className="text-accent text-xl">Carregando cavaleiros...</div>
+        <div className="max-w-6xl mx-auto p-6 flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
       </div>;
   }

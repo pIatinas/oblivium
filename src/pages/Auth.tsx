@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -170,7 +170,7 @@ const Auth = () => {
           
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full bg-gradient-cosmic text-white hover:opacity-90" disabled={loading}>
-              {loading ? "Carregando..." : isSignUp ? "Cadastrar" : "Entrar"}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : isSignUp ? "Cadastrar" : "Entrar"}
             </Button>
             
             <Button type="button" variant="ghost" onClick={() => setIsSignUp(!isSignUp)} className="w-full hover:bg-transparent text-yellow-100 hover:text-white font-extralight text-xs">

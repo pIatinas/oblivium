@@ -264,8 +264,8 @@ const Members = () => {
             </div>
             <div className="flex flex-wrap gap-2">
               {userKnights.map(userKnight => 
-                <TooltipProvider key={userKnight.id}>
-                  <Tooltip>
+                 <TooltipProvider key={userKnight.id}>
+                  <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <div className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}>
                         <Avatar className="w-8 h-8">
@@ -285,10 +285,13 @@ const Members = () => {
               )}
             </div>
             
-            {canManage && <div className="mt-4">
+            {canManage && <div className="mt-4 flex items-center gap-3">
                 <Button variant="outline" onClick={resetAllKnights} className="border-foreground text-foreground hover:bg-foreground hover:text-background">
                   Resetar
                 </Button>
+                <span className="text-sm text-muted-foreground">
+                  {userKnights.filter(uk => !uk.is_used).length} disponíveis
+                </span>
               </div>}
           </section>
 

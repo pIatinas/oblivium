@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sword, Trophy, Users, Zap, Plus, Eye } from "lucide-react";
+import { Sword, Trophy, Users, Zap, Plus, Eye, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
@@ -176,8 +176,8 @@ const Index = () => {
   if (loading) {
     return <div className="min-h-screen">
         <Header />
-        <div className="max-w-6xl mx-auto p-6 text-center">
-          <div className="text-accent text-xl">Carregando...</div>
+        <div className="max-w-6xl mx-auto p-6 flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
       </div>;
   }

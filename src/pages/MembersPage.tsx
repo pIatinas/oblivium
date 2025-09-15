@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Search, Users, Trophy, MessageCircle } from 'lucide-react';
+import { Search, Users, Trophy, MessageCircle, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -119,8 +119,8 @@ const MembersPage = () => {
   if (loading) {
     return <div className="min-h-screen">
         <Header />
-        <div className="max-w-6xl mx-auto p-6 text-center">
-          <div className="text-accent text-xl">Carregando membros...</div>
+        <div className="max-w-6xl mx-auto p-6 flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
       </div>;
   }

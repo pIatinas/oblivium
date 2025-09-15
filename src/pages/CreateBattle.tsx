@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, X } from "lucide-react";
+import { Search, X, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -192,8 +192,8 @@ const CreateBattle = () => {
   if (loading) {
     return <div className="min-h-screen">
         <Header />
-        <div className="max-w-6xl mx-auto p-6 text-center">
-          <div className="text-accent text-xl">Carregando cavaleiros...</div>
+        <div className="max-w-6xl mx-auto p-6 flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
       </div>;
   }

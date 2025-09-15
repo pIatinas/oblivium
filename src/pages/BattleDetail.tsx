@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Star, ThumbsUp, ThumbsDown, MessageCircle, Send, Reply } from "lucide-react";
+import { ArrowLeft, Star, ThumbsUp, ThumbsDown, MessageCircle, Send, Reply, Loader2 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -369,8 +369,8 @@ const BattleDetail = () => {
   if (loading) {
     return <div className="min-h-screen">
         <Header />
-        <div className="max-w-6xl mx-auto p-6 text-center">
-          <div className="text-accent text-xl">Carregando detalhes da batalha...</div>
+        <div className="max-w-6xl mx-auto p-6 flex justify-center items-center min-h-[50vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-accent" />
         </div>
       </div>;
   }

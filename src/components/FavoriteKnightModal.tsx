@@ -47,12 +47,37 @@ const FavoriteKnightModal = ({
   const handleSave = async () => {
     try {
       setLoading(true);
-      const { error } = await supabase
-        .from('profiles')
-        .update({ favorite_knight_id: selectedKnight })
-        .eq('user_id', userId);
       
-      if (error) throw error;
+      // Check if profile exists, if not create it
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('user_id')
+        .eq('user_id', userId)
+        .single();
+        
+      if (!existingProfile) {
+        // Get user data to create profile
+        const { data: userData } = await supabase.auth.getUser();
+        const userEmail = userData.user?.email || '';
+        
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            user_id: userId,
+            email: userEmail,
+            favorite_knight_id: selectedKnight
+          });
+          
+        if (insertError) throw insertError;
+      } else {
+        // Update existing profile
+        const { error } = await supabase
+          .from('profiles')
+          .update({ favorite_knight_id: selectedKnight })
+          .eq('user_id', userId);
+        
+        if (error) throw error;
+      }
       
       toast.success('Cavaleiro favorito atualizado!');
       onUpdate();
