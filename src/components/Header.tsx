@@ -30,6 +30,12 @@ const Header = () => {
     if (path === "/battles") {
       return location.pathname === path || location.pathname.startsWith("/battles/");
     }
+    if (path === "/knights") {
+      return location.pathname === path || location.pathname.startsWith("/knight/");
+    }
+    if (path === "/members") {
+      return location.pathname === path || location.pathname.startsWith("/members/");
+    }
     return location.pathname === path;
   };
   return <header className="bg-card/50 backdrop-blur-sm border-b border-border sticky top-0 z-50">

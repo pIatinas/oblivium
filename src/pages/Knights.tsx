@@ -167,7 +167,7 @@ const Knights = () => {
     return 0;
   });
   if (loading) {
-    return <div className="min-h-screen bg-gradient-nebula">
+    return <div className="min-h-screen">
         <Header />
         <div className="max-w-6xl mx-auto p-6 text-center">
           <div className="text-accent text-xl">Carregando cavaleiros...</div>
@@ -255,7 +255,13 @@ const Knights = () => {
           <div className="flex gap-4 flex-1 w-full ">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input ref={searchInputRef} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10 bg-card border-border" autoFocus />
+              <Input 
+                ref={searchInputRef} 
+                value={searchTerm} 
+                onChange={e => setSearchTerm(e.target.value)} 
+                placeholder="Buscar cavaleiro..."
+                className="pl-10 bg-card border-border" 
+              />
             </div>
             
             <Select value={sortBy} onValueChange={setSortBy}>

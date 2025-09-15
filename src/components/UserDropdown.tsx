@@ -35,10 +35,16 @@ const UserDropdown = () => {
   };
 
   const handleProfileClick = () => {
-    navigate('/members');
+    if (user) {
+      const idPrefix = user.id.substring(0, 3);
+      const slugName = userProfile?.full_name ? 
+        userProfile.full_name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '') : 
+        'usuario';
+      navigate(`/members/${idPrefix}-${slugName}`, { state: { userId: user.id } });
+    }
   };
 
-  const displayName = userProfile?.full_name || 'Usuário';
+  const displayName = userProfile?.full_name || (user ? 'Usuário' : 'Carregando...');
 
   return (
     <DropdownMenu>

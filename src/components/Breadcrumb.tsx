@@ -4,16 +4,18 @@ import { ChevronRight } from "lucide-react";
 interface BreadcrumbProps {
   knightName?: string;
   battleId?: string;
+  memberName?: string;
 }
 
-const Breadcrumb = ({ knightName, battleId }: BreadcrumbProps) => {
+const Breadcrumb = ({ knightName, battleId, memberName }: BreadcrumbProps) => {
   const location = useLocation();
   
   const breadcrumbMap: { [key: string]: string } = {
     '/': 'Home',
     '/knights': 'Cavaleiros',
     '/battles': 'Batalhas',
-    '/create-battle': 'Cadastrar'
+    '/create-battle': 'Cadastrar',
+    '/members': 'Membros'
   };
   
   const currentPage = breadcrumbMap[location.pathname] || 'Home';
@@ -52,6 +54,17 @@ const Breadcrumb = ({ knightName, battleId }: BreadcrumbProps) => {
           </Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-foreground">Detalhe</span>
+        </>
+      ) : memberName ? (
+        <>
+          <Link 
+            to="/members" 
+            className="hover:text-accent transition-colors"
+          >
+            Membros
+          </Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-foreground">{memberName}</span>
         </>
       ) : (
         <span className="text-foreground">{currentPage}</span>

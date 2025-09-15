@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEOHead from '@/components/SEOHead';
+import Breadcrumb from '@/components/Breadcrumb';
 interface Profile {
   id: string;
   user_id: string;
@@ -97,7 +98,7 @@ const MembersPage = () => {
   };
   const filteredMembers = members.filter(member => member.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || false);
   if (loading) {
-    return <div className="min-h-screen bg-gradient-nebula">
+    return <div className="min-h-screen">
         <Header />
         <div className="max-w-6xl mx-auto p-6 text-center">
           <div className="text-accent text-xl">Carregando membros...</div>
@@ -109,6 +110,7 @@ const MembersPage = () => {
       <div className="min-h-screen">
         <Header />
         <div className="max-w-6xl mx-auto p-6">
+          <Breadcrumb />
           <div className="mb-8">
             <h1 className="text-4xl font-bold text-foreground mb-4 text-center">Membros</h1>
             <p className="text-muted-foreground text-center">

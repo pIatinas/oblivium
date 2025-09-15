@@ -146,7 +146,7 @@ const Battles = () => {
   });
   const totalPages = Math.ceil(totalBattles / ITEMS_PER_PAGE);
   if (loading) {
-    return <div className="min-h-screen bg-gradient-nebula">
+    return <div className="min-h-screen">
         <Header />
         <div className="max-w-6xl mx-auto p-6 text-center">
           <div className="text-accent text-xl">Carregando batalhas...</div>

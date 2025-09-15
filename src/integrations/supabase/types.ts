@@ -187,6 +187,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           email: string
+          favorite_knight_id: string | null
           full_name: string | null
           id: string
           role: string | null
@@ -198,6 +199,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email: string
+          favorite_knight_id?: string | null
           full_name?: string | null
           id?: string
           role?: string | null
@@ -209,13 +211,22 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           email?: string
+          favorite_knight_id?: string | null
           full_name?: string | null
           id?: string
           role?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_favorite_knight_id_fkey"
+            columns: ["favorite_knight_id"]
+            isOneToOne: false
+            referencedRelation: "knights"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stigmas: {
         Row: {

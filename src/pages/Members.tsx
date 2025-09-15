@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import Header from '@/components/Header';
-import BattleCard from '@/components/BattleCard';
+import UserBattleCard from '@/components/UserBattleCard';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,6 +13,8 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
 import { toast } from 'sonner';
 import SEOHead from '@/components/SEOHead';
+import Breadcrumb from '@/components/Breadcrumb';
+import FavoriteKnightModal from '@/components/FavoriteKnightModal';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 interface Knight {
@@ -68,6 +70,7 @@ const Members = () => {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [commentsPage, setCommentsPage] = useState(1);
+  const [isFavoriteModalOpen, setIsFavoriteModalOpen] = useState(false);
   const itemsPerPage = 4;
   const targetUserId = location.state?.userId || user?.id;
   const canManage = isAdmin || targetUserId === user?.id;
@@ -200,16 +203,37 @@ const Members = () => {
       <div className="min-h-screen">
         <Header />
         <main className="max-w-6xl mx-auto px-6 py-8">
+          <Breadcrumb memberName={userProfile?.full_name || 'Membro'} />
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-accent mb-2">
               {location.state?.userId && location.state.userId !== user?.id ? `Perfil de ${userProfile?.full_name || 'Membro'}` : 'Meu Perfil'}
             </h1>
+            
+            {/* Avatar placeholder with favorite knight selector */}
+            {(canManage) && (
+              <div className="mt-4">
+                <div 
+                  className="w-12 h-12 rounded-full bg-card border-2 border-accent/30 cursor-pointer hover:border-accent/60 transition-colors flex items-center justify-center"
+                  onClick={() => setIsFavoriteModalOpen(true)}
+                >
+                  {userProfile?.favorite_knight_id ? (
+                    <img 
+                      src={allKnights.find(k => k.id === userProfile.favorite_knight_id)?.image_url || '/placeholder.svg'} 
+                      alt="Avatar" 
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="text-muted-foreground text-xs">+</span>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Cavaleiros Disponíveis */}
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Cavaleiros Disponíveis</h2>
+              <h2 className="text-xl font-semibold text-foreground">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
                     <Button onClick={openKnightModal} className="bg-gradient-cosmic text-white ">
@@ -220,7 +244,7 @@ const Members = () => {
                     <DialogHeader>
                       <DialogTitle>Selecionar Cavaleiros</DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                    <div className="grid grid-cols-3 gap-4 py-4">
                       {allKnights.map(knight => <div key={knight.id} className="flex items-center space-x-3">
                           <Avatar className="w-10 h-10">
                             <AvatarImage src={knight.image_url || '/placeholder.svg'} alt={knight.name} />
@@ -243,74 +267,130 @@ const Members = () => {
                   </DialogContent>
                 </Dialog>}
             </div>
-            <div className="flex flex-wrap gap-3">
-              {userKnights.map(userKnight => <div key={userKnight.id} className={`relative cursor-pointer transition-opacity ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)} title={userKnight.knights.name}>
-                  <Avatar className="w-10 h-10">
+            <div className="flex flex-wrap gap-2">
+              {userKnights.map(userKnight => <div 
+                key={userKnight.id} 
+                className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} 
+                onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}
+                title={userKnight.knights.name}
+              >
+                  <Avatar className="w-8 h-8">
                     <AvatarImage src={userKnight.knights.image_url || '/placeholder.svg'} alt={userKnight.knights.name} />
                     <AvatarFallback>{userKnight.knights.name[0]}</AvatarFallback>
                   </Avatar>
-                  {userKnight.is_used && <div className="absolute -top-1 -right-1 bg-accent text-background rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                  {userKnight.is_used && <div className="absolute -top-1 -right-1 bg-accent text-background rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold">
                       ✓
                     </div>}
                 </div>)}
             </div>
-            {canManage && <div className="mt-4">
+            
+            {canManage && (
+              <div className="mt-4">
                 <Button variant="outline" onClick={resetAllKnights} className="border-foreground text-foreground hover:bg-foreground hover:text-background">
                   Resetar
                 </Button>
-              </div>}
+              </div>
+            )}
           </section>
 
           {/* Minhas Batalhas */}
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Minhas Batalhas</h2>
+              <h2 className="text-xl font-semibold text-foreground">Minhas <span className="text-accent">Batalhas</span></h2>
               <Badge variant="secondary">{userBattles.length} batalhas</Badge>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {paginatedBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={allKnights} stigmas={[]} profiles={[]} onDelete={fetchUserBattles} />)}
-            </div>
-            {totalBattlePages > 1 && <div className="flex justify-center gap-2">
-                {Array.from({
-              length: totalBattlePages
-            }, (_, i) => i + 1).map(page => <Button key={page} variant={currentPage === page ? "default" : "outline"} size="sm" onClick={() => setCurrentPage(page)}>
-                    {page}
-                  </Button>)}
-              </div>}
+            
+            {userBattles.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground text-base">
+                  Este usuário ainda não cadastrou batalhas
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  {paginatedBattles.map(battle => <UserBattleCard key={battle.id} battle={battle} knights={allKnights} stigmas={[]} onDelete={fetchUserBattles} hideAuthor={true} />)}
+                </div>
+                {totalBattlePages > 1 && (
+                  <div className="flex justify-center gap-2">
+                    {Array.from({ length: totalBattlePages }, (_, i) => i + 1).map(page => (
+                      <Button 
+                        key={page} 
+                        variant={currentPage === page ? "default" : "outline"} 
+                        size="sm" 
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </section>
 
           {/* Meus Comentários */}
           <section>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Meus Comentários</h2>
+              <h2 className="text-xl font-semibold text-foreground">Meus <span className="text-accent">Comentários</span></h2>
               <Badge variant="secondary">{userComments.length} comentários</Badge>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {paginatedComments.map(comment => <Card key={comment.id} className="border-border">
-                  <CardContent className="p-6">
-                    <div className="mb-4">
-                      <p className="text-sm font-medium text-accent mb-2">
-                        {format(new Date(comment.created_at), "dd/MM/yy", {
-                      locale: ptBR
-                    })}
-                      </p>
-                      <p className="text-sm text-foreground mb-4">{comment.content}</p>
-                      <Button size="sm" variant="outline" onClick={() => window.location.href = `/battles/${comment.battle_id}`}>
-                        Ver Batalha
+            
+            {userComments.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground text-base">
+                  Este usuário ainda não fez comentários
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  {paginatedComments.map(comment => (
+                    <Card key={comment.id} className="border-border">
+                      <CardContent className="p-6">
+                        <div className="mb-4">
+                          <p className="text-sm font-medium text-accent mb-2">
+                            {format(new Date(comment.created_at), "dd/MM/yy", { locale: ptBR })}
+                          </p>
+                          <p className="text-sm text-foreground mb-4">{comment.content}</p>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={() => window.location.href = `/battles/${comment.battle_id}`}
+                          >
+                            Ver Batalha
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+                {totalCommentPages > 1 && (
+                  <div className="flex justify-center gap-2">
+                    {Array.from({ length: totalCommentPages }, (_, i) => i + 1).map(page => (
+                      <Button 
+                        key={page} 
+                        variant={commentsPage === page ? "default" : "outline"} 
+                        size="sm" 
+                        onClick={() => setCommentsPage(page)}
+                      >
+                        {page}
                       </Button>
-                    </div>
-                  </CardContent>
-                </Card>)}
-            </div>
-            {totalCommentPages > 1 && <div className="flex justify-center gap-2">
-                {Array.from({
-              length: totalCommentPages
-            }, (_, i) => i + 1).map(page => <Button key={page} variant={commentsPage === page ? "default" : "outline"} size="sm" onClick={() => setCommentsPage(page)}>
-                    {page}
-                  </Button>)}
-              </div>}
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </section>
         </main>
+        
+        <FavoriteKnightModal
+          isOpen={isFavoriteModalOpen}
+          onClose={() => setIsFavoriteModalOpen(false)}
+          userId={targetUserId}
+          currentFavoriteId={userProfile?.favorite_knight_id}
+          onUpdate={fetchUserProfile}
+        />
       </div>
     </>;
 };
