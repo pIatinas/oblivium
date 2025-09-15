@@ -49,7 +49,7 @@ const Knights = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [loading, setLoading] = useState(true);
-  const [selectedKnight, setSelectedKnight] = useState<Knight | null>(null);
+  
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -62,20 +62,6 @@ const Knights = () => {
   } = useParams();
   const navigate = useNavigate();
   const searchInputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const knightParam = searchParams.get("knight");
-    if (knightParam) {
-      const initialSelectedKnight = knights.find(knight => knight.id === knightParam);
-      setSelectedKnight(initialSelectedKnight || null);
-    } else if (knightUrl) {
-      // Handle new URL format /knight/123-name
-      const parsed = parseKnightUrl(knightUrl);
-      if (parsed) {
-        const knight = knights.find(k => k.id.startsWith(parsed.idPrefix));
-        setSelectedKnight(knight || null);
-      }
-    }
-  }, [knights, searchParams, knightUrl]);
   useEffect(() => {
     // Only reload data when sort changes, not when search term changes
     fetchData();
@@ -184,70 +170,6 @@ const Knights = () => {
         </div>
       </div>;
   }
-  if (selectedKnight) {
-    const knightBattles = battles.filter(battle => battle.winner_team.includes(selectedKnight.id) || battle.loser_team.includes(selectedKnight.id));
-    const victories = battles.filter(battle => battle.winner_team.includes(selectedKnight.id));
-    const defeats = battles.filter(battle => battle.loser_team.includes(selectedKnight.id));
-    const totalAppearances = getKnightAppearances(selectedKnight.id);
-    return <div className="min-h-screen ">
-        <SEOHead title={`Oblivium • Histórico de ${selectedKnight.name}`} description={`${selectedKnight.name} aparece em ${totalAppearances} times, contando com ${victories.length} vitórias e ${defeats.length} derrotas.`} />
-        <Header />
-        <div className="max-w-6xl mx-auto p-3 md:p-6">
-          <Breadcrumb knightName={selectedKnight.name} />
-          <div className="mb-6 flex justify-end">
-            <Button onClick={() => {
-            setSelectedKnight(null);
-            navigate('/knights');
-          }} className="bg-transparent text-amber-200 text-center">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar
-            </Button>
-          </div>
-
-          <div className="text-center mb-8">
-            <img src={selectedKnight.image_url} alt={selectedKnight.name} className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-accent" />
-            <h1 className="text-4xl text-foreground mb-2 font-semibold">{selectedKnight.name}</h1>
-            <p className="text-muted-foreground -mt-4 text-xl">{totalAppearances} times</p>
-            <ShareButtons url={`${window.location.origin}/knight/${createKnightUrl(selectedKnight.id, selectedKnight.name)}`} />
-          </div>
-
-          <div className="grid grid-cols-2 gap-6 mb-8">
-            <Card className="bg-card border-none shadow-lg">
-              <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-gold rounded-full flex items-center justify-center mb-0 ">
-                  <Trophy className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle className="text-accent text-2xl -mb-1 mt-4 lg:text-3xl">{victories.length}</CardTitle>
-                <CardDescription className="-mt-4 text-xl">Vitórias</CardDescription>
-              </CardHeader>
-            </Card>
-
-            <Card className="bg-card border-none shadow-lg">
-              <CardHeader className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-cosmic rounded-full flex items-center justify-center mb-0">
-                  <Sword className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle className="text-2xl text-purple-600 -mb-1 mt-2 lg:text-3xl">{defeats.length}</CardTitle>
-                <CardDescription className="-mt-4 text-xl">Derrotas</CardDescription>
-              </CardHeader>
-            </Card>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-2xl text-foreground mb-6 font-medium">Histórico de Batalhas</h2>
-            
-            {knightBattles.length > 0 ? <div className="grid md:grid-cols-2 gap-6">
-                {knightBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} />)}
-              </div> : <div className="text-center py-8">
-                <p className="text-muted-foreground text-base">
-                  Este cavaleiro ainda não participou de batalhas
-                </p>
-              </div>}
-          </div>
-        </div>
-        <Footer />
-      </div>;
-  }
   return <div className="min-h-screen">
       <SEOHead title="Oblivium • Cavaleiros Disponíveis" description={`Existem ${knights.length} cavaleiros disponíveis, utilizados em ${battles.length} batalhas diferentes.`} />
       <Header />
@@ -310,7 +232,6 @@ const Knights = () => {
           const appearances = getKnightAppearances(knight.id);
           const knightUrl = createKnightUrl(knight.id, knight.name);
           return <Card key={knight.id} onClick={() => {
-            setSelectedKnight(knight);
             navigate(`/knight/${createKnightUrl(knight.id, knight.name)}`);
           }} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none">
                   <CardContent className="px-3 py-2 text-center bg-transparent ">

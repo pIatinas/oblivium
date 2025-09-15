@@ -17,7 +17,7 @@ export function slugify(text: string): string {
 export function createKnightUrl(knightId: string, knightName: string): string {
   const idPrefix = knightId.substring(0, 3)
   const slugName = slugify(knightName)
-  return `knight=${idPrefix}-${slugName}`
+  return `${idPrefix}-${slugName}`
 }
 
 export function createBattleUrl(winnerTeam: string[], loserTeam: string[], knights: any[]): string {

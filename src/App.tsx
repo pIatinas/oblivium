@@ -11,6 +11,7 @@ import Battles from "./pages/Battles";
 import BattleDetail from "./pages/BattleDetail";
 import CreateBattle from "./pages/CreateBattle";
 import Knights from "./pages/Knights";
+import KnightDetail from "./pages/KnightDetail";
 import Members from "./pages/Members";
 import MembersPage from "./pages/MembersPage";
 import NotFound from "./pages/NotFound";
@@ -47,7 +48,7 @@ const App = () => (
             <Route path="/battles/:id" element={<ProtectedRoute><BattleDetail /></ProtectedRoute>} />
             <Route path="/create-battle" element={<ProtectedRoute><CreateBattle /></ProtectedRoute>} />
             <Route path="/knights" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
-            <Route path="/knight/:knightUrl" element={<ProtectedRoute><Knights /></ProtectedRoute>} />
+            <Route path="/knight/:knightUrl" element={<ProtectedRoute><KnightDetail /></ProtectedRoute>} />
             <Route path="/members/:slug" element={<ProtectedRoute><Members /></ProtectedRoute>} />
             <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
