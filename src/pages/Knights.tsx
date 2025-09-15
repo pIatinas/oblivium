@@ -31,7 +31,6 @@ interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
-  role: string;
 }
 interface Battle {
   id: string;
@@ -158,7 +157,7 @@ const Knights = () => {
       const {
         data,
         error
-      } = await supabase.from('profiles').select('*');
+      } = await supabase.from('profiles').select('id, user_id, full_name');
       if (error) throw error;
       setProfiles(data || []);
     } catch (error: any) {

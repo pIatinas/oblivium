@@ -21,7 +21,6 @@ interface Profile {
   id: string;
   full_name: string | null;
   user_id: string;
-  role: string;
 }
 interface Battle {
   id: string;

@@ -54,9 +54,10 @@ const MembersPage = () => {
   const fetchMembers = async () => {
     try {
       setLoading(true);
+      // Only select basic profile info - email is restricted by RLS for non-admins
       const {
         data: profiles
-      } = await supabase.from('profiles').select('*, knights!favorite_knight_id(*)').order('full_name');
+      } = await supabase.from('profiles').select('id, user_id, full_name, avatar_url, favorite_knight_id, knights!favorite_knight_id(*)').order('full_name');
       if (profiles) {
         setMembers(profiles);
 

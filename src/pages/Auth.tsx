@@ -32,7 +32,7 @@ const Auth = () => {
         // Check if user is active
         const {
           data: profile
-        } = await supabase.from('profiles').select('active, role').eq('user_id', session.user.id).single();
+        } = await supabase.from('profiles').select('active').eq('user_id', session.user.id).single();
         if (profile?.active) {
           navigate('/');
         } else {
@@ -80,7 +80,7 @@ const Auth = () => {
         // Check if user is active after login
         const {
           data: profile
-        } = await supabase.from('profiles').select('active, role').eq('user_id', data.user.id).single();
+        } = await supabase.from('profiles').select('active').eq('user_id', data.user.id).single();
         if (!profile?.active) {
           await supabase.auth.signOut();
           toast({
