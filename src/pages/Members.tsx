@@ -210,30 +210,17 @@ const Members = () => {
             </h1>
             
             {/* Avatar placeholder with favorite knight selector */}
-            {(canManage) && (
-              <div className="mt-4">
-                <div 
-                  className="w-12 h-12 rounded-full bg-card border-2 border-accent/30 cursor-pointer hover:border-accent/60 transition-colors flex items-center justify-center"
-                  onClick={() => setIsFavoriteModalOpen(true)}
-                >
-                  {userProfile?.favorite_knight_id ? (
-                    <img 
-                      src={allKnights.find(k => k.id === userProfile.favorite_knight_id)?.image_url || '/placeholder.svg'} 
-                      alt="Avatar" 
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-muted-foreground text-xs">+</span>
-                  )}
+            {canManage && <div className="mt-4">
+                <div className="w-12 h-12 rounded-full bg-card border-2 border-accent/30 cursor-pointer hover:border-accent/60 transition-colors flex items-center justify-center" onClick={() => setIsFavoriteModalOpen(true)}>
+                  {userProfile?.favorite_knight_id ? <img src={allKnights.find(k => k.id === userProfile.favorite_knight_id)?.image_url || '/placeholder.svg'} alt="Avatar" className="w-full h-full rounded-full object-cover" /> : <span className="text-muted-foreground text-xs">+</span>}
                 </div>
-              </div>
-            )}
+              </div>}
           </div>
 
           {/* Cavaleiros Disponíveis */}
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
+              <h2 className="text-xl text-foreground font-light">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
                     <Button onClick={openKnightModal} className="bg-gradient-cosmic text-white ">
@@ -268,12 +255,7 @@ const Members = () => {
                 </Dialog>}
             </div>
             <div className="flex flex-wrap gap-2">
-              {userKnights.map(userKnight => <div 
-                key={userKnight.id} 
-                className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} 
-                onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}
-                title={userKnight.knights.name}
-              >
+              {userKnights.map(userKnight => <div key={userKnight.id} className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)} title={userKnight.knights.name}>
                   <Avatar className="w-8 h-8">
                     <AvatarImage src={userKnight.knights.image_url || '/placeholder.svg'} alt={userKnight.knights.name} />
                     <AvatarFallback>{userKnight.knights.name[0]}</AvatarFallback>
@@ -284,113 +266,79 @@ const Members = () => {
                 </div>)}
             </div>
             
-            {canManage && (
-              <div className="mt-4">
+            {canManage && <div className="mt-4">
                 <Button variant="outline" onClick={resetAllKnights} className="border-foreground text-foreground hover:bg-foreground hover:text-background">
                   Resetar
                 </Button>
-              </div>
-            )}
+              </div>}
           </section>
 
           {/* Minhas Batalhas */}
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Minhas <span className="text-accent">Batalhas</span></h2>
+              <h2 className="text-xl text-foreground font-bold">Minhas <span className="text-accent">Batalhas</span></h2>
               <Badge variant="secondary">{userBattles.length} batalhas</Badge>
             </div>
             
-            {userBattles.length === 0 ? (
-              <div className="text-center py-8">
+            {userBattles.length === 0 ? <div className="text-center py-8">
                 <p className="text-muted-foreground text-base">
                   Este usuário ainda não cadastrou batalhas
                 </p>
-              </div>
-            ) : (
-              <>
+              </div> : <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   {paginatedBattles.map(battle => <UserBattleCard key={battle.id} battle={battle} knights={allKnights} stigmas={[]} onDelete={fetchUserBattles} hideAuthor={true} />)}
                 </div>
-                {totalBattlePages > 1 && (
-                  <div className="flex justify-center gap-2">
-                    {Array.from({ length: totalBattlePages }, (_, i) => i + 1).map(page => (
-                      <Button 
-                        key={page} 
-                        variant={currentPage === page ? "default" : "outline"} 
-                        size="sm" 
-                        onClick={() => setCurrentPage(page)}
-                      >
+                {totalBattlePages > 1 && <div className="flex justify-center gap-2">
+                    {Array.from({
+                length: totalBattlePages
+              }, (_, i) => i + 1).map(page => <Button key={page} variant={currentPage === page ? "default" : "outline"} size="sm" onClick={() => setCurrentPage(page)}>
                         {page}
-                      </Button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
+                      </Button>)}
+                  </div>}
+              </>}
           </section>
 
           {/* Meus Comentários */}
           <section>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-foreground">Meus <span className="text-accent">Comentários</span></h2>
+              <h2 className="text-xl font-bold">Meus <span className="text-accent">Comentários</span></h2>
               <Badge variant="secondary">{userComments.length} comentários</Badge>
             </div>
             
-            {userComments.length === 0 ? (
-              <div className="text-center py-8">
+            {userComments.length === 0 ? <div className="text-center py-8">
                 <p className="text-muted-foreground text-base">
                   Este usuário ainda não fez comentários
                 </p>
-              </div>
-            ) : (
-              <>
+              </div> : <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  {paginatedComments.map(comment => (
-                    <Card key={comment.id} className="border-border">
+                  {paginatedComments.map(comment => <Card key={comment.id} className="border-border">
                       <CardContent className="p-6">
                         <div className="mb-4">
                           <p className="text-sm font-medium text-accent mb-2">
-                            {format(new Date(comment.created_at), "dd/MM/yy", { locale: ptBR })}
+                            {format(new Date(comment.created_at), "dd/MM/yy", {
+                        locale: ptBR
+                      })}
                           </p>
                           <p className="text-sm text-foreground mb-4">{comment.content}</p>
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            onClick={() => window.location.href = `/battles/${comment.battle_id}`}
-                          >
+                          <Button size="sm" variant="outline" onClick={() => window.location.href = `/battles/${comment.battle_id}`}>
                             Ver Batalha
                           </Button>
                         </div>
                       </CardContent>
-                    </Card>
-                  ))}
+                    </Card>)}
                 </div>
-                {totalCommentPages > 1 && (
-                  <div className="flex justify-center gap-2">
-                    {Array.from({ length: totalCommentPages }, (_, i) => i + 1).map(page => (
-                      <Button 
-                        key={page} 
-                        variant={commentsPage === page ? "default" : "outline"} 
-                        size="sm" 
-                        onClick={() => setCommentsPage(page)}
-                      >
+                {totalCommentPages > 1 && <div className="flex justify-center gap-2">
+                    {Array.from({
+                length: totalCommentPages
+              }, (_, i) => i + 1).map(page => <Button key={page} variant={commentsPage === page ? "default" : "outline"} size="sm" onClick={() => setCommentsPage(page)}>
                         {page}
-                      </Button>
-                    ))}
-                  </div>
-                )}
-              </>
-            )}
+                      </Button>)}
+                  </div>}
+              </>}
           </section>
         </main>
         
-        <FavoriteKnightModal
-          isOpen={isFavoriteModalOpen}
-          onClose={() => setIsFavoriteModalOpen(false)}
-          userId={targetUserId}
-          currentFavoriteId={userProfile?.favorite_knight_id}
-          onUpdate={fetchUserProfile}
-        />
+        <FavoriteKnightModal isOpen={isFavoriteModalOpen} onClose={() => setIsFavoriteModalOpen(false)} userId={targetUserId} currentFavoriteId={userProfile?.favorite_knight_id} onUpdate={fetchUserProfile} />
       </div>
     </>;
 };
