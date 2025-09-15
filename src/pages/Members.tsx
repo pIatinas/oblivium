@@ -274,7 +274,7 @@ const Members = () => {
           </section>
 
           {/* Minhas Batalhas */}
-          <section className="mb-12">
+          <section className="mb-12 bg-card p-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl text-foreground font-bold">Minhas <span className="text-accent">Batalhas</span></h2>
               <Badge variant="secondary">{userBattles.length} batalhas</Badge>
