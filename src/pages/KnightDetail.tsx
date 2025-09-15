@@ -58,14 +58,19 @@ const KnightDetail = () => {
 
   useEffect(() => {
     if (knightUrl) {
+      console.log('KnightDetail - knightUrl:', knightUrl);
       const parsed = parseKnightUrl(knightUrl);
+      console.log('KnightDetail - parsed:', parsed);
       if (parsed) {
         fetchKnightData(parsed.idPrefix);
       } else {
-        navigate('/knights');
+        // If parsing fails, try direct match first 3 chars
+        const idPrefix = knightUrl.substring(0, 3);
+        console.log('KnightDetail - using fallback idPrefix:', idPrefix);
+        fetchKnightData(idPrefix);
       }
     }
-  }, [knightUrl, navigate]);
+  }, [knightUrl]);
 
   const fetchKnightData = async (idPrefix: string) => {
     try {
@@ -94,11 +99,16 @@ const KnightDetail = () => {
       const { data, error } = await supabase
         .from('knights')
         .select('*')
-        .like('id', `${idPrefix}%`)
-        .single();
+        .like('id', `${idPrefix}%`);
       
       if (error) throw error;
-      setKnight(data);
+      
+      if (data && data.length > 0) {
+        setKnight(data[0]); // Take the first match
+      } else {
+        console.log('Knight not found with prefix:', idPrefix);
+        navigate('/knights');
+      }
     } catch (error: any) {
       console.error("Erro ao carregar cavaleiro:", error);
       navigate('/knights');
