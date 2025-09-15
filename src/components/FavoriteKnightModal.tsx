@@ -47,12 +47,13 @@ const FavoriteKnightModal = ({
   const handleSave = async () => {
     try {
       setLoading(true);
-      const {
-        error
-      } = await supabase.from('profiles').update({
-        favorite_knight_id: selectedKnight
-      }).eq('user_id', userId);
+      const { error } = await supabase
+        .from('profiles')
+        .update({ favorite_knight_id: selectedKnight })
+        .eq('user_id', userId);
+      
       if (error) throw error;
+      
       toast.success('Cavaleiro favorito atualizado!');
       onUpdate();
       onClose();

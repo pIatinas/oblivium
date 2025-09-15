@@ -457,21 +457,27 @@ const BattleDetail = () => {
               </div>
             </div>
             
-            {/* Informação do autor */}
-            <div className="absolute bottom-[-10px] left-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
-              por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
-            </div>
-
-            {/* Like/Dislike buttons */}
-            <div className="absolute right-auto -bottom-[8px] right-[10px] flex items-center gap-2 bg-card rounded px-2 ">
-              <Button variant="ghost" size="sm" onClick={() => handleReaction('like')} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
-                <ThumbsUp className="w-4 h-4" />
-                <span className="ml-1 text-xs">{getLikeCount()}</span>
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => handleReaction('dislike')} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}>
-                <ThumbsDown className="w-4 h-4" />
-                <span className="ml-1 text-xs">{getDislikeCount()}</span>
-              </Button>
+            {/* Informação do autor e botões de like/dislike */}
+            <div className="flex justify-between items-center -bottom-[8px] absolute left-[10px] right-[10px]">
+              <div className="bg-card px-2 py-1 rounded text-xs text-muted-foreground">
+                por {getProfileByUserId(battle.created_by)?.full_name || 'Usuário'}
+              </div>
+              
+              <div className="flex items-center gap-2 bg-card rounded px-2">
+                <Button variant="ghost" size="sm" onClick={() => handleReaction('like')} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
+                  <ThumbsUp className="w-4 h-4" />
+                  <span className="ml-1 text-xs">{getLikeCount()}</span>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => handleReaction('dislike')} className={`p-1 h-auto hover:bg-card hover:text-white ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  <ThumbsDown className="w-4 h-4" />
+                  <span className="ml-1 text-xs">{getDislikeCount()}</span>
+                </Button>
+                <div className="border-l border-border h-6 mx-1"></div>
+                <div className="flex items-center gap-1 text-muted-foreground">
+                  <MessageCircle className="w-4 h-4" />
+                  <span className="text-xs">{getMainComments().length}</span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

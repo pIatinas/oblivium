@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAdmin } from '@/hooks/useAdmin';
@@ -68,6 +69,7 @@ const Members = () => {
   const [selectedKnights, setSelectedKnights] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [stigmas, setStigmas] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [commentsPage, setCommentsPage] = useState(1);
   const [isFavoriteModalOpen, setIsFavoriteModalOpen] = useState(false);
@@ -78,6 +80,7 @@ const Members = () => {
     if (targetUserId) {
       fetchUserProfile();
       fetchAllKnights();
+      fetchStigmas();
       fetchUserKnights();
       fetchUserBattles();
       fetchUserComments();
@@ -94,6 +97,11 @@ const Members = () => {
       data
     } = await supabase.from('knights').select('*').order('name');
     setAllKnights(data || []);
+  };
+
+  const fetchStigmas = async () => {
+    const { data } = await supabase.from('stigmas').select('*');
+    setStigmas(data || []);
   };
   const fetchUserKnights = async () => {
     const {
@@ -255,15 +263,26 @@ const Members = () => {
                 </Dialog>}
             </div>
             <div className="flex flex-wrap gap-2">
-              {userKnights.map(userKnight => <div key={userKnight.id} className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)} title={userKnight.knights.name}>
-                  <Avatar className="w-8 h-8">
-                    <AvatarImage src={userKnight.knights.image_url || '/placeholder.svg'} alt={userKnight.knights.name} />
-                    <AvatarFallback>{userKnight.knights.name[0]}</AvatarFallback>
-                  </Avatar>
-                  {userKnight.is_used && <div className="absolute -top-1 -right-1 bg-accent text-background rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold">
-                      ✓
-                    </div>}
-                </div>)}
+              {userKnights.map(userKnight => 
+                <TooltipProvider key={userKnight.id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}>
+                        <Avatar className="w-8 h-8">
+                          <AvatarImage src={userKnight.knights.image_url || '/placeholder.svg'} alt={userKnight.knights.name} />
+                          <AvatarFallback>{userKnight.knights.name[0]}</AvatarFallback>
+                        </Avatar>
+                        {userKnight.is_used && <div className="absolute -top-1 -right-1 bg-accent text-background rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold">
+                            ✓
+                          </div>}
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{userKnight.knights.name}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
             
             {canManage && <div className="mt-4">
@@ -286,7 +305,7 @@ const Members = () => {
                 </p>
               </div> : <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  {paginatedBattles.map(battle => <UserBattleCard key={battle.id} battle={battle} knights={allKnights} stigmas={[]} onDelete={fetchUserBattles} hideAuthor={true} />)}
+                  {paginatedBattles.map(battle => <UserBattleCard key={battle.id} battle={battle} knights={allKnights} stigmas={stigmas} onDelete={fetchUserBattles} hideAuthor={true} />)}
                 </div>
                 {totalBattlePages > 1 && <div className="flex justify-center gap-2">
                     {Array.from({

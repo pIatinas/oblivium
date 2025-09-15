@@ -54,7 +54,7 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:text-black hover:bg-accent">
+        <Button variant="ghost" className="flex items-center gap-2 text-foreground hover:text-black hover:bg-accent min-w-[120px] justify-start">
           <span className="truncate max-w-32">{displayName}</span>
           <ChevronDown className="h-4 w-4" />
         </Button>

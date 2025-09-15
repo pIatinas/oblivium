@@ -73,7 +73,7 @@ const UserBattleCard = ({
           <div className="flex-1 space-y-3">
             <h3 className="text-accent font-semibold text-center flex flex-col items-center gap-2">
               Vencedor
-              {battle.winner_team_stigma && <img src={getStigmaById(battle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-6 h-6 lg:w-12 lg:h-12" />}
+               {battle.winner_team_stigma && <img src={getStigmaById(battle.winner_team_stigma)?.imagem} alt="Estigma do time vencedor" className="w-6 h-6 lg:w-12 lg:h-12" />}
             </h3>
             <div className="flex gap-2 justify-center">
               {battle.winner_team.slice(0, 3).map((knightId, index) => {
@@ -100,7 +100,7 @@ const UserBattleCard = ({
           <div className="flex-1 space-y-3">
             <h3 className="text-purple-400 font-semibold text-center flex flex-col items-center gap-2">
               Perdedor
-              {battle.loser_team_stigma && <img src={getStigmaById(battle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-6 h-6 lg:w-12 lg:h-12" />}
+               {battle.loser_team_stigma && <img src={getStigmaById(battle.loser_team_stigma)?.imagem} alt="Estigma do time perdedor" className="w-6 h-6 lg:w-12 lg:h-12" />}
             </h3>
             <div className="flex gap-2 justify-center">
               {battle.loser_team.slice(0, 3).map((knightId, index) => {
