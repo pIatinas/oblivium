@@ -219,7 +219,7 @@ const Knights = () => {
           </Dialog>
         </div>
 
-        {filteredKnights.length > 0 ? <div className="grid gap-1 lg:gap-6 grid-cols-3 md:grid-cols-4  lg:grid-cols-5 xl:grid-cols-6">
+        {filteredKnights.length > 0 ? <div className="grid gap-1 lg:gap-6 grid-cols-2 md:grid-cols-4  lg:grid-cols-5 xl:grid-cols-6">
             {filteredKnights.map(knight => {
           const appearances = getKnightAppearances(knight.id);
           const knightUrl = createKnightUrl(knight.id, knight.name);
