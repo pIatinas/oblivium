@@ -263,7 +263,7 @@ const Members = () => {
                     <DialogHeader>
                       <DialogTitle>Selecionar Cavaleiros</DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-3 gap-4 py-4">
+                    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 py-4">
                       {allKnights.map(knight => <div key={knight.id} className="flex items-center space-x-3">
                           <Avatar className="w-10 h-10">
                             <AvatarImage src={knight.image_url || '/placeholder.svg'} alt={knight.name} />
