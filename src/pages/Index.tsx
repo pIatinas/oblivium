@@ -273,7 +273,7 @@ const Index = () => {
               </CarouselItem>
             </CarouselContent>
           </Carousel>
-          <CarouselDots count={3} current={actionSlideIndex} />
+          <CarouselDots count={3} current={actionSlideIndex} className="-mb-6" />
         </div>
 
         {/* Estatísticas */}
@@ -323,10 +323,10 @@ const Index = () => {
         {/* Mobile Stats Carousel */}
         <div className="md:hidden mb-12">
           <Carousel className="w-full mb-6" setApi={setStatsCarouselApi}>
-            <CarouselContent>
-              <CarouselItem>
-                <Card className="bg-card border-none">
-                  <CardContent className="p-4 text-center">
+            <CarouselContent className="">
+              <CarouselItem className="">
+                <Card className="bg-card border-none ">
+                  <CardContent className="p-4 text-center ">
                     <div className="flex justify-center mb-4">
                       <Sword className="w-9 h-9 text-accent" />
                     </div>
@@ -370,7 +370,7 @@ const Index = () => {
               </CarouselItem>
             </CarouselContent>
           </Carousel>
-          <CarouselDots count={4} current={statsSlideIndex} />
+          <CarouselDots count={4} current={statsSlideIndex} className="-mb-6" />
         </div>
 
         {/* Principais Cavaleiros */}
@@ -421,7 +421,7 @@ const Index = () => {
               })}
               </CarouselContent>
             </Carousel>
-            <CarouselDots count={Math.ceil(topKnights.length / 2)} current={knightsSlideIndex} />
+            <CarouselDots count={Math.ceil(topKnights.length / 2)} current={knightsSlideIndex} className="-mb-6" />
           </div>
         </div>
 
@@ -457,7 +457,7 @@ const Index = () => {
                   </CarouselItem>)}
               </CarouselContent>
             </Carousel>
-            <CarouselDots count={recentBattles.length} current={battlesSlideIndex} />
+            <CarouselDots count={recentBattles.length} current={battlesSlideIndex} className="-mb-6" />
           </div>
         </div>
       </div>
