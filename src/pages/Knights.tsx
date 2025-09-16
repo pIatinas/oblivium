@@ -209,7 +209,7 @@ const Knights = () => {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Cadastrar Novo Cavaleiro</DialogTitle>
+                <DialogTitle className="text-left font-light">Cadastro de Cavaleiro</DialogTitle>
               </DialogHeader>
               <CreateKnightForm onKnightCreated={() => {
               fetchKnights();

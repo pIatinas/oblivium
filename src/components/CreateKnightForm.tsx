@@ -58,7 +58,7 @@ const CreateKnightForm = ({
   };
   return <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="name">Nome do Cavaleiro</Label>
+        <Label htmlFor="name">Nome</Label>
         <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Seiya de Pégaso" required />
       </div>
 
