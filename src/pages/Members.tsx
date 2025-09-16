@@ -74,23 +74,20 @@ const Members = () => {
   const [commentsPage, setCommentsPage] = useState(1);
   const [isFavoriteModalOpen, setIsFavoriteModalOpen] = useState(false);
   const itemsPerPage = 4;
-  
+
   // Handle direct access via slug
   const [targetUserId, setTargetUserId] = useState<string | null>(null);
   const canManage = isAdmin || targetUserId === user?.id;
-  
+
   // Effect to handle slug-based routing
   useEffect(() => {
     const fetchUserBySlug = async () => {
       if (slug) {
         // Extract user slug from the URL parameter
         const userSlug = slug.split('-').slice(1).join('-'); // Remove the prefix (like "d08")
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('user_id, full_name')
-          .ilike('full_name', `%${userSlug}%`)
-          .limit(1);
-        
+        const {
+          data: profiles
+        } = await supabase.from('profiles').select('user_id, full_name').ilike('full_name', `%${userSlug}%`).limit(1);
         if (profiles && profiles.length > 0) {
           setTargetUserId(profiles[0].user_id);
         }
@@ -100,10 +97,8 @@ const Members = () => {
         setTargetUserId(user.id);
       }
     };
-    
     fetchUserBySlug();
   }, [slug, location.state?.userId, user?.id]);
-  
   useEffect(() => {
     if (targetUserId) {
       fetchUserProfile();
@@ -126,9 +121,10 @@ const Members = () => {
     } = await supabase.from('knights').select('*').order('name');
     setAllKnights(data || []);
   };
-
   const fetchStigmas = async () => {
-    const { data } = await supabase.from('stigmas').select('*');
+    const {
+      data
+    } = await supabase.from('stigmas').select('*');
     setStigmas(data || []);
   };
   const fetchUserKnights = async () => {
@@ -259,7 +255,7 @@ const Members = () => {
               <h2 className="text-xl text-foreground font-semibold">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
-                    <Button onClick={openKnightModal} className="bg-gradient-cosmic text-white ">
+                    <Button onClick={openKnightModal} className="text-gradient-cosmic p-0">
                       Adicionar
                     </Button>
                   </DialogTrigger>
@@ -291,8 +287,7 @@ const Members = () => {
                 </Dialog>}
             </div>
             <div className="flex flex-wrap gap-2">
-              {userKnights.map(userKnight => 
-                 <TooltipProvider key={userKnight.id}>
+              {userKnights.map(userKnight => <TooltipProvider key={userKnight.id}>
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <div className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}>
@@ -309,8 +304,7 @@ const Members = () => {
                       <p>{userKnight.knights.name}</p>
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
-              )}
+                </TooltipProvider>)}
             </div>
             
             {canManage && <div className="mt-4 flex items-center gap-3">
