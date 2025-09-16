@@ -251,11 +251,11 @@ const Members = () => {
 
           {/* Cavaleiros Disponíveis */}
           <section className="mb-6 bg-card p-4 rounded-2xl ">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between mb-2 lg:mb-5 ">
               <h2 className="text-xl text-foreground font-semibold leading-none mb-4 lg:mb-1">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
-                    <Button onClick={openKnightModal} className="text-purple-500 bg-transparent p-0 -mt-4 ">
+                    <Button onClick={openKnightModal} className="text-purple-500 bg-transparent p-0 -mt-4 lg:mt-0 hover:bg-transparent">
                       Adicionar
                     </Button>
                   </DialogTrigger>
@@ -320,7 +320,7 @@ const Members = () => {
           {/* Minhas Batalhas */}
           <section className="mb-6 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl text-foreground font-semibold">Minhas <span className="text-accent">Batalhas</span></h2>
+              <h2 className="text-xl text-foreground font-semibold leading-none mb-4 lg:mb-1">Minhas <span className="text-accent">Batalhas</span></h2>
               <Badge variant="secondary" className="font-light text-nowrap ">{userBattles.length} batalhas</Badge>
             </div>
             
@@ -345,7 +345,7 @@ const Members = () => {
           {/* Meus Comentários */}
           <section className="mb-12 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold">Meus <span className="text-accent">Comentários</span></h2>
+              <h2 className="text-xl font-semibold leading-none mb-4 lg:mb-1">Meus <span className="text-accent">Comentários</span></h2>
               <Badge variant="secondary" className="font-light text-nowrap ">{userComments.length} comentários</Badge>
             </div>
             
