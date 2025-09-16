@@ -144,7 +144,7 @@ const MembersPage = () => {
             </div>
           </div>
 
-          {filteredMembers.length > 0 ? <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+          {filteredMembers.length > 0 ? <div className="grid gap-2 grid-cols-2 md:grid-cols-4 md:gap-3 lg:grid-cols-5 lg:gap-4 xl:grid-cols-6">
               {filteredMembers.map(member => {
             const stats = memberStats[member.user_id] || {
               knights: 0,
