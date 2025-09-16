@@ -255,7 +255,7 @@ const Members = () => {
               <h2 className="text-xl text-foreground font-semibold">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
-                    <Button onClick={openKnightModal} className="text-gradient-cosmic p-0">
+                    <Button onClick={openKnightModal} className="text-purple-500 bg-transparent p-0">
                       Adicionar
                     </Button>
                   </DialogTrigger>
