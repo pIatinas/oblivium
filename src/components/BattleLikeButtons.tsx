@@ -46,14 +46,12 @@ const BattleLikeButtons = ({
       console.error('Erro ao carregar reações:', error);
     }
   };
-
   const fetchComments = async () => {
     try {
-      const { data, error } = await supabase
-        .from('battle_comments')
-        .select('id, battle_id, parent_id')
-        .eq('battle_id', battleId);
-      
+      const {
+        data,
+        error
+      } = await supabase.from('battle_comments').select('id, battle_id, parent_id').eq('battle_id', battleId);
       if (error) throw error;
       setComments(data || []);
     } catch (error) {
@@ -94,8 +92,7 @@ const BattleLikeButtons = ({
   const likeCount = reactions.filter(r => r.reaction_type === 'like').length;
   const dislikeCount = reactions.filter(r => r.reaction_type === 'dislike').length;
   const mainComments = comments.filter(c => !c.parent_id);
-  
-  return <div className="flex gap-2 absolute -bottom-3 left-auto right-2 text-xs text-muted-foreground bg-card rounded px-1 justify-end ">
+  return <div className="flex gap-2 absolute -bottom-6 lg:-bottom-3 left-auto right-2 text-xs text-muted-foreground bg-card rounded px-1 justify-end ">
       <Button size="sm" variant="ghost" onClick={() => handleReaction('like')} disabled={loading} className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
         <ThumbsUp className="w-4 h-4" />
         <span className="ml-1 text-xs">{likeCount}</span>
