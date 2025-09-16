@@ -328,7 +328,7 @@ const CreateBattle = () => {
           <div className="flex items-center space-x-2">
             <Checkbox id="meta-attack" checked={isMetaAttack} onCheckedChange={checked => setIsMetaAttack(checked as boolean)} />
             <Label htmlFor="meta-attack" className="text-foreground cursor-pointer text-muted-foreground whitespace-nowrap ">
-              Meta de Ataque
+              Meta
             </Label>
           </div>
         </div>
