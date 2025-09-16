@@ -308,7 +308,7 @@ const CreateBattle = () => {
         </div>
 
         {/* Meta de Ataque e Categoria */}
-        <div className="mt-3 mb-6 flex items-center justify-end gap-6 ">
+        <div className="mt-3 mb-6 flex items-center justify-between lg:justify-end gap-6 ">
           <div className="flex items-center space-x-2">
             
             <Select value={battleType} onValueChange={setBattleType}>
