@@ -363,7 +363,7 @@ const Index = () => {
         {/* Principais Cavaleiros */}
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6 flex-wrap">
-            <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
+            <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none w-full mb-4 lg:w-auto lg:mb-0">
               Principais <span className="font-bold">Cavaleiros</span>
             </h2>
             <Button asChild variant="outline" className="bg-card border-border">
@@ -414,8 +414,8 @@ const Index = () => {
 
         {/* Batalhas Recentes */}
         <div className="mb-12">
-          <div className="flex items-center justify-between mb-6 flex-wrap">
-            <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none ">
+          <div className="flex items-center justify-between mb-6 flex-wrap ">
+            <h2 className="text-xl lg:text-3xl font-light text-foreground leading-none w-full mb-4 lg:w-auto lg:mb-0">
               Últimas <span className="font-bold">Batalhas</span>
             </h2>
             <Button asChild variant="outline" className="bg-card border-border">

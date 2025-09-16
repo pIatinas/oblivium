@@ -40,13 +40,11 @@ interface BattleCardProps {
   profiles: Profile[];
   onDelete?: () => void;
 }
-
 interface Reaction {
   id: string;
   reaction_type: string;
   user_id: string;
 }
-
 interface Comment {
   id: string;
   battle_id: string;
@@ -59,28 +57,28 @@ const BattleCard = ({
   profiles,
   onDelete
 }: BattleCardProps) => {
-  const { toast } = useToast();
-  const { user } = useAuth();
+  const {
+    toast
+  } = useToast();
+  const {
+    user
+  } = useAuth();
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [userReaction, setUserReaction] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     fetchReactions();
     fetchComments();
   }, [battle.id]);
-
   const fetchReactions = async () => {
     try {
-      const { data, error } = await supabase
-        .from('battle_reactions')
-        .select('*')
-        .eq('battle_id', battle.id);
-      
+      const {
+        data,
+        error
+      } = await supabase.from('battle_reactions').select('*').eq('battle_id', battle.id);
       if (error) throw error;
       setReactions(data || []);
-      
       if (user) {
         const userReactionData = data?.find(r => r.user_id === user.id);
         setUserReaction(userReactionData?.reaction_type || null);
@@ -89,33 +87,25 @@ const BattleCard = ({
       console.error('Erro ao carregar reações:', error);
     }
   };
-
   const fetchComments = async () => {
     try {
-      const { data, error } = await supabase
-        .from('battle_comments')
-        .select('id, battle_id, parent_id')
-        .eq('battle_id', battle.id);
-      
+      const {
+        data,
+        error
+      } = await supabase.from('battle_comments').select('id, battle_id, parent_id').eq('battle_id', battle.id);
       if (error) throw error;
       setComments(data || []);
     } catch (error) {
       console.error('Erro ao carregar comentários:', error);
     }
   };
-
   const handleReaction = async (type: 'like' | 'dislike') => {
     if (!user || loading) return;
-    
     setLoading(true);
     try {
       // Remove existing reaction if any
       if (userReaction) {
-        await supabase
-          .from('battle_reactions')
-          .delete()
-          .eq('battle_id', battle.id)
-          .eq('user_id', user.id);
+        await supabase.from('battle_reactions').delete().eq('battle_id', battle.id).eq('user_id', user.id);
       }
 
       // If clicking the same reaction, just remove it
@@ -123,18 +113,16 @@ const BattleCard = ({
         setUserReaction(null);
       } else {
         // Add new reaction
-        const { error } = await supabase
-          .from('battle_reactions')
-          .insert({
-            battle_id: battle.id,
-            user_id: user.id,
-            reaction_type: type
-          });
-        
+        const {
+          error
+        } = await supabase.from('battle_reactions').insert({
+          battle_id: battle.id,
+          user_id: user.id,
+          reaction_type: type
+        });
         if (error) throw error;
         setUserReaction(type);
       }
-      
       fetchReactions();
     } catch (error) {
       console.error('Erro ao salvar reação:', error);
@@ -142,13 +130,13 @@ const BattleCard = ({
       setLoading(false);
     }
   };
-
   const likeCount = reactions.filter(r => r.reaction_type === 'like').length;
   const dislikeCount = reactions.filter(r => r.reaction_type === 'dislike').length;
   const mainComments = comments.filter(c => !c.parent_id);
-  
   const deleteBattle = async () => {
-    const { error } = await supabase.from('battles').delete().eq('id', battle.id);
+    const {
+      error
+    } = await supabase.from('battles').delete().eq('id', battle.id);
     if (error) throw error;
     if (onDelete) onDelete();
   };
@@ -167,17 +155,13 @@ const BattleCard = ({
         </div>}
       
       <div className="absolute top-2 left-2 z-20">
-        <AdminDeleteButton
-          onDelete={deleteBattle}
-          itemType="batalha"
-          className="w-6 h-6 p-0"
-        />
+        <AdminDeleteButton onDelete={deleteBattle} itemType="batalha" className="w-6 h-6 p-0" />
       </div>
 
       <CardContent onClick={() => {
       const battleUrl = createBattleUrl(battle.winner_team, battle.loser_team, knights);
       window.location.href = `/battles/${battleUrl}`;
-    }} className="p-3 lg:p-6 max-w-full ">
+    }} className="p-3 pb-10 lg:p-6 lg:pb-6 max-w-full ">
         <div className="flex items-center justify-between gap-1 lg:gap-4 ">
           {/* Time Vencedor */}
           <div className="flex-1 space-y-3">
@@ -230,36 +214,24 @@ const BattleCard = ({
         </div>
         
         {/* Informação do autor e botões de like/dislike */}
-        <div className="flex justify-between items-center -bottom-2 absolute left-4 right-4">
+        <div className="flex justify-between items-center bottom-2 lg:-bottom-2 absolute left-4 right-4">
           <div className="text-xs text-muted-foreground bg-card px-2 py-1 rounded">
             Por: {getProfileByUserId(battle.created_by)?.full_name || 'Desconhecido'}
           </div>
           
           <div className="flex gap-2 bg-card rounded px-1">
-            <Button 
-              size="sm" 
-              variant="ghost" 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleReaction('like');
-              }} 
-              disabled={loading} 
-              className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}
-            >
+            <Button size="sm" variant="ghost" onClick={e => {
+            e.stopPropagation();
+            handleReaction('like');
+          }} disabled={loading} className={`p-1 h-auto ${userReaction === 'like' ? 'text-green-500' : 'text-muted-foreground'}`}>
               <ThumbsUp className="w-4 h-4" />
               <span className="ml-1 text-xs">{likeCount}</span>
             </Button>
             
-            <Button 
-              size="sm" 
-              variant="ghost" 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleReaction('dislike');
-              }} 
-              disabled={loading} 
-              className={`p-1 h-auto ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}
-            >
+            <Button size="sm" variant="ghost" onClick={e => {
+            e.stopPropagation();
+            handleReaction('dislike');
+          }} disabled={loading} className={`p-1 h-auto ${userReaction === 'dislike' ? 'text-red-500' : 'text-muted-foreground'}`}>
               <ThumbsDown className="w-4 h-4" />
               <span className="ml-1 text-xs">{dislikeCount}</span>
             </Button>
