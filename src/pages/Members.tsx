@@ -252,10 +252,10 @@ const Members = () => {
           {/* Cavaleiros Disponíveis */}
           <section className="mb-6 bg-card p-4 rounded-2xl ">
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xl text-foreground font-semibold">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
+              <h2 className="text-xl text-foreground font-semibold leading-none mb-4 lg:mb-1">Cavaleiros <span className="text-accent">Disponíveis</span></h2>
               {canManage && <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                   <DialogTrigger asChild>
-                    <Button onClick={openKnightModal} className="text-purple-500 bg-transparent p-0">
+                    <Button onClick={openKnightModal} className="text-purple-500 bg-transparent p-0 -mt-4 ">
                       Adicionar
                     </Button>
                   </DialogTrigger>
