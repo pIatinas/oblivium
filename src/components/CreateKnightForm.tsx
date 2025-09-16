@@ -59,17 +59,17 @@ const CreateKnightForm = ({
   return <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Nome</Label>
-        <Input id="name" value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Seiya de Pégaso" required />
+        <Input id="name" value={name} onChange={e => setName(e.target.value)} required />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="imageUrl">URL da Imagem</Label>
-        <Input id="imageUrl" type="url" value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://..." required />
+        <Input id="imageUrl" type="url" value={imageUrl} onChange={e => setImageUrl(e.target.value)} required />
       </div>
 
       <div className="flex gap-2 flex-row-reverse ">
         <Button type="submit" disabled={loading} className="flex-1">
-          {loading ? "Criando..." : "Criar Cavaleiro"}
+          {loading ? "Salvando..." : "Salvar"}
         </Button>
         {onClose && <Button type="button" variant="outline" onClick={onClose}>
             Cancelar

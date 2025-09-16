@@ -195,10 +195,10 @@ const Battles = () => {
             </Select>
           </div>
 
-          <Button asChild className="bg-gradient-cosmic text-white hover:opacity-90">
+          <Button asChild className="bg-gradient-cosmic text-white hover:opacity-90 md:ml-auto">
             <Link to="/create-battle">
               <Plus className="w-4 h-4 mr-2" />
-              Nova Batalha
+              Adicionar
             </Link>
           </Button>
         </div>

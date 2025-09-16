@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Star, ThumbsUp, ThumbsDown, MessageCircle, Send, Reply, Loader2 } from "lucide-react";
+import { ArrowLeft, Star, ThumbsUp, ThumbsDown, MessageCircle, Send, Reply, Loader2, Heart } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -544,9 +544,21 @@ const BattleDetail = () => {
                       </div>
                     </div>
 
-                    {/* Informação do autor */}
-                    <div className="absolute bottom-[-10px] right-[10px] bg-card px-2 py-1 rounded text-xs text-muted-foreground">
-                      por {getProfileByUserId(relatedBattle.created_by)?.full_name || 'Usuário'}
+                    {/* Informação do autor e ações */}
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="text-xs text-muted-foreground">
+                        por {getProfileByUserId(relatedBattle.created_by)?.full_name || 'Usuário'}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <Heart className="w-4 h-4" />
+                          <span className="text-xs">0</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <MessageCircle className="w-4 h-4" />
+                          <span className="text-xs">0</span>
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>)}

@@ -230,7 +230,7 @@ const Index = () => {
 
         {/* Mobile Action Cards Carousel */}
         <div className="md:hidden mb-12">
-          <Carousel className="w-full mb-6">
+          <Carousel className="w-full mb-6" setApi={setActionCarouselApi}>
             <CarouselContent>
               <CarouselItem>
                 <Link to="/create-battle">
@@ -273,6 +273,7 @@ const Index = () => {
               </CarouselItem>
             </CarouselContent>
           </Carousel>
+          <CarouselDots count={3} current={actionSlideIndex} />
         </div>
 
         {/* Estatísticas */}
@@ -321,7 +322,7 @@ const Index = () => {
 
         {/* Mobile Stats Carousel */}
         <div className="md:hidden mb-12">
-          <Carousel className="w-full mb-6">
+          <Carousel className="w-full mb-6" setApi={setStatsCarouselApi}>
             <CarouselContent>
               <CarouselItem>
                 <Card className="bg-card border-none">
@@ -356,8 +357,20 @@ const Index = () => {
                   </CardContent>
                 </Card>
               </CarouselItem>
+              <CarouselItem>
+                <Card className="bg-card border-none">
+                  <CardContent className="p-4 text-center">
+                    <div className="flex justify-center mb-4">
+                      <Users className="w-9 h-9 text-accent" />
+                    </div>
+                    <div className="text-4xl font-bold text-foreground mb-2">{profiles.length}</div>
+                    <p className="text-muted-foreground">Membros</p>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
             </CarouselContent>
           </Carousel>
+          <CarouselDots count={4} current={statsSlideIndex} />
         </div>
 
         {/* Principais Cavaleiros */}

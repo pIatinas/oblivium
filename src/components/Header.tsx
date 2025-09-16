@@ -31,7 +31,7 @@ const Header = () => {
       return location.pathname === path || location.pathname.startsWith("/battles/");
     }
     if (path === "/knights") {
-      return location.pathname === path || location.pathname.startsWith("/knight/");
+      return location.pathname === path || location.pathname.startsWith("/knight/") || location.pathname.startsWith("/knights/");
     }
     if (path === "/members") {
       return location.pathname === path || location.pathname.startsWith("/members/");
@@ -69,6 +69,7 @@ const Header = () => {
                     {item.name}
                   </Button>
                 </Link>)}
+              <UserDropdown />
               <Button variant="ghost" onClick={() => {
             setIsMenuOpen(false);
             signOut();

@@ -216,7 +216,7 @@ const BattleCard = ({
         {/* Informação do autor e botões de like/dislike */}
         <div className="flex justify-between items-center bottom-2 lg:-bottom-2 absolute left-4 right-4">
           <div className="text-xs text-muted-foreground bg-card px-2 py-1 rounded">
-            Por: {getProfileByUserId(battle.created_by)?.full_name || 'Desconhecido'}
+            por {getProfileByUserId(battle.created_by)?.full_name || 'Desconhecido'}
           </div>
           
           <div className="flex gap-2 bg-card rounded px-1">

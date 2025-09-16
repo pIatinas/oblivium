@@ -90,7 +90,7 @@ const CreateKnightModal = ({ isOpen, onClose, onKnightCreated }: CreateKnightMod
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nome do cavaleiro"
+              
               className="bg-background border-border"
             />
           </div>
@@ -102,7 +102,7 @@ const CreateKnightModal = ({ isOpen, onClose, onKnightCreated }: CreateKnightMod
               type="url"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://exemplo.com/imagem.jpg"
+              
               className="bg-background border-border"
             />
           </div>
