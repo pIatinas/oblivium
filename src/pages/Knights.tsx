@@ -49,7 +49,6 @@ const Knights = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [loading, setLoading] = useState(true);
-  
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -79,7 +78,6 @@ const Knights = () => {
         });
       }
     }, 0);
-    
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
   const fetchData = async () => {
@@ -187,13 +185,7 @@ const Knights = () => {
           <div className="flex gap-4 flex-1 w-full ">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input 
-                ref={searchInputRef} 
-                value={searchTerm} 
-                onChange={e => setSearchTerm(e.target.value)} 
-                placeholder="Buscar cavaleiro..."
-                className="pl-10 bg-card border-border" 
-              />
+              <Input ref={searchInputRef} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Buscar cavaleiro..." className="pl-10 bg-card border-border" />
             </div>
             
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -236,8 +228,8 @@ const Knights = () => {
           }} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none">
                   <CardContent className="px-3 py-2 text-center bg-transparent ">
                     <img src={knight.image_url} alt={knight.name} className="w-20 h-20 rounded-full mx-auto mb-1 border border-accent/20" />
-                    <h3 className="text-lg font-semibold text-foreground mb-2">{knight.name}</h3>
-                    <p className="text-sm text-muted-foreground -mt-4 ">{appearances} times</p>
+                    <h3 className="text-sm lg:text-lg font-semibold text-foreground mb-2">{knight.name}</h3>
+                    <p className="text-xs lg:text-sm text-muted-foreground -mt-3 ">{appearances} times</p>
                   </CardContent>
                 </Card>;
         })}
