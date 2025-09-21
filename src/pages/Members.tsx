@@ -263,6 +263,18 @@ const Members = () => {
                     <DialogHeader>
                       <DialogTitle>Selecionar Cavaleiros</DialogTitle>
                     </DialogHeader>
+                    <div className="flex justify-end mb-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const allSelected = selectedKnights.length === allKnights.length;
+                          setSelectedKnights(allSelected ? [] : allKnights.map(k => k.id));
+                        }}
+                      >
+                        {selectedKnights.length === allKnights.length ? 'Desmarcar Todos' : 'Selecionar Todos'}
+                      </Button>
+                    </div>
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 py-4">
                       {allKnights.map(knight => <div key={knight.id} className="flex items-center space-x-3">
                           <Avatar className="w-10 h-10">
