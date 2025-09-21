@@ -291,7 +291,7 @@ const Members = () => {
                   <Tooltip delayDuration={0}>
                     <TooltipTrigger asChild>
                       <div className={`relative cursor-pointer transition-opacity hover:opacity-100 ${userKnight.is_used ? 'opacity-40' : 'opacity-100'}`} onClick={() => canManage && toggleKnightUsage(userKnight.id, userKnight.is_used)}>
-                        <Avatar className="w-8 h-8">
+                        <Avatar className="w-10 h-10">
                           <AvatarImage src={userKnight.knights.image_url || '/placeholder.svg'} alt={userKnight.knights.name} />
                           <AvatarFallback>{userKnight.knights.name[0]}</AvatarFallback>
                         </Avatar>

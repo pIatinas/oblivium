@@ -5,7 +5,7 @@ const Footer = () => {
           A vida é feita de escolhas. E eu escolhi lutar ao lado dos meus amigos.
         </p>
         <p className="text-muted-foreground">
-          Criado por <a href="https://www.wallaceerick.com.br" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 transition-colors">Wallace</a>
+          Criado por <a href="https://www.wallaceerick.com.br" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80 transition-colors">Wallace Erick</a>
         </p>
       </div>
     </footer>;

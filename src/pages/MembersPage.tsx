@@ -3,7 +3,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Search, Users, Trophy, MessageCircle, Loader2 } from 'lucide-react';
+import { Search, Users, Swords, MessageCircle, Loader2 } from 'lucide-react';
+import profilePlaceholder from '@/assets/profile-placeholder.webp';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
@@ -154,7 +155,7 @@ const MembersPage = () => {
             return <Card key={member.id} onClick={() => handleMemberClick(member)} className="bg-card hover:bg-card/80 transition-all duration-300 cursor-pointer border-none">
                     <CardContent className="p-6 text-center">
                       <Avatar className="w-24 h-auto rounded-3xl mx-auto mb-4 ">
-                        <AvatarImage src={member.favorite_knight_id ? knights.find(k => k.id === member.favorite_knight_id)?.image_url || '/placeholder.svg' : '/placeholder.svg'} alt={member.full_name || 'Usuário'} />
+                        <AvatarImage src={member.favorite_knight_id ? knights.find(k => k.id === member.favorite_knight_id)?.image_url || profilePlaceholder : profilePlaceholder} alt={member.full_name || 'Usuário'} />
                         <AvatarFallback className="text-xl">
                           {member.full_name ? member.full_name[0].toUpperCase() : 'U'}
                         </AvatarFallback>
@@ -170,7 +171,7 @@ const MembersPage = () => {
                           <span className="text-sm text-muted-foreground">{stats.knights}</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Trophy className="w-4 h-4 text-accent" />
+                          <Swords className="w-4 h-4 text-accent" />
                           <span className="text-sm text-muted-foreground">{stats.battles}</span>
                         </div>
                         <div className="flex items-center gap-1">
