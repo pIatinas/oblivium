@@ -263,18 +263,6 @@ const Members = () => {
                     <DialogHeader>
                       <DialogTitle>Selecionar Cavaleiros</DialogTitle>
                     </DialogHeader>
-                    <div className="flex justify-end mb-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          const allSelected = selectedKnights.length === allKnights.length;
-                          setSelectedKnights(allSelected ? [] : allKnights.map(k => k.id));
-                        }}
-                      >
-                        {selectedKnights.length === allKnights.length ? 'Desmarcar Todos' : 'Selecionar Todos'}
-                      </Button>
-                    </div>
                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 py-4">
                       {allKnights.map(knight => <div key={knight.id} className="flex items-center space-x-3">
                           <Avatar className="w-10 h-10">
@@ -287,13 +275,25 @@ const Members = () => {
                           </label>
                         </div>)}
                     </div>
-                    <div className="flex justify-end gap-2">
-                      <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-                        Cancelar
+                    <div className="flex justify-between items-center">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const allSelected = selectedKnights.length === allKnights.length;
+                          setSelectedKnights(allSelected ? [] : allKnights.map(k => k.id));
+                        }}
+                      >
+                        {selectedKnights.length === allKnights.length ? 'Desmarcar Todos' : 'Selecionar Todos'}
                       </Button>
-                      <Button onClick={saveKnightSelection}>
-                        Salvar
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                          Cancelar
+                        </Button>
+                        <Button onClick={saveKnightSelection}>
+                          Salvar
+                        </Button>
+                      </div>
                     </div>
                   </DialogContent>
                 </Dialog>}
