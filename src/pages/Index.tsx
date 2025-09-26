@@ -132,7 +132,7 @@ const Index = () => {
         knightCounts[knightId] = (knightCounts[knightId] || 0) + 1;
       });
     });
-    const sortedKnightIds = Object.entries(knightCounts).sort(([, a], [, b]) => b - a).slice(0, 12).map(([id]) => id);
+    const sortedKnightIds = Object.entries(knightCounts).sort(([, a], [, b]) => b - a).slice(0, 16).map(([id]) => id);
     const {
       data: knightsData
     } = await supabase.from('knights').select('*').in('id', sortedKnightIds);
