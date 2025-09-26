@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -20,6 +21,7 @@ interface UserProfile {
   full_name: string | null;
   active: boolean;
   created_at: string;
+  role?: string | null;
 }
 
 const Manage = () => {
@@ -39,13 +41,31 @@ const Manage = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data, error } = await supabase
+      // First get all profiles
+      const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setUsers(data || []);
+      if (profilesError) throw profilesError;
+
+      // Then get user roles
+      const { data: userRoles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+
+      // Combine the data
+      const usersWithRoles = profiles?.map(profile => {
+        const userRole = userRoles?.find(role => role.user_id === profile.user_id);
+        return {
+          ...profile,
+          role: userRole?.role || null
+        };
+      }) || [];
+      
+      setUsers(usersWithRoles);
     } catch (error) {
       console.error('Error fetching users:', error);
       toast({
@@ -154,6 +174,48 @@ const Manage = () => {
     }
   };
 
+  const handleRoleChange = async (userId: string, newRole: 'admin' | 'user') => {
+    try {
+      // First, check if user already has a role
+      const { data: existingRole } = await supabase
+        .from('user_roles')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (existingRole) {
+        // Update existing role
+        const { error } = await supabase
+          .from('user_roles')
+          .update({ role: newRole })
+          .eq('user_id', userId);
+
+        if (error) throw error;
+      } else {
+        // Insert new role
+        const { error } = await supabase
+          .from('user_roles')
+          .insert([{ user_id: userId, role: newRole }]);
+
+        if (error) throw error;
+      }
+
+      toast({
+        title: "Sucesso",
+        description: `Papel de usuário atualizado para ${newRole}`
+      });
+
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating user role:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao atualizar papel do usuário",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (adminLoading) {
     return <LoadingSpinner />;
   }
@@ -203,6 +265,7 @@ const Manage = () => {
                     <TableHead>Nome Completo</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Admin</TableHead>
                     <TableHead>Data de Cadastro</TableHead>
                     <TableHead>Ações</TableHead>
                   </TableRow>
@@ -245,6 +308,20 @@ const Manage = () => {
                         </div>
                       </TableCell>
                       <TableCell>
+                        <Select
+                          value={userProfile.role || 'user'}
+                          onValueChange={(value: 'admin' | 'user') => handleRoleChange(userProfile.user_id, value)}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="user">User</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell>
                         {new Date(userProfile.created_at).toLocaleDateString('pt-BR')}
                       </TableCell>
                       <TableCell>
@@ -285,6 +362,20 @@ const Manage = () => {
                             </>
                           )}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={userProfile.role || 'user'}
+                          onValueChange={(value: 'admin' | 'user') => handleRoleChange(userProfile.user_id, value)}
+                        >
+                          <SelectTrigger className="w-24">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="user">User</SelectItem>
+                            <SelectItem value="admin">Admin</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </TableCell>
                     </TableRow>
                   ))}
