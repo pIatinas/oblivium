@@ -61,16 +61,16 @@ const Auth = () => {
           options: {
             data: {
               full_name: fullName
-            }
+            },
+            emailRedirectTo: `${window.location.origin}/`
           }
         });
         if (error) throw error;
+
+        // Sign out immediately after signup to prevent auto-login
+        await supabase.auth.signOut();
         
-        toast({
-          title: "Cadastro realizado!",
-          description: "Sua conta foi criada. Aguarde a ativação por um administrador."
-        });
-        setIsSignUp(false); // Switch to login form
+        setShowSuccessMessage(true);
       } else {
         const {
           data,

@@ -8,7 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { Pencil, Save, X } from 'lucide-react';
+import { Pencil, Save, X, Trash2 } from 'lucide-react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import SEOHead from '@/components/SEOHead';
 
@@ -119,6 +119,35 @@ const Manage = () => {
       toast({
         title: "Erro",
         description: "Erro ao alterar status do usuário",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Tem certeza que deseja excluir o usuário ${userName}? Esta ação não pode ser desfeita.`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Sucesso",
+        description: "Usuário excluído com sucesso"
+      });
+
+      fetchUsers();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao excluir usuário",
         variant: "destructive"
       });
     }
@@ -236,13 +265,22 @@ const Manage = () => {
                               </Button>
                             </>
                           ) : (
-                            <Button
-                              size="sm"
-                              onClick={() => handleEdit(userProfile)}
-                              variant="outline"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
+                            <>
+                              <Button
+                                size="sm"
+                                onClick={() => handleEdit(userProfile)}
+                                variant="outline"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                onClick={() => handleDeleteUser(userProfile.id, userProfile.full_name || userProfile.email)}
+                                variant="destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </>
                           )}
                         </div>
                       </TableCell>
