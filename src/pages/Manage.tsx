@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Pencil, Save, X, Trash2 } from 'lucide-react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import SEOHead from '@/components/SEOHead';
+import Header from '@/components/Header';
 
 interface UserProfile {
   id: string;
@@ -179,11 +180,12 @@ const Manage = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen">
       <SEOHead 
         title="Gerenciar Usuários - Oblivium"
         description="Painel administrativo para gerenciar usuários do sistema Oblivium"
       />
+      <Header />
       
       <div className="container mx-auto py-8 px-4">
         <Card>
@@ -298,7 +300,7 @@ const Manage = () => {
           </CardContent>
         </Card>
       </div>
-    </>
+    </div>
   );
 };
 
