@@ -391,7 +391,7 @@ const Index = () => {
           <div className="hidden md:grid gap-2 lg:gap-6 md:grid-cols-6 xl:grid-cols-8">
             {topKnights.map(knight => {
             const knightUrl = createKnightUrl(knight.id, knight.name);
-            return <Link key={knight.id} to={`/knight/${knightUrl}`}>
+            return <Link key={knight.id} to={`/knights/${knightUrl}`}>
                 <Card className="bg-card hover:bg-card/7 hover:scale-110 transition-all duration-200 cursor-pointer border-none shadow-lg">
                   <CardContent className="p-4 text-center">
                     <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full mx-auto mb-3 border border-accent/20" />
@@ -409,7 +409,7 @@ const Index = () => {
                 {topKnights.map(knight => {
                 const knightUrl = createKnightUrl(knight.id, knight.name);
                 return <CarouselItem key={knight.id} className="pl-2 basis-1/2">
-                    <Link to={`/knight/${knightUrl}`}>
+                    <Link to={`/knights/${knightUrl}`}>
                       <Card className="bg-card transition-all duration-200 cursor-pointer border-none shadow-lg">
                         <CardContent className="p-4 text-center">
                           <img src={knight.image_url} alt={knight.name} className="w-16 h-16 rounded-full mx-auto mb-3 border border-accent/20" />
