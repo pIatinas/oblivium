@@ -266,7 +266,7 @@ const Manage = () => {
                 <Input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Buscar por nome ou email..."
+                  placeholder="Buscar"
                   className="pl-10 bg-card border-border"
                 />
               </div>
@@ -277,7 +277,7 @@ const Manage = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nome Completo</TableHead>
+                    <TableHead>Nome</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Admin</TableHead>
