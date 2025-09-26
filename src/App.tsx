@@ -14,6 +14,7 @@ import Knights from "./pages/Knights";
 import KnightDetail from "./pages/KnightDetail";
 import Members from "./pages/Members";
 import MembersPage from "./pages/MembersPage";
+import Manage from "./pages/Manage";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 
@@ -51,6 +52,7 @@ const App = () => (
             <Route path="/knights/:knightUrl" element={<ProtectedRoute><KnightDetail /></ProtectedRoute>} />
             <Route path="/members/:slug" element={<ProtectedRoute><Members /></ProtectedRoute>} />
             <Route path="/members" element={<ProtectedRoute><MembersPage /></ProtectedRoute>} />
+            <Route path="/manage" element={<ProtectedRoute><Manage /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

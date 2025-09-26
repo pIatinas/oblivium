@@ -1,4 +1,4 @@
-import { ChevronDown, User, LogOut } from 'lucide-react';
+import { ChevronDown, User, LogOut, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -7,12 +7,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { useAdmin } from '@/hooks/useAdmin';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useState, useEffect } from 'react';
 
 const UserDropdown = () => {
   const { user, signOut } = useAuth();
+  const { isAdmin } = useAdmin();
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState<any>(null);
   const [displayName, setDisplayName] = useState('Carregando...');
@@ -73,6 +75,12 @@ const UserDropdown = () => {
           <User className="h-4 w-4" />
           Meu Perfil
         </DropdownMenuItem>
+        {isAdmin && (
+          <DropdownMenuItem onClick={() => navigate('/manage')} className="flex items-center gap-2 cursor-pointer hover:bg-muted">
+            <Settings className="h-4 w-4" />
+            Gerenciar
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem 
           onClick={signOut} 
           className="flex items-center gap-2 cursor-pointer hover:bg-destructive hover:text-destructive-foreground text-destructive"
