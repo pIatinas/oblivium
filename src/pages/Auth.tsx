@@ -61,12 +61,16 @@ const Auth = () => {
           options: {
             data: {
               full_name: fullName
-            },
-            emailRedirectTo: `${window.location.origin}/auth`
+            }
           }
         });
         if (error) throw error;
-        setShowSuccessMessage(true);
+        
+        toast({
+          title: "Cadastro realizado!",
+          description: "Sua conta foi criada. Aguarde a ativação por um administrador."
+        });
+        setIsSignUp(false); // Switch to login form
       } else {
         const {
           data,
