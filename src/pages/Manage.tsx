@@ -254,13 +254,13 @@ const Manage = () => {
       <div className="container mx-auto py-8 px-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Gerenciar Usuários</CardTitle>
-            <p className="text-muted-foreground">
-              Gerencie os usuários cadastrados no sistema
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <CardTitle className="text-2xl">Gerenciar Usuários</CardTitle>
+                <p className="text-muted-foreground">
+                  Gerencie os usuários cadastrados no sistema
+                </p>
+              </div>
               <div className="relative max-w-sm">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
@@ -271,7 +271,8 @@ const Manage = () => {
                 />
               </div>
             </div>
-            
+          </CardHeader>
+          <CardContent>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
