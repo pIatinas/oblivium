@@ -8,6 +8,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Search } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Pencil, Save, X, Trash2 } from 'lucide-react';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -32,6 +33,7 @@ const Manage = () => {
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<{ full_name: string; email: string }>({ full_name: '', email: '' });
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (!adminLoading && isAdmin) {
@@ -258,6 +260,18 @@ const Manage = () => {
             </p>
           </CardHeader>
           <CardContent>
+            <div className="mb-6">
+              <div className="relative max-w-sm">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                <Input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar por nome ou email..."
+                  className="pl-10 bg-card border-border"
+                />
+              </div>
+            </div>
+            
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -271,7 +285,12 @@ const Manage = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {users.map((userProfile) => (
+                  {users
+                    .filter(user => 
+                      user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map((userProfile) => (
                     <TableRow key={userProfile.id}>
                       <TableCell>
                         {editingUser === userProfile.id ? (
@@ -363,28 +382,17 @@ const Manage = () => {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <Select
-                          value={userProfile.role || 'user'}
-                          onValueChange={(value: 'admin' | 'user') => handleRoleChange(userProfile.user_id, value)}
-                        >
-                          <SelectTrigger className="w-24">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="user">User</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
               
-              {users.length === 0 && (
+              {users.filter(user => 
+                user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                user.email.toLowerCase().includes(searchTerm.toLowerCase())
+              ).length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
-                  Nenhum usuário encontrado
+                  {users.length === 0 ? 'Nenhum usuário encontrado' : 'Nenhum usuário corresponde à pesquisa'}
                 </div>
               )}
             </div>
