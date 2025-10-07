@@ -58,7 +58,7 @@ const Battles = () => {
     fetchKnights();
     fetchStigmas();
     fetchProfiles();
-  }, [searchP1, searchP2, searchP3, typeFilter, currentPage]);
+  }, [typeFilter]);
   const fetchBattles = async () => {
     try {
       let query = supabase.from('battles').select('*', {
@@ -73,7 +73,7 @@ const Battles = () => {
         count
       } = await query.order('created_at', {
         ascending: false
-      }).range((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE - 1);
+      });
       if (error) throw error;
       setBattles((data || []).map(battle => ({
         ...battle,
@@ -150,6 +150,11 @@ const Battles = () => {
     
     return matchesP1 && matchesP2 && matchesP3;
   });
+  
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchP1, searchP2, searchP3]);
+  
   const totalPages = Math.ceil(filteredBattles.length / ITEMS_PER_PAGE);
   const paginatedBattles = filteredBattles.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
   if (loading) {
@@ -183,7 +188,6 @@ const Battles = () => {
                 value={searchP1} 
                 onChange={e => {
                   setSearchP1(e.target.value);
-                  setCurrentPage(1);
                 }} 
                 className="pl-10 bg-card border-border" 
               />
@@ -198,7 +202,6 @@ const Battles = () => {
                 value={searchP2} 
                 onChange={e => {
                   setSearchP2(e.target.value);
-                  setCurrentPage(1);
                 }} 
                 className="pl-10 bg-card border-border" 
               />
@@ -213,7 +216,6 @@ const Battles = () => {
                 value={searchP3} 
                 onChange={e => {
                   setSearchP3(e.target.value);
-                  setCurrentPage(1);
                 }} 
                 className="pl-10 bg-card border-border" 
               />
