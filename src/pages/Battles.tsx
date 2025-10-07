@@ -174,80 +174,71 @@ const Battles = () => {
         </div>
 
         {/* Filtros e Busca */}
-        <div className="mb-6 flex flex-col-reverse sm:flex-row gap-4 items-end justify-between flex-wrap-reverse w-full ">
-          <div className="flex flex-col gap-4 flex-1 w-full">
-            <div className="flex gap-2 w-full">
-              <div className="flex-1">
-                <label className="text-sm font-medium text-muted-foreground mb-1 block">P1</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input 
-                    value={searchP1} 
-                    onChange={e => {
-                      setSearchP1(e.target.value);
-                      setCurrentPage(1);
-                    }} 
-                    placeholder="Cavaleiro P1"
-                    className="pl-10 bg-card border-border" 
-                  />
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <label className="text-sm font-medium text-muted-foreground mb-1 block">P2</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input 
-                    value={searchP2} 
-                    onChange={e => {
-                      setSearchP2(e.target.value);
-                      setCurrentPage(1);
-                    }} 
-                    placeholder="Cavaleiro P2"
-                    className="pl-10 bg-card border-border" 
-                  />
-                </div>
-              </div>
-              
-              <div className="flex-1">
-                <label className="text-sm font-medium text-muted-foreground mb-1 block">P3</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input 
-                    value={searchP3} 
-                    onChange={e => {
-                      setSearchP3(e.target.value);
-                      setCurrentPage(1);
-                    }} 
-                    placeholder="Cavaleiro P3"
-                    className="pl-10 bg-card border-border" 
-                  />
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-4">
-              <Select value={typeFilter} onValueChange={value => {
-                setTypeFilter(value);
-                setCurrentPage(1);
-              }}>
-                <SelectTrigger className="w-[180px] bg-card border-border">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="Athena">Athena</SelectItem>
-                  <SelectItem value="Econômico">Econômico</SelectItem>
-                  <SelectItem value="Hades">Hades</SelectItem>
-                  <SelectItem value="Lua">Lua</SelectItem>
-                  <SelectItem value="Padrão">Padrão</SelectItem>
-                  <SelectItem value="Poseidon">Poseidon</SelectItem>
-                </SelectContent>
-              </Select>
+        <div className="mb-6 flex flex-col md:flex-row gap-4 items-end w-full">
+          <div className="flex-1">
+            <label className="text-sm font-medium text-muted-foreground mb-1 block">Posição 1</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input 
+                value={searchP1} 
+                onChange={e => {
+                  setSearchP1(e.target.value);
+                  setCurrentPage(1);
+                }} 
+                className="pl-10 bg-card border-border" 
+              />
             </div>
           </div>
+          
+          <div className="flex-1">
+            <label className="text-sm font-medium text-muted-foreground mb-1 block">Posição 2</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input 
+                value={searchP2} 
+                onChange={e => {
+                  setSearchP2(e.target.value);
+                  setCurrentPage(1);
+                }} 
+                className="pl-10 bg-card border-border" 
+              />
+            </div>
+          </div>
+          
+          <div className="flex-1">
+            <label className="text-sm font-medium text-muted-foreground mb-1 block">Posição 3</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input 
+                value={searchP3} 
+                onChange={e => {
+                  setSearchP3(e.target.value);
+                  setCurrentPage(1);
+                }} 
+                className="pl-10 bg-card border-border" 
+              />
+            </div>
+          </div>
+          
+          <Select value={typeFilter} onValueChange={value => {
+            setTypeFilter(value);
+            setCurrentPage(1);
+          }}>
+            <SelectTrigger className="w-[180px] bg-card border-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="Athena">Athena</SelectItem>
+              <SelectItem value="Econômico">Econômico</SelectItem>
+              <SelectItem value="Hades">Hades</SelectItem>
+              <SelectItem value="Lua">Lua</SelectItem>
+              <SelectItem value="Padrão">Padrão</SelectItem>
+              <SelectItem value="Poseidon">Poseidon</SelectItem>
+            </SelectContent>
+          </Select>
 
-          <Button asChild className="bg-gradient-cosmic text-white hover:opacity-90 md:ml-auto">
+          <Button asChild className="bg-gradient-cosmic text-white hover:opacity-90">
             <Link to="/create-battle">
               <Plus className="w-4 h-4 mr-2" />
               Adicionar
