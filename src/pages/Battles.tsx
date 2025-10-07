@@ -44,7 +44,9 @@ const Battles = () => {
   const [stigmas, setStigmas] = useState<Stigma[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchP1, setSearchP1] = useState("");
+  const [searchP2, setSearchP2] = useState("");
+  const [searchP3, setSearchP3] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalBattles, setTotalBattles] = useState(0);
@@ -56,7 +58,7 @@ const Battles = () => {
     fetchKnights();
     fetchStigmas();
     fetchProfiles();
-  }, [searchTerm, typeFilter, currentPage]);
+  }, [searchP1, searchP2, searchP3, typeFilter, currentPage]);
   const fetchBattles = async () => {
     try {
       let query = supabase.from('battles').select('*', {
@@ -134,16 +136,22 @@ const Battles = () => {
     return profiles.find(p => p.user_id === userId);
   };
   const filteredBattles = battles.filter(battle => {
-    const matchesSearch = battle.winner_team.some(knightId => {
-      const knight = getKnightById(knightId);
-      return knight?.name.toLowerCase().includes(searchTerm.toLowerCase());
-    }) || battle.loser_team.some(knightId => {
-      const knight = getKnightById(knightId);
-      return knight?.name.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    return matchesSearch;
+    const matchesP1 = !searchP1 || 
+      getKnightById(battle.winner_team[0])?.name.toLowerCase().includes(searchP1.toLowerCase()) ||
+      getKnightById(battle.loser_team[0])?.name.toLowerCase().includes(searchP1.toLowerCase());
+    
+    const matchesP2 = !searchP2 || 
+      getKnightById(battle.winner_team[1])?.name.toLowerCase().includes(searchP2.toLowerCase()) ||
+      getKnightById(battle.loser_team[1])?.name.toLowerCase().includes(searchP2.toLowerCase());
+    
+    const matchesP3 = !searchP3 || 
+      getKnightById(battle.winner_team[2])?.name.toLowerCase().includes(searchP3.toLowerCase()) ||
+      getKnightById(battle.loser_team[2])?.name.toLowerCase().includes(searchP3.toLowerCase());
+    
+    return matchesP1 && matchesP2 && matchesP3;
   });
-  const totalPages = Math.ceil(totalBattles / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredBattles.length / ITEMS_PER_PAGE);
+  const paginatedBattles = filteredBattles.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
   if (loading) {
     return <div className="min-h-screen">
         <Header />
@@ -166,33 +174,77 @@ const Battles = () => {
         </div>
 
         {/* Filtros e Busca */}
-        <div className="mb-6 flex flex-col-reverse sm:flex-row gap-4 items-center justify-between flex-wrap-reverse w-full ">
-          <div className="flex gap-4 flex-1 w-full  ">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input value={searchTerm} onChange={e => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }} className="pl-3 lg:pl-10 bg-card border-border  " />
+        <div className="mb-6 flex flex-col-reverse sm:flex-row gap-4 items-end justify-between flex-wrap-reverse w-full ">
+          <div className="flex flex-col gap-4 flex-1 w-full">
+            <div className="flex gap-2 w-full">
+              <div className="flex-1">
+                <label className="text-sm font-medium text-muted-foreground mb-1 block">P1</label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input 
+                    value={searchP1} 
+                    onChange={e => {
+                      setSearchP1(e.target.value);
+                      setCurrentPage(1);
+                    }} 
+                    placeholder="Cavaleiro P1"
+                    className="pl-10 bg-card border-border" 
+                  />
+                </div>
+              </div>
+              
+              <div className="flex-1">
+                <label className="text-sm font-medium text-muted-foreground mb-1 block">P2</label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input 
+                    value={searchP2} 
+                    onChange={e => {
+                      setSearchP2(e.target.value);
+                      setCurrentPage(1);
+                    }} 
+                    placeholder="Cavaleiro P2"
+                    className="pl-10 bg-card border-border" 
+                  />
+                </div>
+              </div>
+              
+              <div className="flex-1">
+                <label className="text-sm font-medium text-muted-foreground mb-1 block">P3</label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input 
+                    value={searchP3} 
+                    onChange={e => {
+                      setSearchP3(e.target.value);
+                      setCurrentPage(1);
+                    }} 
+                    placeholder="Cavaleiro P3"
+                    className="pl-10 bg-card border-border" 
+                  />
+                </div>
+              </div>
             </div>
             
-            <Select value={typeFilter} onValueChange={value => {
-            setTypeFilter(value);
-            setCurrentPage(1);
-          }}>
-              <SelectTrigger className="w-[180px] bg-card border-border">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
-                <SelectItem value="Athena">Athena</SelectItem>
-                <SelectItem value="Econômico">Econômico</SelectItem>
-                <SelectItem value="Hades">Hades</SelectItem>
-                <SelectItem value="Lua">Lua</SelectItem>
-                <SelectItem value="Padrão">Padrão</SelectItem>
-                <SelectItem value="Poseidon">Poseidon</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex gap-4">
+              <Select value={typeFilter} onValueChange={value => {
+                setTypeFilter(value);
+                setCurrentPage(1);
+              }}>
+                <SelectTrigger className="w-[180px] bg-card border-border">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="Athena">Athena</SelectItem>
+                  <SelectItem value="Econômico">Econômico</SelectItem>
+                  <SelectItem value="Hades">Hades</SelectItem>
+                  <SelectItem value="Lua">Lua</SelectItem>
+                  <SelectItem value="Padrão">Padrão</SelectItem>
+                  <SelectItem value="Poseidon">Poseidon</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <Button asChild className="bg-gradient-cosmic text-white hover:opacity-90 md:ml-auto">
@@ -206,7 +258,7 @@ const Battles = () => {
         {/* Lista de Batalhas */}
         {filteredBattles.length > 0 ? <>
             <div className="grid gap-6 md:grid-cols-2">
-              {filteredBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} onDelete={fetchBattles} />)}
+              {paginatedBattles.map(battle => <BattleCard key={battle.id} battle={battle} knights={knights} stigmas={stigmas} profiles={profiles} onDelete={fetchBattles} />)}
             </div>
 
             {/* Paginação */}
