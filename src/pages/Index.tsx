@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sword, Trophy, Users, Zap, Plus, Eye, Loader2 } from "lucide-react";
+import { Sword, Heart, Users, Zap, Plus, Eye, Loader2, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
@@ -38,13 +38,15 @@ interface Battle {
 interface Stats {
   totalBattles: number;
   totalKnights: number;
-  totalVictories: number;
+  totalComments: number;
+  totalLikes: number;
 }
 const Index = () => {
   const [stats, setStats] = useState<Stats>({
     totalBattles: 0,
     totalKnights: 0,
-    totalVictories: 0
+    totalComments: 0,
+    totalLikes: 0
   });
   const [topKnights, setTopKnights] = useState<Knight[]>([]);
   const [recentBattles, setRecentBattles] = useState<Battle[]>([]);
@@ -105,19 +107,23 @@ const Index = () => {
     }
   };
   const fetchStats = async () => {
-    const [battlesRes, knightsRes] = await Promise.all([supabase.from('battles').select('*', {
-      count: 'exact',
-      head: true
-    }), supabase.from('knights').select('*', {
-      count: 'exact',
-      head: true
-    })]);
+    const [battlesRes, knightsRes, commentsRes, likesRes] = await Promise.all([
+      supabase.from('battles').select('*', { count: 'exact', head: true }),
+      supabase.from('knights').select('*', { count: 'exact', head: true }),
+      supabase.from('battle_comments').select('*', { count: 'exact', head: true }),
+      supabase.from('battle_reactions').select('*', { count: 'exact', head: true }).eq('reaction_type', 'like')
+    ]);
+    
     const totalBattles = battlesRes.count || 0;
     const totalKnights = knightsRes.count || 0;
+    const totalComments = commentsRes.count || 0;
+    const totalLikes = likesRes.count || 0;
+    
     setStats({
       totalBattles,
       totalKnights,
-      totalVictories: totalBattles
+      totalComments,
+      totalLikes
     });
   };
   const fetchTopKnights = async () => {
@@ -278,7 +284,7 @@ const Index = () => {
 
         {/* Estatísticas */}
         {/* Desktop Stats Grid */}
-        <div className="hidden md:grid grid-cols-4 gap-6 mb-12">
+        <div className="hidden md:grid grid-cols-5 gap-6 mb-12">
           <Card className="bg-card border-none ">
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="flex justify-center mb-4">
@@ -302,10 +308,20 @@ const Index = () => {
           <Card className="bg-card border-none ">
             <CardContent className="p-4 lg:p-6 text-center">
               <div className="flex justify-center mb-4">
-                <Trophy className="w-9 h-9 lg:w-12 lg:h-12 text-accent" />
+                <MessageCircle className="w-9 h-9 lg:w-12 lg:h-12 text-accent" />
               </div>
-              <div className="text-4xl font-bold text-foreground mb-2">{stats.totalVictories}</div>
-              <p className="text-muted-foreground">Vitórias</p>
+              <div className="text-4xl font-bold text-foreground mb-2">{stats.totalComments}</div>
+              <p className="text-muted-foreground">Comentários</p>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-none ">
+            <CardContent className="p-4 lg:p-6 text-center">
+              <div className="flex justify-center mb-4">
+                <Heart className="w-9 h-9 lg:w-12 lg:h-12 text-accent" />
+              </div>
+              <div className="text-4xl font-bold text-foreground mb-2">{stats.totalLikes}</div>
+              <p className="text-muted-foreground">Likes</p>
             </CardContent>
           </Card>
 
@@ -350,10 +366,21 @@ const Index = () => {
                 <Card className="bg-card border-none">
                   <CardContent className="p-4 text-center">
                     <div className="flex justify-center mb-4">
-                      <Trophy className="w-9 h-9 text-accent" />
+                      <MessageCircle className="w-9 h-9 text-accent" />
                     </div>
-                    <div className="text-4xl font-bold text-foreground mb-2">{stats.totalVictories}</div>
-                    <p className="text-muted-foreground">Vitórias</p>
+                    <div className="text-4xl font-bold text-foreground mb-2">{stats.totalComments}</div>
+                    <p className="text-muted-foreground">Comentários</p>
+                  </CardContent>
+                </Card>
+              </CarouselItem>
+              <CarouselItem>
+                <Card className="bg-card border-none">
+                  <CardContent className="p-4 text-center">
+                    <div className="flex justify-center mb-4">
+                      <Heart className="w-9 h-9 text-accent" />
+                    </div>
+                    <div className="text-4xl font-bold text-foreground mb-2">{stats.totalLikes}</div>
+                    <p className="text-muted-foreground">Likes</p>
                   </CardContent>
                 </Card>
               </CarouselItem>
@@ -370,7 +397,7 @@ const Index = () => {
               </CarouselItem>
             </CarouselContent>
           </Carousel>
-          <CarouselDots count={4} current={statsSlideIndex} className="-mb-6" />
+          <CarouselDots count={5} current={statsSlideIndex} className="-mb-6" />
         </div>
 
         {/* Principais Cavaleiros */}
